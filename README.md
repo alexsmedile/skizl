@@ -142,6 +142,13 @@ The script reads the container's `SKILL.md` frontmatter to extract `name`, `allo
 
 ```
 /plugin marketplace add alexsmedile/skizl
+/plugin install skizl@skizl
+```
+
+**Via Codex:**
+
+```bash
+codex plugin install https://github.com/alexsmedile/skizl
 ```
 
 **Via npx skills (global):**

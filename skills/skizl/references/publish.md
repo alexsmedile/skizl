@@ -200,10 +200,11 @@ _backups/
 Before generating, ask:
 
 > **Which install methods should the README include?**
-> 1. `/plugin marketplace add <username>/<repo>` — Claude Code plugin marketplace
-> 2. `npx skills add <username>/<repo>` — vercel skills CLI (global / project-scoped / agent-targeted)
-> 3. `git clone` — manual clone + symlink
-> 4. All of the above
+> 1. Claude Code marketplace — `/plugin marketplace add <username>/<repo>` + `/plugin install <repo>@<repo>`
+> 2. Codex — `codex plugin install https://github.com/<username>/<repo>`
+> 3. `npx skills add <username>/<repo>` — vercel skills CLI (global / project-scoped / agent-targeted)
+> 4. `git clone` — manual clone + symlink
+> 5. All of the above
 
 Wait for the user's answer, then generate a README with:
 - `# <repo-name>` heading
@@ -233,7 +234,9 @@ Next steps:
   Test locally:   claude --plugin-dir ./
   Create repo:    gh repo create <username>/<repo-name> --public
   Push:           git add . && git commit -m "feat: initial plugin scaffold" && git push -u origin main
-  Install:        /plugin marketplace add <username>/<repo-name>
+  Claude Code:    /plugin marketplace add <username>/<repo-name>
+                  /plugin install <repo-name>@<repo-name>
+  Codex:          codex plugin install https://github.com/<username>/<repo-name>
   Via npx:        npx skills add <username>/<repo-name>
 ```
 
