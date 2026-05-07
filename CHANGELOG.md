@@ -7,9 +7,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [1.3.0] — 2026-05-07
 
+### Added
+- `.codex-plugin/plugin.json` enriched with optional `interface` block (displayName, shortDescription, longDescription, developerName, category, capabilities, websiteURL, defaultPrompt, brandColor) for Codex browser UI
+- `publish` reference and `create-plugin` skill updated to document the `interface` block as optional, with warning against adding `privacyPolicyURL`/`termsOfServiceURL` unless those files exist
+
 ### Changed
 - `publish` reference updated with verified Claude Code and Codex install methods from official docs
-- README install section: corrected Claude Code install command to `skizl@alexsmedile-skizl`, replaced invalid `codex plugin install` with `codex plugin marketplace add` + `codex /plugins`
+- Claude Code install key format clarified as `{plugin-name}@{marketplace-key}` — `{marketplace-key}` is the top-level `"name"` in `.claude-plugin/marketplace.json`, `{plugin-name}` is `plugins[0].name`; they are often the same but can differ (e.g. `codex@openai-codex`)
+- README install command corrected from `skizl@alexsmedile-skizl` to `skizl@skizl`
 - Quick Start examples replaced with generic `writing` container (removed project-specific `cs` container)
 - Icon replaced with v2 squircle design matching Blip-style app icon aesthetic
 
