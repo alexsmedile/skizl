@@ -156,13 +156,20 @@ Check each target file. For files that already exist, ask: **"<file> already exi
 
 ### `.codex-plugin/plugin.json`
 
+Codex requires `name`, `version`, `description`, and `skills` path:
+
 ```json
 {
-  "name": "<repo-name>"
+  "name": "<repo-name>",
+  "version": "<version>",
+  "description": "<description>",
+  "skills": "./skills/"
 }
 ```
 
 ### `.agents/plugins/marketplace.json`
+
+Codex marketplace file — separate schema from Claude's. `source.path` is relative to `.agents/plugins/` and must be `./`-prefixed:
 
 ```json
 {
@@ -175,13 +182,15 @@ Check each target file. For files that already exist, ask: **"<file> already exi
       "name": "<repo-name>",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "../../"
       },
       "category": "Productivity"
     }
   ]
 }
 ```
+
+> `source.path` is `../../` because it resolves relative to `.agents/plugins/`, pointing back to the repo root where `.codex-plugin/` lives.
 
 ### `.gitignore` (only if missing)
 
@@ -231,24 +240,43 @@ Files created:
   README.md
 
 Next steps:
-  Test locally:   claude --plugin-dir ./
+  Test (Claude):  claude --plugin-dir ./
+  Test (Codex):   codex plugin marketplace add ./  &&  codex /plugins
   Create repo:    gh repo create <username>/<repo-name> --public
   Push:           git add . && git commit -m "feat: initial plugin scaffold" && git push -u origin main
-  Claude Code:    /plugin marketplace add <username>/<repo-name>
-                  /plugin install <repo-name>@<username>-<repo-name>
-  Codex:          codex plugin marketplace add <username>/<repo-name>
-                  codex /plugins  (then install from browser)
-  Via npx:        npx skills add <username>/<repo-name>
+
+  Install (Claude Code):
+    /plugin marketplace add <username>/<repo-name>
+    /plugin install <repo-name>@<username>-<repo-name>
+
+  Install (Codex):
+    codex plugin marketplace add <username>/<repo-name>
+    codex /plugins  (then browse and install)
+
+  Install (npx skills):
+    npx skills add <username>/<repo-name>
 ```
 
 ---
 
 ## Notes
 
-- `skills/` and `agents/` at the plugin root are **auto-discovered** — no paths needed in `plugin.json`
-- The Claude and Codex marketplace files use **different schemas** — never merge or swap them
-- Do NOT add `skills` or `agents` keys to `marketplace.json` — causes schema validation errors
-- Bump `version` in both `plugin.json` and `marketplace.json` on each release
+**Claude Code:**
+- `skills/` and `agents/` at the plugin root are **auto-discovered** — no paths needed in `.claude-plugin/plugin.json`
+- Do NOT add `skills` or `agents` keys to `.claude-plugin/marketplace.json` — causes schema validation errors
+- Install: `/plugin marketplace add <username>/<repo>` then `/plugin install <repo>@<username>-<repo>`
+- Marketplace name is `<username>-<repo>` (hyphenated owner-repo)
+- Reload after changes: `/reload-plugins`
+
+**Codex:**
+- `.codex-plugin/plugin.json` requires `name`, `version`, `description`, and `skills` path
+- `.agents/plugins/marketplace.json` is the Codex marketplace file — different schema from Claude's, never swap them
+- `source.path` in `.agents/plugins/marketplace.json` resolves relative to `.agents/plugins/` — use `../../` to point to repo root
+- Install: `codex plugin marketplace add <username>/<repo>` then `codex /plugins` to browse and install
+- `codex plugin install` is **not a valid command** — always use marketplace add + browser
+
+**Both:**
+- Bump `version` in all `plugin.json` and `marketplace.json` files on each release
 - If the repo already has a `.git/` with a remote, extract `username` and `repo-name` automatically:
   ```bash
   git remote get-url origin 2>/dev/null | sed 's/.*github.com[:/]\([^/]*\)\/\([^.]*\).*/\1 \2/'
