@@ -200,8 +200,8 @@ _backups/
 Before generating, ask:
 
 > **Which install methods should the README include?**
-> 1. Claude Code marketplace — `/plugin marketplace add <username>/<repo>` + `/plugin install <repo>@<repo>`
-> 2. Codex — `codex plugin install https://github.com/<username>/<repo>`
+> 1. Claude Code marketplace — `/plugin marketplace add <username>/<repo>` then `/plugin install <repo>@<username>-<repo>`
+> 2. Codex — `/plugins` inside Codex CLI to open the plugin browser
 > 3. `npx skills add <username>/<repo>` — vercel skills CLI (global / project-scoped / agent-targeted)
 > 4. `git clone` — manual clone + symlink
 > 5. All of the above
@@ -235,8 +235,8 @@ Next steps:
   Create repo:    gh repo create <username>/<repo-name> --public
   Push:           git add . && git commit -m "feat: initial plugin scaffold" && git push -u origin main
   Claude Code:    /plugin marketplace add <username>/<repo-name>
-                  /plugin install <repo-name>@<repo-name>
-  Codex:          codex plugin install https://github.com/<username>/<repo-name>
+                  /plugin install <repo-name>@<username>-<repo-name>
+  Codex:          /plugins  (interactive browser inside Codex CLI)
   Via npx:        npx skills add <username>/<repo-name>
 ```
 
