@@ -1,0 +1,16 @@
+{
+  "name": "skilz",
+  "interface": {
+    "displayName": "skilz"
+  },
+  "plugins": [
+    {
+      "name": "skilz",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

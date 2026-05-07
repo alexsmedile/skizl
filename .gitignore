@@ -1,0 +1,9 @@
+.DS_Store
+**/.DS_Store
+output/*
+!output/.gitkeep
+_archive/
+_archived/
+_backup/
+_backups/
+*.zip
