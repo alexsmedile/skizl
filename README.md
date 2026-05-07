@@ -35,20 +35,20 @@ npx skills add alexsmedile/skizl
 **Pack a group of standalone skills into a container:**
 
 ```bash
-/skizl pack cs brainstorm strategize generate design-pass
+/skizl pack writing draft revise summarize proofread
 ```
 
 **Unpack a container back to standalone:**
 
 ```bash
-/skizl unpack skills/cs --dest skills/
+/skizl unpack skills/writing --dest skills/
 ```
 
 **Pin a single action as its own shortcut:**
 
 ```bash
-/skizl pin skills/cs brainstorm
-# Creates /i-brainstorm → delegates to cs container
+/skizl pin skills/writing draft
+# Creates /i-draft → delegates to writing container
 ```
 
 ---
