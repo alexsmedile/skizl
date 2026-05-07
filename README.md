@@ -147,7 +147,15 @@ The script reads the container's `SKILL.md` frontmatter to extract `name`, `allo
 
 **Via Codex:**
 
-Run `/plugins` inside Codex CLI to open the plugin browser, then search for `skizl`.
+```bash
+codex plugin install https://github.com/alexsmedile/skizl
+```
+
+Or from a local clone:
+
+```bash
+codex plugin install ./skizl
+```
 
 **Via npx skills (global):**
 
