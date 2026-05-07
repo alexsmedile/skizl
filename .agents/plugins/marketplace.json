@@ -8,7 +8,7 @@
       "name": "skizl",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "../../"
       },
       "category": "Productivity"
     }
