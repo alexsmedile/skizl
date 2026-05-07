@@ -197,11 +197,19 @@ _backups/
 
 ### `README.md` (only if missing)
 
-Generate a minimal README with:
+Before generating, ask:
+
+> **Which install methods should the README include?**
+> 1. `/plugin marketplace add <username>/<repo>` — Claude Code plugin marketplace
+> 2. `npx skills add <username>/<repo>` — vercel skills CLI (global / project-scoped / agent-targeted)
+> 3. `git clone` — manual clone + symlink
+> 4. All of the above
+
+Wait for the user's answer, then generate a README with:
 - `# <repo-name>` heading
 - Description paragraph
-- Install section with all three install methods (Claude Code, Codex, npx skills)
-- After Install section listing skills as `/plugin-name:skill-name`
+- Install section with only the chosen methods
+- After Install section listing skills as `/<repo-name>:<skill-name>`
 - License section
 
 ---

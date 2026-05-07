@@ -73,9 +73,9 @@ The script reads `SKILL.md` frontmatter (YAML) to extract `name`, `allowed-tools
 ## Installation
 
 ```bash
-npx skills add <username>/skizl        # project-scoped
-npx skills add <username>/skizl -g     # global
-npx skills add <username>/skizl -a claude-code  # target specific agent
+npx skills add alexsmedile/skizl        # project-scoped
+npx skills add alexsmedile/skizl -g     # global
+npx skills add alexsmedile/skizl -a claude-code  # target specific agent
 ```
 
 After install, invoke as `/skizl <command>` — e.g. `/skizl sym in`, `/skizl pack ...`, `/skizl publish ...`.

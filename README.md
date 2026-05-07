@@ -23,7 +23,7 @@ Pack 10 skills into 1 container. Unpack any container back to standalone. Pin sh
 **Install via [skills](https://github.com/vercel-labs/skills):**
 
 ```bash
-npx skills add <username>/skizl
+npx skills add alexsmedile/skizl
 ```
 
 **Symlink all skills into Claude Code in one command:**
@@ -138,22 +138,28 @@ The script reads the container's `SKILL.md` frontmatter to extract `name`, `allo
 
 ## 💾 Installation
 
-**Global (available across all projects):**
+**Via Claude Code plugin marketplace:**
 
-```bash
-npx skills add <username>/skizl -g
+```
+/plugin marketplace add alexsmedile/skizl
 ```
 
-**Project-scoped (committed with your project):**
+**Via npx skills (global):**
 
 ```bash
-npx skills add <username>/skizl
+npx skills add alexsmedile/skizl -g
+```
+
+**Via npx skills (project-scoped):**
+
+```bash
+npx skills add alexsmedile/skizl
 ```
 
 **Target a specific agent:**
 
 ```bash
-npx skills add <username>/skizl -a claude-code
+npx skills add alexsmedile/skizl -a claude-code
 ```
 
 Invoke as `/skizl <command>` after install.
