@@ -225,7 +225,7 @@ _backups/
 Before generating, ask:
 
 > **Which install methods should the README include?**
-> 1. Claude Code marketplace — `/plugin marketplace add <username>/<repo>` then `/plugin install <repo>@<username>-<repo>`
+> 1. Claude Code marketplace — `/plugin marketplace add <username>/<repo>` then `/plugin install {plugin-name}@{marketplace-key}`
 > 2. Codex — `codex plugin marketplace add <username>/<repo>` then `codex /plugins` to install
 > 3. `npx skills add <username>/<repo>` — vercel skills CLI (global / project-scoped / agent-targeted)
 > 4. `git clone` — manual clone + symlink
@@ -263,7 +263,10 @@ Next steps:
 
   Install (Claude Code):
     /plugin marketplace add <username>/<repo-name>
-    /plugin install <repo-name>@<username>-<repo-name>
+    /plugin install {plugin-name}@{marketplace-key}
+    # {marketplace-key} = top-level "name" in .claude-plugin/marketplace.json
+    # {plugin-name}     = plugins[0].name in .claude-plugin/marketplace.json
+    # e.g. /plugin install skizl@skizl  (often the same, but can differ)
 
   Install (Codex):
     codex plugin marketplace add <username>/<repo-name>
@@ -280,8 +283,10 @@ Next steps:
 **Claude Code:**
 - `skills/` and `agents/` at the plugin root are **auto-discovered** — no paths needed in `.claude-plugin/plugin.json`
 - Do NOT add `skills` or `agents` keys to `.claude-plugin/marketplace.json` — causes schema validation errors
-- Install: `/plugin marketplace add <username>/<repo>` then `/plugin install <repo>@<username>-<repo>`
-- Marketplace name is `<username>-<repo>` (hyphenated owner-repo)
+- Install: `/plugin marketplace add <username>/<repo>` then `/plugin install {plugin-name}@{marketplace-key}`
+  - `{marketplace-key}` = top-level `"name"` in `.claude-plugin/marketplace.json`
+  - `{plugin-name}` = `plugins[0].name` in `.claude-plugin/marketplace.json`
+  - They are often the same (e.g. `skizl@skizl`), but can differ (e.g. `codex@openai-codex`)
 - Reload after changes: `/reload-plugins`
 
 **Codex:**
