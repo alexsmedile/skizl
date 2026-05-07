@@ -26,12 +26,6 @@ Pack 10 skills into 1 container. Unpack any container back to standalone. Pin sh
 npx skills add alexsmedile/skizl
 ```
 
-**Symlink all skills into Claude Code in one command:**
-
-```bash
-/skizl sym in
-```
-
 **Pack a group of standalone skills into a container:**
 
 ```bash
@@ -49,6 +43,12 @@ npx skills add alexsmedile/skizl
 ```bash
 /skizl pin skills/writing draft
 # Creates /i-draft → delegates to writing container
+```
+
+**Symlink all skills into Claude Code in one command:**
+
+```bash
+/skizl sym in
 ```
 
 ---
