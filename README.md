@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/skizl-icon.svg" width="80" alt="skizl icon" />
+  <img src="docs/assets/skizl-icon-v2.svg" width="80" alt="skizl icon" />
 </div>
 
 # skizl
