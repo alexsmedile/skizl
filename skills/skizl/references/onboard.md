@@ -1,17 +1,17 @@
 # onboard
 
-Walk the user through how skilz works and guide them to their first action.
+Walk the user through how skizl works and guide them to their first action.
 
 ## What to explain
 
-### The problem skilz solves
+### The problem skizl solves
 
 As your Claude Code skill library grows, flat folders become unmanageable. You end up with dozens of
 standalone skills that have no shared structure, duplicated context, and no way to group related ones.
 
 ### The container pattern
 
-skilz introduces the **container**: a single master skill that routes to on-demand action files.
+skizl introduces the **container**: a single master skill that routes to on-demand action files.
 
 **Instead of:**
 ```
@@ -50,7 +50,7 @@ All operations are **non-destructive** — pack and unpack are copy operations. 
 
 ### Routing in any container
 
-Every container built by skilz follows the same routing:
+Every container built by skizl follows the same routing:
 1. **No argument** — show menu
 2. **Known command** — load and run that action
 3. **Free text** — infer intent, suggest the most likely action, ask for confirmation

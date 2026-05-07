@@ -4,22 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-**skilz** is a Claude Code meta-skill that manages the lifecycle of skill containers. It packs multiple standalone skills into a unified container architecture (`actions/` + `knowledge/`), unpacks containers back to standalone skills, and manages lightweight redirect shortcuts (pins).
+**skizl** is a Claude Code meta-skill that manages the lifecycle of skill containers. It packs multiple standalone skills into a unified container architecture (`references/`), unpacks containers back to standalone skills, manages lightweight redirect shortcuts (pins), and provides tooling to symlink, inspect, diff, fork, and publish skills.
 
-The actual skill lives at `skills/skilz/` — the root holds only this documentation.
+The actual skill lives at `skills/skizl/` — the root holds only this documentation.
 
 ## Skill Architecture
 
 The skill uses a **container pattern** where a lean master `SKILL.md` routes to on-demand action files:
 
 ```
-skills/skilz/
+skills/skizl/
 ├── SKILL.md          ← routing + command table (<500 lines, auto-loaded)
 ├── references/       ← per-command logic + shared knowledge, loaded explicitly when needed
+│   ├── sym.md
 │   ├── pack.md
 │   ├── unpack.md
 │   ├── pin.md
-│   └── onboard.md
+│   ├── list.md
+│   ├── diff.md
+│   ├── doctor.md
+│   ├── fork.md
+│   ├── publish.md
+│   ├── onboard.md
+│   └── folders.md
 └── scripts/
     └── pin.mjs       ← Node.js script for pin/unpin automation
 ```
@@ -30,17 +37,24 @@ skills/skilz/
 
 | Command | Aliases | What it does |
 |---------|---------|--------------|
-| `pack`   | wrap, fold, zip, bundle, forge, merge, knit | Pack standalone skills into a container |
+| `pack` | wrap, fold, zip, bundle, forge, merge, knit | Pack standalone skills into a container |
 | `unpack` | unwrap, unfold, unzip, burst, smelt, split, unravel | Restore container actions as standalone skills |
-| `pin`    | link, alias, tap | Create a redirect skill pointing to one container action |
-| `unpin`  | unlink, detach | Remove a redirect skill |
-| `status` | info, ls, list | Inspect a container's structure |
+| `pin` | link, alias, tap | Create a redirect skill pointing to one container action |
+| `unpin` | unlink, detach | Remove a redirect skill |
+| `sym` | symlink, link-skills | Symlink `skills/` into `.claude/skills/` and `.agents/skills/` (`in` / `out` / `status`) |
+| `list` | ls, installed | Show installed skills with their symlink state |
+| `diff` | compare, changes | Compare two versions of a skill |
+| `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
+| `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
+| `publish` | release, scaffold | Scaffold plugin manifests to publish a skill on GitHub |
+| `status` | info | Inspect a container's structure and active pins |
+| `onboard` | help, intro, explain | Explain how skizl works and guide first use |
 
 ## Key Design Rules
 
 - **Pack and unpack are copy operations** — source skills/containers are never modified or deleted
-- **Master SKILL.md must stay under 500 lines** — move verbose content to `knowledge/` files
-- **Knowledge files must be explicitly referenced** from action files to be loaded
+- **Master SKILL.md must stay under 500 lines** — move verbose content to `references/` files
+- **Reference files must be explicitly loaded** — Claude reads them on demand when a command is invoked
 - **Pin shortcuts** follow the naming convention `i-<action>` and are symlinked into `.claude/skills/`
 
 ## scripts/pin.mjs
@@ -59,10 +73,10 @@ The script reads `SKILL.md` frontmatter (YAML) to extract `name`, `allowed-tools
 ## Installation
 
 ```bash
-npx skills add alexsmedile/skilz        # project-scoped
-npx skills add alexsmedile/skilz -g     # global
-npx skills add alexsmedile/skilz -a claude-code  # target specific agent
+npx skills add <username>/skizl        # project-scoped
+npx skills add <username>/skizl -g     # global
+npx skills add <username>/skizl -a claude-code  # target specific agent
 ```
 
-After install, invoke as `/skilz pack ...` or `/skilz unpack ...`.
+After install, invoke as `/skizl <command>` — e.g. `/skizl sym in`, `/skizl pack ...`, `/skizl publish ...`.
 

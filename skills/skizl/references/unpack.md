@@ -2,8 +2,8 @@
 
 Restore a container's actions as standalone skills.
 
-**Usage:** `skilz unpack <container-path> [--dest <directory>]`
-**Example:** `skilz unpack skills/cs --dest skills/`
+**Usage:** `skizl unpack <container-path> [--dest <directory>]`
+**Example:** `skizl unpack skills/cs --dest skills/`
 
 **Core rule: the source container is never modified or deleted.
 `unpack` is a copy operation — it reads the actions and creates new standalone skills in `--dest`.

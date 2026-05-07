@@ -1,0 +1,212 @@
+---
+name: skizl
+description: |
+  Pack multiple standalone skills into a single skill container (references/ architecture),
+  unpack a container back to standalone skills, manage pin/unpin shortcut skills, and
+  symlink skills into .claude/skills/ and .agents/skills/.
+  Use when: consolidating skills into a master skill, migrating standalone skills to the
+  container format, restoring skills to standalone, creating/removing shortcut redirects,
+  or linking skills/ into .claude/skills/.
+  Triggers: "pack skills", "unpack skill", "create skill container", "pin skill", "unpin skill",
+  "symlink skills", "skizl sym init", "skizl sym migrate",
+  "/skizl", "how does skizl work", "explain skizl", "onboard skizl".
+argument-hint: "pack|unpack|pin|unpin|sym|list|diff|doctor|fork|publish|status|onboard"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+---
+
+Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
+
+## Commands
+
+| Command | Accepted aliases | What it does |
+|---|---|---|
+| `pack` | wrap, fold, zip, bundle, forge, merge, knit | Create a container from standalone skills |
+| `unpack` | unwrap, unfold, unzip, burst, smelt, split, unravel | Restore container actions as standalone skills |
+| `pin` | link, alias, tap | Create a redirect skill that delegates to the container |
+| `unpin` | unlink, detach | Remove a redirect skill |
+| `sym` | symlink, link-skills, install-skills | Symlink skills/ into .claude/skills/ and .agents/skills/ |
+| `list` | ls, installed | Show installed skills with their symlink state |
+| `diff` | compare, changes | Compare two versions of a skill |
+| `doctor` | check, diagnose, health | Diagnose skill installation issues |
+| `fork` | clone, copy, branch | Clone a skill (local or GitHub URL) as a personal variant |
+| `publish` | release, scaffold, plugin | Scaffold plugin manifests to publish a skill on GitHub |
+| `status` | info | Inspect a container's structure and active pins |
+| `onboard` | help, intro, explain, tour, howto | Explain how skizl works and guide first use |
+
+## Routing
+
+1. **No argument** — print the commands table above and ask what to do
+2. **First word = command or alias** — normalize to canonical, load `references/<canonical>.md` and follow
+3. **Free text** — interpret the intent, choose the most likely action, ask for confirmation before proceeding
+
+**Alias → canonical normalization:**
+- wrap / fold / zip / bundle / forge / merge / knit → `pack`
+- unwrap / unfold / unzip / burst / smelt / split / unravel → `unpack`
+- link / alias / tap → `pin`
+- unlink / detach → `unpin`
+- symlink / link-skills / install-skills → `sym`
+- ls / installed → `list`
+- compare / changes → `diff`
+- check / diagnose / health → `doctor`
+- clone / copy / branch → `fork`
+- release / scaffold / plugin → `publish`
+- info → `status`
+- help / intro / explain / tour / howto → `onboard`
+
+---
+
+## PACK
+
+Read `references/pack.md` for full instructions.
+
+**Quick usage:** `skizl pack <container-name> <skill1> <skill2> ...`
+
+**Example:** `skizl pack cs brainstorm strategize generate design-pass`
+
+---
+
+## UNPACK
+
+Read `references/unpack.md` for full instructions.
+
+**Quick usage:** `skizl unpack <container-path> [--dest <directory>]`
+
+**Example:** `skizl unpack skills/cs --dest skills/`
+
+---
+
+## PIN
+
+Read `references/pin.md` for full instructions.
+
+**Quick usage:** `skizl pin <container-path> <action>`
+
+Or from inside a container: `/<container-name> pin <action>`
+
+---
+
+## UNPIN
+
+**Usage:** `skizl unpin <container-path> <action>`
+
+```bash
+SKILLS_DIR=$(dirname <container-path>)
+rm -rf "$SKILLS_DIR/i-<action>"
+[ -L ".claude/skills/i-<action>" ] && rm ".claude/skills/i-<action>"
+echo "Unpinned: /<action> removed"
+```
+
+---
+
+## SYM
+
+Read `references/sym.md` for full instructions.
+
+**Sub-commands:**
+- `skizl sym init` / `skizl sym in` — link all skills from `skills/` into `.claude/skills/` and `.agents/skills/`
+- `skizl sym migrate` / `skizl sym out` — move real dirs from `.claude/skills/` into `skills/` and re-link
+- `skizl sym status` — show what's linked, what's missing
+
+---
+
+## LIST
+
+Read `references/list.md` for full instructions.
+
+**Quick usage:** `skizl list`
+
+Lists all skills in `skills/`, `~/.claude/skills/`, and `.claude/skills/` with their symlink state (linked / unlinked / broken).
+
+---
+
+## DIFF
+
+Read `references/diff.md` for full instructions.
+
+**Quick usage:** `skizl diff <skill-path> [<other-skill-path>]`
+
+Compares two versions of a skill's `SKILL.md`. If only one path is given, diffs against the installed global version.
+
+---
+
+## DOCTOR
+
+Read `references/doctor.md` for full instructions.
+
+**Quick usage:** `skizl doctor [<skill-name>]`
+
+Checks for broken symlinks, missing SKILL.md, version mismatches, and orphaned entries in `.claude/skills/`.
+
+---
+
+## FORK
+
+Read `references/fork.md` for full instructions.
+
+**Quick usage:** `skizl fork <source> [--name <new-name>]`
+
+`<source>` can be a local path or a GitHub URL (e.g. `https://github.com/user/repo`). Clones the skill into `skills/<new-name>/` and symlinks it.
+
+---
+
+## PUBLISH
+
+Read `references/publish.md` for full instructions.
+
+**Quick usage:** `skizl publish <skill-path> [--username <github-username>]`
+
+**Example:** `skizl publish skills/my-skill --username <username>`
+
+Reads `SKILL.md` frontmatter to pre-fill name, description, and version. Creates `.claude-plugin/`, `.codex-plugin/`, and `.agents/plugins/` at the repo root. Generates a `README.md` if missing.
+
+---
+
+## STATUS
+
+**Usage:** `skizl status <container-path>`
+
+```bash
+echo "=== Container: <name> ==="
+echo "References:"; ls <container-path>/references/ 2>/dev/null || echo "(none)"
+echo "Scripts:"; ls <container-path>/scripts/ 2>/dev/null || echo "(none)"
+echo "Active pins:"
+SKILLS_DIR=$(dirname <container-path>)
+ls "$SKILLS_DIR" | grep "^i-" || echo "(none)"
+```
+
+---
+
+## ONBOARD
+
+Read `references/onboard.md` for full instructions.
+
+---
+
+## References
+
+- [sym](references/sym.md)
+- [pack](references/pack.md)
+- [unpack](references/unpack.md)
+- [pin](references/pin.md)
+- [list](references/list.md)
+- [diff](references/diff.md)
+- [doctor](references/doctor.md)
+- [fork](references/fork.md)
+- [publish](references/publish.md)
+- [onboard](references/onboard.md)
+- [Folder conventions](references/folders.md)
+
+---
+
+## Common errors
+
+| Symptom | Fix |
+|---|---|
+| Source skill not found | Specify the absolute path or verify it is in `.claude/skills/` or `skills/` |
+| Master SKILL.md > 500 lines | Move verbose sections to `references/` and link them |
+| Pin not triggering | Verify the redirect skill is in `.claude/skills/` as a symlink |
+| Knowledge not loaded | Add an explicit reference in the action file (`See [file](../references/file.md)`) |

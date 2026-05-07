@@ -1,11 +1,11 @@
 {
-  "name": "skilz",
+  "name": "skizl",
   "interface": {
-    "displayName": "skilz"
+    "displayName": "skizl"
   },
   "plugins": [
     {
-      "name": "skilz",
+      "name": "skizl",
       "source": {
         "source": "local",
         "path": "./"

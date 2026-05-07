@@ -2,7 +2,7 @@
 
 Create a lightweight redirect skill that delegates to the container.
 
-**Usage:** `skilz pin <container-path> <action> [--skills-dir <dir>]`
+**Usage:** `skizl pin <container-path> <action> [--skills-dir <dir>]`
 **From inside the container:** `/<container-name> pin <action>`
 
 ## Step 1 — Run the pin script
@@ -50,5 +50,5 @@ Load `<container-path>/actions/<action>.md` and follow its instructions.
 Pin created: /<action> → /<container-name> <action>
 File: <dest>/i-<action>/SKILL.md
 
-To remove: skilz unpin <container-path> <action>
+To remove: skizl unpin <container-path> <action>
 ```

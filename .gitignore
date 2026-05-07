@@ -7,3 +7,5 @@ _archived/
 _backup/
 _backups/
 *.zip
+.scrapekit/
+.playwright-mcp/

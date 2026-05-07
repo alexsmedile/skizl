@@ -1,20 +1,20 @@
 <div align="center">
-  <img src="docs/assets/skilz-icon.svg" width="80" alt="skilz icon" />
+  <img src="docs/assets/skizl-icon.svg" width="80" alt="skizl icon" />
 </div>
 
-# skilz
+# skizl
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.0.0-green)
+![Version](https://img.shields.io/badge/version-1.1.0-green)
 
 **Turn a pile of standalone skills into a clean, organized skill library in one command.**
 
 ---
 
-As your Claude Code skill library grows, flat folders become unmanageable. `skilz` introduces the **container pattern** — a single master skill that routes to on-demand action files, keeping context lean and structure clear.
+As your Claude Code skill library grows, flat folders become unmanageable. `skizl` introduces the **container pattern** — a single master skill that routes to on-demand action files, keeping context lean and structure clear.
 
-Pack 10 skills into 1 container. Unpack any container back to standalone. Pin shortcuts so any action is one slash command away.
+Pack 10 skills into 1 container. Unpack any container back to standalone. Pin shortcuts so any action is one slash command away. Symlink, inspect, diff, fork, and publish your skill library.
 
 ---
 
@@ -23,25 +23,31 @@ Pack 10 skills into 1 container. Unpack any container back to standalone. Pin sh
 **Install via [skills](https://github.com/vercel-labs/skills):**
 
 ```bash
-npx skills add alexsmedile/skilz
+npx skills add <username>/skizl
+```
+
+**Symlink all skills into Claude Code in one command:**
+
+```bash
+/skizl sym in
 ```
 
 **Pack a group of standalone skills into a container:**
 
 ```bash
-/skilz pack cs brainstorm strategize generate design-pass
+/skizl pack cs brainstorm strategize generate design-pass
 ```
 
 **Unpack a container back to standalone:**
 
 ```bash
-/skilz unpack skills/cs --dest skills/
+/skizl unpack skills/cs --dest skills/
 ```
 
 **Pin a single action as its own shortcut:**
 
 ```bash
-/skilz pin skills/cs brainstorm
+/skizl pin skills/cs brainstorm
 # Creates /i-brainstorm → delegates to cs container
 ```
 
@@ -77,7 +83,7 @@ skills/<master-skill>/
     └── pin.mjs        ← pin/unpin automation
 ```
 
-<img src="docs/assets/skilz-flow.svg" width="100%" alt="skilz flow diagram" />
+<img src="docs/assets/skizl-flow.svg" width="100%" alt="skizl flow diagram" />
 
 **Why containers?**
 - One folder instead of N folders for related skills
@@ -89,13 +95,20 @@ skills/<master-skill>/
 
 ## 🔧 Commands
 
-| Command  | Aliases | What it does |
-|----------|---------|--------------|
-| `pack`   | wrap, fold, zip, bundle, forge, merge, knit | Pack standalone skills into a container |
+| Command | Aliases | What it does |
+|---------|---------|--------------|
+| `pack` | wrap, fold, zip, bundle, forge, merge, knit | Pack standalone skills into a container |
 | `unpack` | unwrap, unfold, unzip, burst, smelt, split, unravel | Restore container actions as standalone skills |
-| `pin`    | link, alias, tap | Create an `i-<action>` redirect skill for one container action |
-| `unpin`  | unlink, detach | Remove a redirect skill |
-| `status` | info, ls, list | Inspect a container's structure and active pins |
+| `pin` | link, alias, tap | Create an `i-<action>` redirect skill for one container action |
+| `unpin` | unlink, detach | Remove a redirect skill |
+| `sym` | symlink, link-skills | Symlink `skills/` into `.claude/skills/` and `.agents/skills/` (`in` / `out` / `status`) |
+| `list` | ls, installed | Show installed skills with their symlink state |
+| `diff` | compare, changes | Compare two versions of a skill |
+| `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
+| `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
+| `publish` | release, scaffold | Scaffold plugin manifests to publish a skill on GitHub |
+| `status` | info | Inspect a container's structure and active pins |
+| `onboard` | help, intro, explain | Explain how skizl works and guide first use |
 
 All operations are **non-destructive** — pack and unpack are copy operations. Source files are never modified or deleted.
 
@@ -128,22 +141,22 @@ The script reads the container's `SKILL.md` frontmatter to extract `name`, `allo
 **Global (available across all projects):**
 
 ```bash
-npx skills add alexsmedile/skilz -g
+npx skills add <username>/skizl -g
 ```
 
 **Project-scoped (committed with your project):**
 
 ```bash
-npx skills add alexsmedile/skilz
+npx skills add <username>/skizl
 ```
 
 **Target a specific agent:**
 
 ```bash
-npx skills add alexsmedile/skilz -a claude-code
+npx skills add <username>/skizl -a claude-code
 ```
 
-Invoke as `/skilz <command>` after install.
+Invoke as `/skizl <command>` after install.
 
 ---
 

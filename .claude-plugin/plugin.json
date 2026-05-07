@@ -1,12 +1,12 @@
 {
-  "name": "skilz",
+  "name": "skizl",
   "version": "1.0.0",
   "description": "Pack, unpack, and manage Claude Code skill containers — merge standalone skills into organized containers or restore them individually.",
   "author": {
-    "name": "alexsmedile"
+    "name": "Alessandro Smedile"
   },
-  "homepage": "https://github.com/alexsmedile/skilz",
-  "repository": "https://github.com/alexsmedile/skilz",
+  "homepage": "https://github.com/alexsmedile/skizl",
+  "repository": "https://github.com/alexsmedile/skizl",
   "license": "MIT",
   "keywords": [
     "skills",
