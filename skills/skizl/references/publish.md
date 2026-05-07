@@ -156,16 +156,32 @@ Check each target file. For files that already exist, ask: **"<file> already exi
 
 ### `.codex-plugin/plugin.json`
 
-Codex requires `name`, `version`, `description`, and `skills` path:
+Codex requires `name`, `version`, `description`, and `skills` path. The optional `interface` block enriches the Codex plugin browser (displayName, shortDescription, brandColor, etc.) — ask the user if they want it included:
 
 ```json
 {
   "name": "<repo-name>",
   "version": "<version>",
   "description": "<description>",
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "<repo-name>",
+    "shortDescription": "<one-line summary>",
+    "longDescription": "<full description>",
+    "developerName": "<author>",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/<username>/<repo-name>",
+    "defaultPrompt": [
+      "<example prompt 1>",
+      "<example prompt 2>"
+    ],
+    "brandColor": "#000000"
+  }
 }
 ```
+
+> `interface` is optional. Omit it for a minimal manifest; include it to control how the plugin appears in the Codex browser (icon color, prompts, description).
 
 ### `.agents/plugins/marketplace.json`
 
