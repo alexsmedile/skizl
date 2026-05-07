@@ -5,6 +5,20 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [1.3.0] — 2026-05-07
+
+### Changed
+- `publish` reference updated with verified Claude Code and Codex install methods from official docs
+- README install section: corrected Claude Code install command to `skizl@alexsmedile-skizl`, replaced invalid `codex plugin install` with `codex plugin marketplace add` + `codex /plugins`
+- Quick Start examples replaced with generic `writing` container (removed project-specific `cs` container)
+- Icon replaced with v2 squircle design matching Blip-style app icon aesthetic
+
+### Fixed
+- `.codex-plugin/plugin.json` missing required `version`, `description`, and `skills` fields
+- `.agents/plugins/marketplace.json` `source.path` corrected from `"./"` to `"../../"` (resolves relative to `.agents/plugins/`)
+
+---
+
 ## [1.2.0] — 2026-05-07
 
 ### Fixed
