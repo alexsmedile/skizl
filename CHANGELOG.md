@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [1.5.1] — 2026-05-10
+
+### Fixed
+- `git-guard install`: gather all inputs (existing hook check + SKILL.md question) upfront before writing any files, so the install flow runs without mid-process interruptions
+- `git-guard install` Step 4 report: added ⚠ git tag bootstrap note — on the very first commit after install, `--no-verify` is required once (the tag cannot exist before its commit); suggested commands included
+
+---
+
 ## [1.5.0] — 2026-05-10
 
 ### Added

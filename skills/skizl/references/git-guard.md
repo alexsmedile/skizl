@@ -14,7 +14,11 @@ Installs a `pre-commit` git hook that checks all version strings in the repo agr
 
 ## install
 
-### Step 1 — Detect existing hook
+### Step 1 — Gather all inputs (before any writes)
+
+Collect everything needed upfront so the install runs without interruption.
+
+**1a — Detect existing hook**
 
 ```bash
 [ -f scripts/hooks/pre-commit ] && echo "exists" || echo "missing"
@@ -22,8 +26,9 @@ git config core.hooksPath 2>/dev/null
 ```
 
 If already installed, ask: **"git-guard is already installed — reinstall? (yes / no)"**
+If no, stop here.
 
-### Step 2 — Ask about SKILL.md inclusion
+**1b — Ask about SKILL.md inclusion**
 
 Skills can be standalone with their own versioning cadence, independent of the plugin manifests. Ask:
 
@@ -32,7 +37,19 @@ Skills can be standalone with their own versioning cadence, independent of the p
 > 2. No — skip SKILL.md entirely (skill versions are independent)
 > 3. Ask per skill — prompt for each skill found in `skills/`
 
-Save the answer to `scripts/hooks/.git-guard.json`:
+If `"Ask per skill"` was chosen and multiple skills exist, list them and ask which to include.
+
+Hold all answers in memory — **do not write any files until Step 2.**
+
+### Step 2 — Write the hook script
+
+Create `scripts/hooks/` if missing, then write `scripts/hooks/pre-commit`:
+
+```bash
+mkdir -p scripts/hooks
+```
+
+Write `scripts/hooks/.git-guard.json` using the answers from Step 1b:
 
 ```json
 {
@@ -40,7 +57,7 @@ Save the answer to `scripts/hooks/.git-guard.json`:
 }
 ```
 
-If `"ask"` was chosen and multiple skills exist, list them and ask which to include. Save the result as:
+If `"ask"` resolved to specific skills, save instead:
 
 ```json
 {
@@ -49,15 +66,7 @@ If `"ask"` was chosen and multiple skills exist, list them and ask which to incl
 }
 ```
 
-### Step 3 — Write the hook script
-
-Create `scripts/hooks/` if missing, then write `scripts/hooks/pre-commit`:
-
-```bash
-mkdir -p scripts/hooks
-```
-
-Make it executable:
+Make the hook executable:
 
 ```bash
 chmod +x scripts/hooks/pre-commit
@@ -65,13 +74,13 @@ chmod +x scripts/hooks/pre-commit
 
 Script content — see **Hook script** section below.
 
-### Step 4 — Configure git
+### Step 3 — Configure git
 
 ```bash
 git config core.hooksPath scripts/hooks
 ```
 
-### Step 5 — Report
+### Step 4 — Report
 
 ```
 ✓ git-guard installed
@@ -84,6 +93,14 @@ git config core.hooksPath scripts/hooks
 
   Anyone who clones this repo needs to run once:
     git config core.hooksPath scripts/hooks
+
+  ⚠ Git tag bootstrap: the hook checks the latest git tag against other
+  version sources. On the very first commit after install, no tag at the
+  new version exists yet — the hook will block. Use --no-verify for that
+  one commit, then immediately tag and push:
+
+    git commit --no-verify -m "chore: release vX.Y.Z"
+    git tag vX.Y.Z && git push && git push --tags
 ```
 
 ---
