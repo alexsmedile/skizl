@@ -1,7 +1,7 @@
 {
   "name": "skizl",
-  "version": "1.0.0",
-  "description": "Pack, unpack, and manage Claude Code skill containers — merge standalone skills into organized containers or restore them individually.",
+  "version": "1.4.0",
+  "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, and publish.",
   "author": {
     "name": "Alessandro Smedile"
   },

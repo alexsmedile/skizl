@@ -6,90 +6,87 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.3.0-green)
+![Version](https://img.shields.io/badge/version-1.4.0-green)
 
-**Turn a pile of standalone skills into a clean, organized skill library in one command.**
+**From scattered slash commands to a versioned, publishable skill library.**
+
+Pack. Version. Publish. One skill to manage them all.
 
 ---
 
-As your Claude Code skill library grows, flat folders become unmanageable. `skizl` introduces the **container pattern** — a single master skill that routes to on-demand action files, keeping context lean and structure clear.
+> Your Claude Code skills deserve better than a flat folder.
 
-Pack 10 skills into 1 container. Unpack any container back to standalone. Pin shortcuts so any action is one slash command away. Symlink, inspect, diff, fork, and publish your skill library.
+As your skill library grows, flat folders stop working. You end up with 20 loose `SKILL.md` files — no shared context, no version history, no way to publish, no way to know what's installed where.
+
+`skizl` is the skill lifecycle manager Claude Code was missing. It gives your skills the same workflows you'd expect from any serious package: organize into containers, wire up shortcuts, diff versions, snapshot before big changes, and publish to the marketplace in one command.
 
 ---
 
 ## ⚡ Quick Start
 
-**Install via [skills](https://github.com/vercel-labs/skills):**
+**Install:**
 
 ```bash
 npx skills add alexsmedile/skizl
 ```
 
-**Pack a group of standalone skills into a container:**
+**Pack related skills into a container:**
 
-```bash
-/skizl pack writing draft revise summarize proofread
+```
+/skizl pack write, summarize, and proofread skills into writing skill container
 ```
 
-**Unpack a container back to standalone:**
+**Wire every skill into Claude Code at once:**
 
-```bash
-/skizl unpack skills/writing --dest skills/
 ```
-
-**Pin a single action as its own shortcut:**
-
-```bash
-/skizl pin skills/writing draft
-# Creates /i-draft → delegates to writing container
-```
-
-**Symlink all skills into Claude Code in one command:**
-
-```bash
 /skizl sym in
+```
+
+**Snapshot before a big change:**
+
+```
+/skizl snapshot skills/writing
+```
+
+**Publish to the Claude + Codex marketplace:**
+
+```
+/skizl publish skills/writing --username your-github-username
 ```
 
 ---
 
-## 📦 Container Architecture
+## 📦 The Container Pattern
 
-A container is a master skill that loads action logic on demand — only `SKILL.md` is read automatically; everything else is pulled when needed.
+Instead of N folders with duplicated context, one container routes to on-demand action files. Only `SKILL.md` is loaded automatically — everything else is pulled when needed.
 
-**Instead of:**
-
+**Before:**
 ```
 skills/
-├── brainstorm/
-│   └── SKILL.md
-├── generate/
-│   └── SKILL.md
-└── design/
-    └── SKILL.md
+├── draft/SKILL.md
+├── revise/SKILL.md
+├── summarize/SKILL.md
+└── proofread/SKILL.md
 ```
 
-**You get:**
-
+**After:**
 ```
-skills/<master-skill>/
-├── SKILL.md           ← routing + command menu (<500 lines, auto-loaded)
-├── references/        ← per-command logic + shared knowledge, loaded on demand
-│   ├── brainstorm.md
-│   ├── generate.md
-│   ├── design.md
-│   └── platforms.md  ← shared knowledge lives here too, same folder
+skills/writing/
+├── SKILL.md              ← routing + menu (<500 lines, auto-loaded)
+├── references/
+│   ├── draft.md          ← loaded on demand
+│   ├── revise.md
+│   ├── summarize.md
+│   └── style-guide.md   ← shared knowledge, one place
 └── scripts/
-    └── pin.mjs        ← pin/unpin automation
+    └── pin.mjs
 ```
 
-<img src="docs/assets/skizl-flow.svg" width="100%" alt="skizl flow diagram" />
-
-**Why containers?**
-- One folder instead of N folders for related skills
-- Shared knowledge in `references/` — no duplication across command files
-- Master `SKILL.md` stays under 500 lines — no context bloat
-- Each command file is independently readable and editable
+Benefits:
+- One slash command (`/writing`) instead of four
+- Shared knowledge lives in `references/` — no duplication
+- Master `SKILL.md` stays lean — no context bloat
+- Pack and unpack are reversible copy operations — nothing is ever destroyed
 
 ---
 
@@ -97,93 +94,93 @@ skills/<master-skill>/
 
 | Command | Aliases | What it does |
 |---------|---------|--------------|
-| `pack` | wrap, fold, zip, bundle, forge, merge, knit | Pack standalone skills into a container |
-| `unpack` | unwrap, unfold, unzip, burst, smelt, split, unravel | Restore container actions as standalone skills |
-| `pin` | link, alias, tap | Create an `i-<action>` redirect skill for one container action |
-| `unpin` | unlink, detach | Remove a redirect skill |
-| `sym` | symlink, link-skills | Symlink `skills/` into `.claude/skills/` and `.agents/skills/` (`in` / `out` / `status`) |
+| `pack` | wrap, fold, bundle, forge | Pack standalone skills into a container |
+| `unpack` | unwrap, unfold, burst, smelt | Restore container actions as standalone skills |
+| `pin` | link, alias, tap | Create an `/i-<action>` shortcut for one container action |
+| `unpin` | unlink, detach | Remove a shortcut |
+| `sym` | symlink, link-skills | Symlink `skills/` into `.claude/skills/` and `.agents/skills/` |
 | `list` | ls, installed | Show installed skills with their symlink state |
-| `diff` | compare, changes | Compare two versions of a skill |
+| `diff` | compare, changes | Compare two versions of a skill's `SKILL.md` |
 | `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
 | `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
-| `publish` | release, scaffold | Scaffold plugin manifests to publish a skill on GitHub |
+| `publish` | release, scaffold | Scaffold plugin manifests for Claude + Codex marketplaces |
+| `snapshot` | save, checkpoint, freeze | Save `SKILL.md` as `versions/SKILL@x.y.z.md` |
+| `bump` | version, semver, increment | Increment `version:` in frontmatter (patch/minor/major) |
+| `history` | log, versions, changelog | List, show, or diff versioned snapshots |
+| `archive` | backup, tar, zip-full | Archive the entire skill folder as a timestamped tarball |
 | `status` | info | Inspect a container's structure and active pins |
 | `onboard` | help, intro, explain | Explain how skizl works and guide first use |
 
-All operations are **non-destructive** — pack and unpack are copy operations. Source files are never modified or deleted.
+All operations are **non-destructive**. Pack and unpack are copy operations — source files are never modified or deleted.
 
 ---
 
-## 📄 pin.mjs
+## 🧠 How It Works
+
+<img src="docs/assets/skizl-flow.svg" width="100%" alt="skizl flow diagram" />
+
+skizl covers the full skill lifecycle in four phases:
+
+**Organize** — `pack` collapses N standalone skills into one container with a `references/` folder. `unpack` reverses it. `pin` creates a shortcut redirect so any container action is reachable as its own slash command.
+
+**Wire** — `sym in` symlinks your entire `skills/` directory into `.claude/skills/` and `.agents/skills/` using portable relative symlinks. `list` and `doctor` show you what's installed, linked, broken, or missing.
+
+**Version** — `snapshot` saves the current `SKILL.md` as `versions/SKILL@x.y.z.md` before changes. `bump` increments the version field and offers to snapshot. `diff` compares two versions — and offers to snapshot if local is ahead. `history` lists all snapshots with `--show` and `--diff` flags. `archive` tarballs the whole skill folder when a diff shows large-scale changes.
+
+**Distribute** — `fork` clones a skill from a local path or GitHub URL. `publish` scaffolds all plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`) from your `SKILL.md` frontmatter in one pass.
+
+---
+
+## 📌 pin.mjs
 
 `scripts/pin.mjs` automates pin/unpin without manual file creation. No external dependencies — standard Node.js only.
 
 ```bash
-# List active pins for a container
-node scripts/pin.mjs --list skills/cs
-
-# Create a pin
-node scripts/pin.mjs skills/cs brainstorm
-
-# Remove a pin
-node scripts/pin.mjs --remove skills/cs brainstorm
-
-# Specify a custom skills directory
-node scripts/pin.mjs --skills-dir ~/.claude/skills skills/cs brainstorm
+node scripts/pin.mjs --list skills/writing          # show active pins
+node scripts/pin.mjs skills/writing draft           # create /i-draft pin
+node scripts/pin.mjs --remove skills/writing draft  # remove pin
+node scripts/pin.mjs --skills-dir ~/.claude/skills skills/writing draft
 ```
 
-The script reads the container's `SKILL.md` frontmatter to extract `name`, `allowed-tools`, and the action's description from the commands table. Pins are automatically symlinked into `.claude/skills/` if that directory exists.
+The script reads `SKILL.md` frontmatter to extract `name`, `allowed-tools`, and the action description. Pins are automatically symlinked into `.claude/skills/` if that directory exists.
 
 ---
 
 ## 💾 Installation
 
 **Via Claude Code plugin marketplace:**
-
 ```
 /plugin marketplace add alexsmedile/skizl
 /plugin install skizl@skizl
 ```
 
 **Via Codex:**
-
-Add as a marketplace source, then install via the plugin browser:
-
 ```bash
-codex plugin marketplace add alexsmedile/skizl
-```
-
-Then run `codex /plugins` to open the browser and install.
-
-**Via npx skills (global):**
-
-```bash
-npx skills add alexsmedile/skizl -g
+npx codex-marketplace add alexsmedile/skizl --plugin
+# then: codex /plugins → browse and install
 ```
 
 **Via npx skills (project-scoped):**
-
 ```bash
 npx skills add alexsmedile/skizl
 ```
 
-**Target a specific agent:**
-
+**Via npx skills (global):**
 ```bash
-npx skills add alexsmedile/skizl -a claude-code
+npx skills add alexsmedile/skizl -g
 ```
 
-Invoke as `/skizl <command>` after install.
+Invoke as `/skizl <command>` after install. Run `/skizl onboard` if it's your first time.
 
 ---
 
 ## Who It's For
 
-- Claude Code users managing 10+ skills who want structure
-- Anyone building or maintaining a skill container library
-- Developers who want to expose individual container actions as top-level shortcuts
+- Claude Code users with 10+ skills who want structure without overhead
+- Anyone building a skill container library to share or reuse
+- Developers who want to publish skills to the Claude and Codex marketplaces
 
 ## Who It's Not For
 
-- Users with just a few skills (flat structure is fine)
-- Non-Claude-Code environments
+- Users with just a few skills — a flat folder works fine at small scale
+- Non-Claude-Code environments — skizl is Claude Code-native

@@ -5,6 +5,22 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [1.4.0] — 2026-05-10
+
+### Added
+- `snapshot` command: save `SKILL.md` as `versions/SKILL@<version>.md`; auto-triggered on `publish` (if `version:` present) and on `diff` when local is ahead of global installed
+- `bump` command: increment `version:` frontmatter (patch/minor/major or explicit), with optional snapshot after bump
+- `history` command: list snapshots in `versions/` sorted by semver descending; `--show <ver>` to read, `--diff <ver>` to diff current vs snapshot
+- `archive` command: tar the entire skill folder as a timestamped tarball (`_backups/<name>@YYYYMMDD-HHMM[--tag].tar.gz`); always manual, suggested by diff on large-scale changes
+- `references/snapshot.md`: full spec for snapshot, bump, and history sub-commands
+- `references/archive.md`: full spec for archive including intent-detection table and large-diff heuristic
+
+### Changed
+- `diff` now offers to snapshot when local version is ahead of global installed
+- `publish` reference updated: `source.path` corrected to `"./"` (relative to repo root), hybrid layout removed, Codex install commands corrected to `npx codex-marketplace add ... --plugin`
+
+---
+
 ## [1.3.0] — 2026-05-07
 
 ### Added

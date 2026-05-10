@@ -2,15 +2,18 @@
 name: skizl
 description: |
   Pack multiple standalone skills into a single skill container (references/ architecture),
-  unpack a container back to standalone skills, manage pin/unpin shortcut skills, and
-  symlink skills into .claude/skills/ and .agents/skills/.
+  unpack a container back to standalone skills, manage pin/unpin shortcut skills,
+  symlink skills into .claude/skills/ and .agents/skills/, manage skill versioning
+  (snapshot, bump version, view history), and archive entire skill folders as tarballs.
   Use when: consolidating skills into a master skill, migrating standalone skills to the
   container format, restoring skills to standalone, creating/removing shortcut redirects,
-  or linking skills/ into .claude/skills/.
+  linking skills/ into .claude/skills/, snapshotting a skill version, bumping version,
+  browsing skill version history, or archiving a full skill folder before major changes.
   Triggers: "pack skills", "unpack skill", "create skill container", "pin skill", "unpin skill",
-  "symlink skills", "skizl sym init", "skizl sym migrate",
-  "/skizl", "how does skizl work", "explain skizl", "onboard skizl".
-argument-hint: "pack|unpack|pin|unpin|sym|list|diff|doctor|fork|publish|status|onboard"
+  "symlink skills", "skizl sym init", "skizl sym migrate", "snapshot skill", "bump version",
+  "skill history", "save skill version", "archive skill", "backup skill", "/skizl",
+  "how does skizl work", "explain skizl".
+argument-hint: "pack|unpack|pin|unpin|sym|list|diff|doctor|fork|publish|snapshot|bump|history|archive|status|onboard"
 allowed-tools:
   - Bash
   - Read
@@ -34,6 +37,10 @@ Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 | `doctor` | check, diagnose, health | Diagnose skill installation issues |
 | `fork` | clone, copy, branch | Clone a skill (local or GitHub URL) as a personal variant |
 | `publish` | release, scaffold, plugin | Scaffold plugin manifests to publish a skill on GitHub |
+| `snapshot` | save, checkpoint, freeze | Save current SKILL.md as a versioned snapshot in versions/ |
+| `bump` | version, semver, increment | Bump version: field in frontmatter (patch/minor/major) |
+| `history` | log, versions, changelog | List or inspect snapshots for a skill |
+| `archive` | backup, tar, zip-full, freeze-all | Archive the entire skill folder as a tarball |
 | `status` | info | Inspect a container's structure and active pins |
 | `onboard` | help, intro, explain, tour, howto | Explain how skizl works and guide first use |
 
@@ -54,6 +61,10 @@ Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 - check / diagnose / health → `doctor`
 - clone / copy / branch → `fork`
 - release / scaffold / plugin → `publish`
+- save / checkpoint / freeze → `snapshot`
+- version / semver / increment → `bump`
+- log / versions / changelog → `history`
+- backup / tar / zip-full / freeze-all → `archive`
 - info → `status`
 - help / intro / explain / tour / howto → `onboard`
 
@@ -165,6 +176,46 @@ Reads `SKILL.md` frontmatter to pre-fill name, description, and version. Creates
 
 ---
 
+## SNAPSHOT
+
+Read `references/snapshot.md` for full instructions.
+
+**Quick usage:** `skizl snapshot <skill-path>`
+
+Saves the current `SKILL.md` as `versions/SKILL@<version>.md`. Auto-triggered on `publish` (before writing manifests) and after `diff` when local is ahead.
+
+---
+
+## BUMP
+
+Read `references/snapshot.md` for full instructions.
+
+**Quick usage:** `skizl bump <skill-path> [patch|minor|major|<version>]`
+
+Increments `version:` in frontmatter, then offers to snapshot. If bump type is omitted, asks interactively.
+
+---
+
+## HISTORY
+
+Read `references/snapshot.md` for full instructions.
+
+**Quick usage:** `skizl history <skill-path>`
+
+Lists all snapshots in `versions/`. Use `--show <ver>` to read one, `--diff <ver>` to diff current vs snapshot.
+
+---
+
+## ARCHIVE
+
+Read `references/archive.md` for full instructions.
+
+**Quick usage:** `skizl archive <skill-path> [--dest <directory>]`
+
+Archives the entire skill folder (including `references/`, `scripts/`, `versions/`, etc.) as a timestamped tarball. Always manual — never auto-triggered. Skizl may suggest it when a diff shows large-scale changes.
+
+---
+
 ## STATUS
 
 **Usage:** `skizl status <container-path>`
@@ -197,6 +248,8 @@ Read `references/onboard.md` for full instructions.
 - [doctor](references/doctor.md)
 - [fork](references/fork.md)
 - [publish](references/publish.md)
+- [snapshot / bump / history](references/snapshot.md)
+- [archive](references/archive.md)
 - [onboard](references/onboard.md)
 - [Folder conventions](references/folders.md)
 

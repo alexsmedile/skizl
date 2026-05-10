@@ -49,7 +49,7 @@ diff --color=always -u "$GLOBAL" "$LOCAL" || true
 
 After running diff:
 - If **identical**: "No differences — both versions match."
-- If **local is ahead**: show added/changed lines, note the local is newer
+- If **local is ahead**: show added/changed lines, note the local is newer. Then ask: **"Local is ahead — snapshot current version? (yes / skip)"** — if yes, run `skizl snapshot <skill-path>`.
 - If **global is ahead**: warn the user their local copy may be outdated
 - If **both differ**: show full diff and ask if they want to sync
 

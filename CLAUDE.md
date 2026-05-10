@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-**skizl** is a Claude Code meta-skill that manages the lifecycle of skill containers. It packs multiple standalone skills into a unified container architecture (`references/`), unpacks containers back to standalone skills, manages lightweight redirect shortcuts (pins), and provides tooling to symlink, inspect, diff, fork, and publish skills.
+**skizl** is a Claude Code meta-skill that manages the lifecycle of skill containers. It packs multiple standalone skills into a unified container architecture (`references/`), unpacks containers back to standalone skills, manages lightweight redirect shortcuts (pins), and provides tooling to symlink, inspect, diff, fork, publish, version (snapshot/bump/history), and archive skills.
 
 The actual skill lives at `skills/skizl/` — the root holds only this documentation.
 
@@ -25,6 +25,8 @@ skills/skizl/
 │   ├── doctor.md
 │   ├── fork.md
 │   ├── publish.md
+│   ├── snapshot.md
+│   ├── archive.md
 │   ├── onboard.md
 │   └── folders.md
 └── scripts/
@@ -47,6 +49,10 @@ skills/skizl/
 | `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
 | `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
 | `publish` | release, scaffold | Scaffold plugin manifests to publish a skill on GitHub |
+| `snapshot` | save, checkpoint, freeze | Save SKILL.md as a versioned snapshot in `versions/` |
+| `bump` | version, semver, increment | Increment `version:` in frontmatter (patch/minor/major) |
+| `history` | log, versions, changelog | List, show, or diff versioned snapshots |
+| `archive` | backup, tar, zip-full | Archive the entire skill folder as a timestamped tarball |
 | `status` | info | Inspect a container's structure and active pins |
 | `onboard` | help, intro, explain | Explain how skizl works and guide first use |
 

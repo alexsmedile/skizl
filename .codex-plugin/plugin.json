@@ -1,12 +1,12 @@
 {
   "name": "skizl",
-  "version": "1.0.0",
-  "description": "Pack, unpack, and manage Claude Code skill containers — merge standalone skills into organized containers or restore them individually.",
+  "version": "1.4.0",
+  "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, and publish.",
   "skills": "./skills/",
   "interface": {
     "displayName": "skizl",
-    "shortDescription": "Manage Claude Code skill containers — pack, unpack, pin, fork, and publish.",
-    "longDescription": "skizl introduces the container pattern: one master skill that routes to on-demand action files. Pack standalone skills into a container, unpack them back, pin shortcut redirects, symlink your library, diff versions, fork from GitHub, and scaffold plugin manifests for publication.",
+    "shortDescription": "Manage agentic skill containers — pack, unpack, pin, fork, publish, and version.",
+    "longDescription": "skizl is the full skill lifecycle manager for Claude Code. Pack standalone skills into containers, unpack them back, pin shortcut redirects, symlink your library, diff and snapshot versions, bump semver, browse history, archive full folders, fork from GitHub, and publish plugin manifests for Claude Code and Codex marketplaces.",
     "developerName": "Alessandro Smedile",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
