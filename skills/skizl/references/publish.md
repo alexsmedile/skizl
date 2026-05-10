@@ -275,9 +275,24 @@ Wait for the user's answer, then generate a README with:
 
 ---
 
-## Step 5 — Report
+## Step 5 — git-guard
 
-After writing all files:
+After writing all manifest files, check whether `scripts/hooks/pre-commit` exists:
+
+```bash
+[ -f scripts/hooks/pre-commit ] && echo "installed" || echo "missing"
+```
+
+- **Missing** → run `skizl git-guard install` automatically (follow `references/git-guard.md`)
+- **Present** → run `skizl git-guard check` and report results
+
+This ensures every published plugin repo has version drift protection from day one.
+
+---
+
+## Step 6 — Report
+
+After writing all files and installing git-guard:
 
 ```
 ✓ Published: <repo-name>
@@ -289,6 +304,7 @@ Files created:
   .agents/plugins/marketplace.json
   hooks/hooks.json
   hooks/hooks-codex.json
+  scripts/hooks/pre-commit   (git-guard — version drift protection)
   .gitignore  (already existed — skipped)
   README.md
 
@@ -309,6 +325,9 @@ Next steps:
   Install (npx skills — skills only, no agents/hooks/MCP):
     npx skills add <username>/<repo-name>
     # reads .claude-plugin/plugin.json for skill paths; ignores agents/, hooks/, .mcp.json
+
+  New clones — activate git-guard:
+    git config core.hooksPath scripts/hooks
 ```
 
 ---

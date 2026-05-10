@@ -43,6 +43,7 @@ Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 | `archive` | backup, tar, zip-full, freeze-all | Archive the entire skill folder as a tarball |
 | `status` | info | Inspect a container's structure and active pins |
 | `onboard` | help, intro, explain, tour, howto | Explain how skizl works and guide first use |
+| `git-guard` | version-guard, hook, drift | Install/remove/check pre-commit version consistency hook |
 
 ## Routing
 
@@ -67,6 +68,7 @@ Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 - backup / tar / zip-full / freeze-all → `archive`
 - info → `status`
 - help / intro / explain / tour / howto → `onboard`
+- version-guard / hook / drift → `git-guard`
 
 ---
 
@@ -237,6 +239,16 @@ Read `references/onboard.md` for full instructions.
 
 ---
 
+## GIT-GUARD
+
+Read `references/git-guard.md` for full instructions.
+
+**Quick usage:** `skizl git-guard install`
+
+Installs a `pre-commit` git hook (via `core.hooksPath`) that checks all version strings in the repo agree before every commit — manifests, README badge, CHANGELOG, git tag, and optionally SKILL.md. Blocks commits when versions diverge and prints exactly which files are out of sync.
+
+---
+
 ## References
 
 - [sym](references/sym.md)
@@ -252,6 +264,7 @@ Read `references/onboard.md` for full instructions.
 - [archive](references/archive.md)
 - [onboard](references/onboard.md)
 - [Folder conventions](references/folders.md)
+- [git-guard](references/git-guard.md) — pre-commit version drift protection
 
 ---
 
