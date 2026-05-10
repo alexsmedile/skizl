@@ -94,13 +94,8 @@ git config core.hooksPath scripts/hooks
   Anyone who clones this repo needs to run once:
     git config core.hooksPath scripts/hooks
 
-  ⚠ Git tag bootstrap: the hook checks the latest git tag against other
-  version sources. On the very first commit after install, no tag at the
-  new version exists yet — the hook will block. Use --no-verify for that
-  one commit, then immediately tag and push:
-
-    git commit --no-verify -m "chore: release vX.Y.Z"
-    git tag vX.Y.Z && git push && git push --tags
+  Note: the git tag is allowed to lag behind (you commit first, tag after).
+  The hook only blocks if a tag is somehow ahead of the manifest versions.
 ```
 
 ---
@@ -149,11 +144,13 @@ ROOT="$(git rev-parse --show-toplevel)"
 CONFIG="$ROOT/scripts/hooks/.git-guard.json"
 VERSIONS=()   # parallel arrays
 LABELS=()
+TYPES=()      # "version" | "tag"
 
 collect() {
-  local label="$1" version="$2"
+  local label="$1" version="$2" type="${3:-version}"
   LABELS+=("$label")
   VERSIONS+=("$version")
+  TYPES+=("$type")
 }
 
 # semver_max <a> <b> — returns the higher of two semver strings
@@ -217,9 +214,9 @@ if [ -f "$ROOT/CHANGELOG.md" ]; then
   [ -n "$v" ] && collect "CHANGELOG.md (top entry)" "$v"
 fi
 
-# Latest git tag
+# Latest git tag (type "tag" — only blocks if tag is ahead of manifests)
 v=$(git -C "$ROOT" tag --sort=-version:refname 2>/dev/null | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -1 | sed 's/^v//')
-[ -n "$v" ] && collect "git tag (latest)" "$v"
+[ -n "$v" ] && collect "git tag (latest)" "$v" "tag"
 
 # SKILL.md files — controlled by config
 SKILL_CHECK=$(jq -r '.skill_check // "none"' "$CONFIG" 2>/dev/null || echo "none")
@@ -268,11 +265,22 @@ echo ""
 for i in "${!LABELS[@]}"; do
   label="${LABELS[$i]}"
   ver="${VERSIONS[$i]}"
-  if [ "$ver" = "$HIGHEST" ]; then
-    mark="✓"
+  type="${TYPES[$i]}"
+  if [ "$type" = "tag" ]; then
+    # Tag may lag (not yet released) — only flag if tag is ahead of manifests
+    if [ "$(semver_max "$ver" "$HIGHEST")" = "$ver" ] && [ "$ver" != "$HIGHEST" ]; then
+      mark="✗"  # tag is ahead — manifests need updating
+      DRIFT=1
+    else
+      mark="✓"  # tag is behind or equal — fine
+    fi
   else
-    mark="✗"
-    DRIFT=1
+    if [ "$ver" = "$HIGHEST" ]; then
+      mark="✓"
+    else
+      mark="✗"
+      DRIFT=1
+    fi
   fi
   printf "  %s  %-40s %s\n" "$mark" "$label" "$ver"
 done

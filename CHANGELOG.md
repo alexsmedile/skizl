@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [1.5.2] — 2026-05-10
+
+### Fixed
+- `git-guard` hook: git tag is now allowed to lag behind manifest versions (commit first, tag after is normal workflow). Hook only blocks if a tag is somehow *ahead* of manifests — a genuinely broken state. Tag uses a new `TYPES` parallel array; `collect` accepts optional third arg `"tag"` to opt into this relaxed check.
+- Removed the `--no-verify` bootstrap workaround from the install report — no longer needed.
+
+---
+
 ## [1.5.1] — 2026-05-10
 
 ### Fixed

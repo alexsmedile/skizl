@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.5.1-green)
+![Version](https://img.shields.io/badge/version-1.5.2-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
