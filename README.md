@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.4.0-green)
+![Version](https://img.shields.io/badge/version-1.5.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -110,6 +110,7 @@ Benefits:
 | `archive` | backup, tar, zip-full | Archive the entire skill folder as a timestamped tarball |
 | `status` | info | Inspect a container's structure and active pins |
 | `onboard` | help, intro, explain | Explain how skizl works and guide first use |
+| `git-guard` | version-guard, hook, drift | Install/remove/check pre-commit version consistency hook |
 
 All operations are **non-destructive**. Pack and unpack are copy operations — source files are never modified or deleted.
 

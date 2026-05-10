@@ -28,6 +28,7 @@ skills/skizl/
 │   ├── snapshot.md
 │   ├── archive.md
 │   ├── onboard.md
+│   ├── git-guard.md
 │   └── folders.md
 └── scripts/
     └── pin.mjs       ← Node.js script for pin/unpin automation
@@ -55,6 +56,7 @@ skills/skizl/
 | `archive` | backup, tar, zip-full | Archive the entire skill folder as a timestamped tarball |
 | `status` | info | Inspect a container's structure and active pins |
 | `onboard` | help, intro, explain | Explain how skizl works and guide first use |
+| `git-guard` | version-guard, hook, drift | Install/remove/check pre-commit version consistency hook |
 
 ## Key Design Rules
 

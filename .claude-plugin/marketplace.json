@@ -4,15 +4,15 @@
     "name": "Alessandro Smedile"
   },
   "metadata": {
-    "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, and publish.",
-    "version": "1.4.0"
+    "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, and git-guard.",
+    "version": "1.5.0"
   },
   "plugins": [
     {
       "name": "skizl",
       "source": "./",
-      "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, and publish.",
-      "version": "1.4.0",
+      "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, and git-guard.",
+      "version": "1.5.0",
       "author": {
         "name": "Alessandro Smedile"
       },

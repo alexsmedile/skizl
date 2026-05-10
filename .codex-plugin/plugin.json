@@ -1,12 +1,12 @@
 {
   "name": "skizl",
-  "version": "1.4.0",
-  "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, and publish.",
+  "version": "1.5.0",
+  "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, and git-guard.",
   "skills": "./skills/",
   "interface": {
     "displayName": "skizl",
     "shortDescription": "Manage agentic skill containers — pack, unpack, pin, fork, publish, and version.",
-    "longDescription": "skizl is the full skill lifecycle manager for Claude Code. Pack standalone skills into containers, unpack them back, pin shortcut redirects, symlink your library, diff and snapshot versions, bump semver, browse history, archive full folders, fork from GitHub, and publish plugin manifests for Claude Code and Codex marketplaces.",
+    "longDescription": "skizl is the full skill lifecycle manager for Claude Code. Pack standalone skills into containers, unpack them back, pin shortcut redirects, symlink your library, diff and snapshot versions, bump semver, browse history, archive full folders, fork from GitHub, publish plugin manifests for Claude Code and Codex marketplaces, and install git-guard to catch version drift before every commit.",
     "developerName": "Alessandro Smedile",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],

@@ -5,6 +5,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [1.5.0] — 2026-05-10
+
+### Added
+- `git-guard` command (`version-guard`, `hook`, `drift`): installs a `pre-commit` hook via `core.hooksPath` that collects versions from all 6 locations (manifests, README badge, CHANGELOG, git tag, optional SKILL.md), takes the highest as truth, prints a ✓/✗ table, and blocks the commit if anything diverges
+- `references/git-guard.md`: full spec for `install`, `remove`, and `check` sub-commands, including the complete hook script and `.git-guard.json` config
+- `publish` Step 5 now auto-runs `git-guard install` when no hook exists, so every published repo gets the guard automatically
+
+### Fixed
+- Hook script: empty `VERSIONS` array + `set -u` could crash on bash < 4.4 — replaced `${VERSIONS[@]:-}` with safe `${VERSIONS[@]+"${VERSIONS[@]}"}` expansion
+- Hook script: all file paths now anchored to `$(git rev-parse --show-toplevel)` so the hook works correctly when invoked outside the repo root
+- Hook script: `sort -V` on macOS BSD sort misorders semver across major digit boundaries (e.g. `1.9 < 1.10`) — added `gsort -V` detection with a pure-bash semver fallback
+- Hook script: zero version sources found now prints an explicit notice and exits 0 instead of silently claiming "all consistent"
+
+---
+
 ## [1.4.0] — 2026-05-10
 
 ### Added
