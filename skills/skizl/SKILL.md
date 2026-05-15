@@ -19,7 +19,7 @@ allowed-tools:
   - Read
   - Write
   - Edit
-version: 1.5.2
+version: 1.5.3
 ---
 
 Manages the lifecycle of skill containers: pack, unpack, pin, unpin.

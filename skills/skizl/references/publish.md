@@ -261,7 +261,7 @@ Before generating, ask:
 
 > **Which install methods should the README include?**
 > 1. Claude Code — `/plugin marketplace add` + `/plugin install`
-> 2. Codex — `npx codex-marketplace add ... --plugin`
+> 2. Codex — `npx codex-marketplace add <user>/<repo> --plugin` (one command, activates directly); or native CLI `codex plugin marketplace add ...` then install from `/plugins`
 > 3. `npx skills add` — Vercel skills CLI (**skills only** — installs `skills/`, does NOT install `agents/`, `hooks/`, or MCP config; reads `.claude-plugin/plugin.json` to discover skill paths but ignores all other plugin components)
 > 4. `git clone` — manual clone
 > 5. All of the above
@@ -310,7 +310,7 @@ Files created:
 
 Next steps:
   Test (Claude):  claude --plugin-dir ./
-  Test (Codex):   npx codex-marketplace add ./ --plugin  &&  codex /plugins
+  Test (Codex):   npx codex-marketplace add ./ --plugin
   Create repo:    gh repo create <username>/<repo-name> --public
   Push:           git add . && git commit -m "feat: initial plugin scaffold" && git push -u origin main
 
@@ -319,8 +319,8 @@ Next steps:
     /plugin install <repo-name>@<repo-name>
 
   Install (Codex):
-    npx codex-marketplace add <username>/<repo-name> --plugin
-    codex /plugins  (then browse and install)
+    npx codex-marketplace add <username>/<repo-name> --plugin   (one command, activates directly)
+    or: codex plugin marketplace add <username>/<repo-name>  then  codex /plugins
 
   Install (npx skills — skills only, no agents/hooks/MCP):
     npx skills add <username>/<repo-name>
@@ -359,9 +359,9 @@ Next steps:
 - Codex auto-discovers `agents/` — do not add an `agents` field to `.codex-plugin/plugin.json`
 - `.agents/plugins/marketplace.json` is the Codex marketplace file — different schema from Claude's, never swap them
 - `source.path` resolves relative to the **repo root** — use `"./"` for repo-root plugins, `"./plugins/<name>"` for nested
-- Install (repo-root): `npx codex-marketplace add <username>/<repo> --plugin` then `codex /plugins`
-- Install (multi-plugin): `npx codex-marketplace add <username>/<repo> --plugins` then `codex /plugins`
-- `codex plugin install` and `codex plugin marketplace add` are **not valid commands** — always use `npx codex-marketplace`
+- Install (repo-root): `npx codex-marketplace add <username>/<repo> --plugin` (one command, activates directly); or native CLI `codex plugin marketplace add <username>/<repo>` then `codex /plugins`
+- Install (multi-plugin): same as above; ensure `.agents/plugins/marketplace.json` lists each plugin with the correct `source.path`
+- Two Codex install paths: `npx codex-marketplace add … --plugin` is the external helper — it adds the marketplace *and* activates the plugin. The native CLI (`codex plugin marketplace add|upgrade|remove`) only registers the marketplace; there is no `codex plugin install` subcommand, so after a native `add` you must activate from the in-app `/plugins` browser.
 
 **Both:**
 - Bump `version` in all `plugin.json` and `.claude-plugin/marketplace.json` on each release

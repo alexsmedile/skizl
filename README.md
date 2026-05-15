@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.5.2-green)
+![Version](https://img.shields.io/badge/version-1.5.3-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -147,28 +147,45 @@ The script reads `SKILL.md` frontmatter to extract `name`, `allowed-tools`, and 
 
 ---
 
-## 💾 Installation
+## 💾 Install
 
-**Via Claude Code plugin marketplace:**
-```
+### Claude Code — marketplace
+
+```bash
 /plugin marketplace add alexsmedile/skizl
 /plugin install skizl@skizl
 ```
 
-**Via Codex:**
+Or open the interactive `/plugin` manager and browse from there.
+
+### Codex — marketplace
+
+Fastest — one command, activates the plugin directly:
+
 ```bash
 npx codex-marketplace add alexsmedile/skizl --plugin
+```
+
+Or via the built-in plugin manager:
+
+```bash
+codex plugin marketplace add alexsmedile/skizl
 # then: codex /plugins → browse and install
 ```
 
-**Via npx skills (project-scoped):**
+### npx skills
+
 ```bash
-npx skills add alexsmedile/skizl
+npx skills add alexsmedile/skizl       # project-scoped
+npx skills add alexsmedile/skizl -g    # global
 ```
 
-**Via npx skills (global):**
+### Test locally (no install)
+
 ```bash
-npx skills add alexsmedile/skizl -g
+git clone https://github.com/alexsmedile/skizl
+claude --plugin-dir ./skizl                  # Claude Code
+npx codex-marketplace add ./skizl --plugin   # Codex
 ```
 
 Invoke as `/skizl <command>` after install. Run `/skizl onboard` if it's your first time.

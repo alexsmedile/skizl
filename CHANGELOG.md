@@ -5,6 +5,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [1.5.3] — 2026-05-16
+
+### Changed
+- Install docs: clarified the two Codex install paths — `npx codex-marketplace add … --plugin` (external helper, adds marketplace *and* activates) vs. the native `codex plugin marketplace add` CLI (registers the marketplace only; activate afterward from the in-app `/plugins` browser).
+- Corrected `publish.md`: `codex plugin marketplace add` is a valid command (previous docs said otherwise); there is still no `codex plugin install` subcommand.
+- Restructured README install section with per-target headings and a "test locally" block.
+
+---
+
 ## [1.5.2] — 2026-05-10
 
 ### Fixed

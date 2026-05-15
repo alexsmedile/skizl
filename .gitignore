@@ -9,3 +9,5 @@ _backups/
 *.zip
 .scrapekit/
 .playwright-mcp/
+.claude/settings.local.json
+**/settings.local.json
