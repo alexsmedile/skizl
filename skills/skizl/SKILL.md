@@ -1,25 +1,23 @@
 ---
 name: skizl
 description: |
-  Pack multiple standalone skills into a single skill container (references/ architecture),
-  unpack a container back to standalone skills, manage pin/unpin shortcut skills,
-  symlink skills into .claude/skills/ and .agents/skills/, manage skill versioning
-  (snapshot, bump version, view history), and archive entire skill folders as tarballs.
-  Use when: consolidating skills into a master skill, migrating standalone skills to the
-  container format, restoring skills to standalone, creating/removing shortcut redirects,
-  linking skills/ into .claude/skills/, snapshotting a skill version, bumping version,
-  browsing skill version history, or archiving a full skill folder before major changes.
-  Triggers: "pack skills", "unpack skill", "create skill container", "pin skill", "unpin skill",
-  "symlink skills", "skizl sym init", "skizl sym migrate", "snapshot skill", "bump version",
-  "skill history", "save skill version", "archive skill", "backup skill", "/skizl",
-  "how does skizl work", "explain skizl".
+  Pack standalone skills into references-based containers, unpack containers back to
+  standalone skills, create or remove shortcut pins, symlink skills into .claude/skills/
+  and .agents/skills/, snapshot and bump skill versions, inspect history, archive full
+  skill folders, fork skills, publish plugin manifests, and install git-guard version
+  checks. Use when consolidating skills, restoring standalone skills, wiring shortcuts,
+  checking install health, preparing skills for Claude, Codex, or Google Antigravity
+  distribution, or managing
+  a versioned skill library. Triggers include "pack skills", "unpack skill", "pin skill",
+  "skizl sym init", "snapshot skill", "publish skill", "archive skill", "/skizl",
+  "how does skizl work", and "explain skizl".
 argument-hint: "pack|unpack|pin|unpin|sym|list|diff|doctor|fork|publish|snapshot|bump|history|archive|status|onboard"
 allowed-tools:
   - Bash
   - Read
   - Write
   - Edit
-version: 1.5.3
+version: 1.5.4
 ---
 
 Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
@@ -175,7 +173,7 @@ Read `references/publish.md` for full instructions.
 
 **Example:** `skizl publish skills/my-skill --username <username>`
 
-Reads `SKILL.md` frontmatter to pre-fill name, description, and version. Creates `.claude-plugin/`, `.codex-plugin/`, and `.agents/plugins/` at the repo root. Generates a `README.md` if missing.
+Reads `SKILL.md` frontmatter to pre-fill name, description, and version. Creates `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, and a root `plugin.json` (Antigravity marker) at the repo root. Generates a `README.md` if missing.
 
 ---
 

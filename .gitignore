@@ -11,3 +11,8 @@ _backups/
 .playwright-mcp/
 .claude/settings.local.json
 **/settings.local.json
+
+# local-only skills, not part of the skizl plugin
+skills/skill-creator/
+skills/progressive-skill-builder/
+skills/writing-great-skills/

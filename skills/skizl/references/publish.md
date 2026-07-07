@@ -1,8 +1,8 @@
 # publish — Prepare a skill for publication as a plugin
 
-Scaffolds the complete plugin manifest structure on an existing skill folder, making it installable via Claude Code marketplace, Codex, and `npx skills` (skills only).
+Scaffolds the complete plugin manifest structure on an existing skill folder, making it installable via Claude Code marketplace, Codex, Google Antigravity, and `npx skills` (skills only).
 
-Both runtimes share the same `skills/`, `agents/`, and `hooks/` at the plugin root — no duplication, no runtime-specific trees.
+All three runtimes share the same `skills/`, `agents/`, and `hooks/` at the plugin root — no duplication, no runtime-specific trees. Antigravity additionally discovers the repo root as a plugin via a root `plugin.json` marker.
 
 ## Usage
 
@@ -30,6 +30,7 @@ Given a skill at `skills/<name>/`, publish scaffolds these files at the **repo r
 │   └── marketplace.json    ← Claude marketplace metadata
 ├── .codex-plugin/
 │   └── plugin.json         ← Codex plugin manifest
+├── plugin.json             ← Antigravity plugin marker (root-level)
 ├── .agents/
 │   └── plugins/
 │       └── marketplace.json  ← Codex marketplace file
@@ -50,6 +51,15 @@ Read `SKILL.md` frontmatter from the skill to pre-fill as many fields as possibl
 - `name:` → repo name
 - `description:` → plugin description
 - `version:` → plugin version (default `1.0.0` if missing)
+
+Description rules:
+- Codex measures the `description` value by itself; do not concatenate it with `when_to_use`, triggers, command menus, plugin interface fields, or body text for this limit.
+- Codex skill descriptions have a hard 1024-character limit for that `description` field.
+- Prefer a 900-character maximum for generated or rewritten `description` values so future edits have headroom.
+- If the frontmatter `description:` is missing, write a concise one from the skill's purpose, commands, and trigger context before continuing.
+- If the frontmatter `description:` is 901-1024 characters, warn that it is close to the Codex limit and offer to shorten it.
+- If it is over 1024 characters, do not publish until it is shortened.
+- Use the same checked description for plugin `description`, Codex `interface.shortDescription` or `longDescription` as appropriate, and marketplace metadata. `shortDescription` should be a one-line summary under 160 characters.
 
 Resolve GitHub identity automatically before prompting:
 
@@ -81,6 +91,7 @@ Then ask the user for any missing values:
 | Keywords | derived from name + description | show for confirmation |
 
 **Do not proceed until repo name, username, description, and author are known.**
+**Do not proceed if the skill description exceeds 1024 characters.**
 
 ---
 
@@ -197,6 +208,18 @@ Check each target file. For files that already exist, ask: **"<file> already exi
 > `interface` extras: `"logo"`, `"composerIcon"` (paths to `.codex-plugin/assets/`); `"privacyPolicyURL"`, `"termsOfServiceURL"` (any URL — local or external).  
 > Codex auto-discovers `agents/` — do not add an `agents` field.
 
+### `plugin.json` (repo root — Antigravity)
+
+```json
+{
+  "name": "<repo-name>"
+}
+```
+
+> This is the **Antigravity plugin marker** — its presence makes the repo folder a valid Antigravity plugin. `name` is optional (defaults to the folder name), but always write it so installs under a renamed folder keep the canonical name. Do NOT add `version` or other fields — the documented Antigravity schema is name-only, and git-guard does not scan this file.
+> Antigravity auto-discovers `skills/<name>/SKILL.md` and `rules/*.md` inside the plugin folder. It does NOT read `agents/`, `.claude-plugin/`, or `.codex-plugin/` — those are inert for Antigravity.
+> Antigravity hooks live in a root `hooks.json` and MCP servers in a root `mcp_config.json` (Antigravity's own schemas — different from Claude's `hooks/hooks.json`). Only create these if the skill actually ships Antigravity hooks/MCP config; skip by default.
+
 ### `.agents/plugins/marketplace.json`
 
 ```json
@@ -262,9 +285,10 @@ Before generating, ask:
 > **Which install methods should the README include?**
 > 1. Claude Code — `/plugin marketplace add` + `/plugin install`
 > 2. Codex — `npx codex-marketplace add <user>/<repo> --plugin` (one command, activates directly); or native CLI `codex plugin marketplace add ...` then install from `/plugins`
-> 3. `npx skills add` — Vercel skills CLI (**skills only** — installs `skills/`, does NOT install `agents/`, `hooks/`, or MCP config; reads `.claude-plugin/plugin.json` to discover skill paths but ignores all other plugin components)
-> 4. `git clone` — manual clone
-> 5. All of the above
+> 3. Antigravity — clone/symlink into `.agents/plugins/` (workspace) or `~/.gemini/config/plugins/` (global)
+> 4. `npx skills add` — Vercel skills CLI (**skills only** — installs `skills/`, does NOT install `agents/`, `hooks/`, or MCP config; reads `.claude-plugin/plugin.json` to discover skill paths but ignores all other plugin components)
+> 5. `git clone` — manual clone
+> 6. All of the above
 
 Wait for the user's answer, then generate a README with:
 - `# <repo-name>` heading
@@ -296,11 +320,13 @@ After writing all files and installing git-guard:
 
 ```
 ✓ Published: <repo-name>
+Description length: <n> chars (Codex limit: 1024)
 
 Files created:
   .claude-plugin/plugin.json
   .claude-plugin/marketplace.json
   .codex-plugin/plugin.json
+  plugin.json                (Antigravity marker)
   .agents/plugins/marketplace.json
   hooks/hooks.json
   hooks/hooks-codex.json
@@ -325,6 +351,14 @@ Next steps:
   Install (npx skills — skills only, no agents/hooks/MCP):
     npx skills add <username>/<repo-name>
     # reads .claude-plugin/plugin.json for skill paths; ignores agents/, hooks/, .mcp.json
+
+  Install (Antigravity — workspace):
+    git clone https://github.com/<username>/<repo-name> .agents/plugins/<repo-name>
+    # or symlink an existing local clone:
+    ln -s ../../<relative-path-to-repo> .agents/plugins/<repo-name>
+
+  Install (Antigravity — global, all workspaces):
+    git clone https://github.com/<username>/<repo-name> ~/.gemini/config/plugins/<repo-name>
 
   New clones — activate git-guard:
     git config core.hooksPath scripts/hooks
@@ -363,10 +397,21 @@ Next steps:
 - Install (multi-plugin): same as above; ensure `.agents/plugins/marketplace.json` lists each plugin with the correct `source.path`
 - Two Codex install paths: `npx codex-marketplace add … --plugin` is the external helper — it adds the marketplace *and* activates the plugin. The native CLI (`codex plugin marketplace add|upgrade|remove`) only registers the marketplace; there is no `codex plugin install` subcommand, so after a native `add` you must activate from the in-app `/plugins` browser.
 
-**Both:**
-- Bump `version` in all `plugin.json` and `.claude-plugin/marketplace.json` on each release
-- Hooks split by runtime: `hooks/hooks.json` for Claude, `hooks/hooks-codex.json` for Codex — same folder, different files
-- Both runtimes share `skills/`, `agents/`, `hooks/` at the plugin root — no duplication
+**Antigravity (Google):**
+- Docs: https://antigravity.google/docs/plugins
+- **No marketplace, no registry, no install CLI.** The docs define exactly two ways to add a plugin: (1) Google's own bundled plugins, browsable/addable from the Antigravity UI's Customizations page — third-party plugins are never listed there; (2) manually placing a plugin folder in a scan directory. For any repo you or someone else publishes (including skizl), option 2 is the only path — there is nothing equivalent to `/plugin marketplace add` (Claude) or `codex plugin marketplace add` (Codex). Installing from GitHub means `git clone` (or symlink) into a scan dir yourself; Antigravity has no command that fetches a repo for you
+- A plugin is any folder with a root `plugin.json` marker — `{"name": "..."}` is the whole documented schema (`name` optional, defaults to folder name)
+- Components Antigravity loads from the plugin folder: `skills/<name>/SKILL.md`, `rules/*.md`, root `hooks.json` (hooks), root `mcp_config.json` (MCP servers). It ignores `agents/`, `.claude-plugin/`, `.codex-plugin/`, and `hooks/`
+- Install locations (Antigravity auto-scans these):
+  - Workspace: `<workspace>/.agents/plugins/<plugin-name>/` or `<workspace>/_agents/plugins/<plugin-name>/`
+  - Global: `~/.gemini/config/plugins/<plugin-name>/`
+- Coexistence note: `.agents/plugins/` is also where the Codex `marketplace.json` **file** lives. Antigravity only picks up **directories** containing a `plugin.json`, so the Codex marketplace file is ignored — they share the dir safely. In a consuming workspace, an installed plugin folder sits at `.agents/plugins/<name>/` right next to any Codex marketplace file
+- The root `plugin.json` is inert for Claude Code (which reads `.claude-plugin/plugin.json`) and Codex (`.codex-plugin/plugin.json`) — no conflicts
+
+**All runtimes:**
+- Bump `version` in all `plugin.json` and `.claude-plugin/marketplace.json` on each release (the root Antigravity `plugin.json` has no version — nothing to bump)
+- Hooks split by runtime: `hooks/hooks.json` for Claude, `hooks/hooks-codex.json` for Codex, root `hooks.json` for Antigravity (only if needed)
+- Claude, Codex, and Antigravity all share `skills/` at the plugin root; Claude and Codex additionally share `agents/` and `hooks/` — no duplication
 - If the repo already has a `.git/` with a remote, extract `username` and `repo-name` automatically:
   ```bash
   git remote get-url origin 2>/dev/null | sed 's/.*github.com[:/]\([^/]*\)\/\([^.]*\).*/\1 \2/'

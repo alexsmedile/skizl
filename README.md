@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.5.3-green)
+![Version](https://img.shields.io/badge/version-1.6.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -103,7 +103,7 @@ Benefits:
 | `diff` | compare, changes | Compare two versions of a skill's `SKILL.md` |
 | `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
 | `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
-| `publish` | release, scaffold | Scaffold plugin manifests for Claude + Codex marketplaces |
+| `publish` | release, scaffold | Scaffold plugin manifests for Claude, Codex + Antigravity |
 | `snapshot` | save, checkpoint, freeze | Save `SKILL.md` as `versions/SKILL@x.y.z.md` |
 | `bump` | version, semver, increment | Increment `version:` in frontmatter (patch/minor/major) |
 | `history` | log, versions, changelog | List, show, or diff versioned snapshots |
@@ -128,7 +128,7 @@ skizl covers the full skill lifecycle in four phases:
 
 **Version** — `snapshot` saves the current `SKILL.md` as `versions/SKILL@x.y.z.md` before changes. `bump` increments the version field and offers to snapshot. `diff` compares two versions — and offers to snapshot if local is ahead. `history` lists all snapshots with `--show` and `--diff` flags. `archive` tarballs the whole skill folder when a diff shows large-scale changes.
 
-**Distribute** — `fork` clones a skill from a local path or GitHub URL. `publish` scaffolds all plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`) from your `SKILL.md` frontmatter in one pass.
+**Distribute** — `fork` clones a skill from a local path or GitHub URL. `publish` scaffolds all plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, root `plugin.json` for Antigravity) from your `SKILL.md` frontmatter in one pass.
 
 ---
 
@@ -173,6 +173,18 @@ codex plugin marketplace add alexsmedile/skizl
 # then: codex /plugins → browse and install
 ```
 
+### Google Antigravity
+
+Antigravity has no marketplace or install CLI for third-party plugins — installing means manually placing the folder in a scan directory yourself:
+
+```bash
+# workspace-level (this workspace only)
+git clone https://github.com/alexsmedile/skizl .agents/plugins/skizl
+
+# global (all workspaces)
+git clone https://github.com/alexsmedile/skizl ~/.gemini/config/plugins/skizl
+```
+
 ### npx skills
 
 ```bash
@@ -196,7 +208,7 @@ Invoke as `/skizl <command>` after install. Run `/skizl onboard` if it's your fi
 
 - Claude Code users with 10+ skills who want structure without overhead
 - Anyone building a skill container library to share or reuse
-- Developers who want to publish skills to the Claude and Codex marketplaces
+- Developers who want to publish skills for Claude Code, Codex, and Google Antigravity
 
 ## Who It's Not For
 

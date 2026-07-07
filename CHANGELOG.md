@@ -5,6 +5,28 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [1.6.0] — 2026-07-07
+
+### Added
+- Google Antigravity plugin support: `publish` now scaffolds a root `plugin.json` marker (name-only, per the [Antigravity plugin spec](https://antigravity.google/docs/plugins)) alongside the Claude and Codex manifests, documents Antigravity's component discovery (`skills/`, `rules/`, root `hooks.json`, root `mcp_config.json`), and reports install paths — workspace `.agents/plugins/` / `_agents/plugins/` and global `~/.gemini/config/plugins/`. Docs are explicit that Antigravity has no marketplace/install CLI for third-party plugins — install is always manual (clone or symlink into a scan directory).
+- README: Antigravity install section; skizl repo itself now ships a root `plugin.json` so it installs as an Antigravity plugin directly.
+
+### Changed
+- `.gitignore`: excluded `skills/skill-creator/`, `skills/progressive-skill-builder/`, `skills/writing-great-skills/` — local-only skills not part of the skizl plugin.
+
+---
+
+## [1.5.4] — 2026-06-20
+
+### Added
+- Description-field safeguards for Codex's 1024-character skill description limit: `pack` now generates and reports bounded frontmatter `description` values, `publish` blocks over-limit descriptions and can produce missing ones, and `doctor` checks installed/source skills for missing, near-limit, or over-limit descriptions. The check applies to `description` alone, not `description` plus `when_to_use`.
+
+### Changed
+- Shortened the active skizl skill description so it stays comfortably under the Codex limit.
+- `pin.mjs` now normalizes generated shortcut descriptions and caps them before writing redirect skills.
+
+---
+
 ## [1.5.3] — 2026-05-16
 
 ### Changed

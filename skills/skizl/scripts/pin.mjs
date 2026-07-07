@@ -13,14 +13,11 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const CONTAINER_DIR = path.resolve(__dirname, '..');
-const CONTAINER_SKILL = JSON.parse(
-  fs.readFileSync(path.join(CONTAINER_DIR, 'SKILL.md'), 'utf8')
-    .match(/^---\n([\s\S]*?)\n---/)?.[1]
-    ?.replace(/^name:\s*(.+)$/m, '"name": "$1"')
-    || '{"name":"cs"}'
-);
+const DESCRIPTION_LIMIT = 1024;
+const DESCRIPTION_TARGET = 900;
 
 // Parse container name from SKILL.md frontmatter
 function getContainerName() {
@@ -42,6 +39,28 @@ function getAllowedTools() {
   const block = raw.match(/^allowed-tools:\n((?:\s+-\s+.+\n?)+)/m);
   if (!block) return ['Bash', 'Read', 'Write'];
   return block[1].match(/^\s+-\s+(.+)$/gm).map(l => l.replace(/^\s+-\s+/, '').trim());
+}
+
+function limitDescription(text) {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (normalized.length <= DESCRIPTION_TARGET) return normalized;
+
+  const clipped = normalized.slice(0, DESCRIPTION_TARGET - 1);
+  const lastSentence = Math.max(
+    clipped.lastIndexOf('. '),
+    clipped.lastIndexOf('; '),
+    clipped.lastIndexOf(', ')
+  );
+  const boundary = lastSentence > 120 ? lastSentence + 1 : clipped.lastIndexOf(' ');
+  return `${clipped.slice(0, boundary > 0 ? boundary : DESCRIPTION_TARGET - 3).trim()}...`;
+}
+
+function assertDescriptionWithinCodexLimit(description, skillPath) {
+  if (description.length > DESCRIPTION_LIMIT) {
+    console.error(`Generated description is ${description.length} chars; Codex limit is ${DESCRIPTION_LIMIT}.`);
+    console.error(`Refusing to write ${skillPath}. Shorten the container menu description and retry.`);
+    process.exit(1);
+  }
 }
 
 function resolveSkillsDir(override) {
@@ -66,19 +85,22 @@ function pin(action, skillsDir) {
 
   fs.mkdirSync(pinDir, { recursive: true });
 
-  const actionPath = path.join(CONTAINER_DIR, 'actions', `${action}.md`);
+  const actionPath = path.join(CONTAINER_DIR, 'references', `${action}.md`);
   if (!fs.existsSync(actionPath)) {
-    console.error(`Action not found: actions/${action}.md`);
+    console.error(`Action not found: references/${action}.md`);
     process.exit(1);
   }
 
   const relativeContainer = path.relative(pinDir, CONTAINER_DIR);
+  const pinDescription = limitDescription(
+    `Shortcut for /${containerName} ${action}. ${description} Delegates to the parent container; updates to the container flow through automatically.`
+  );
+  assertDescriptionWithinCodexLimit(pinDescription, path.join(pinDir, 'SKILL.md'));
 
   const content = `---
 name: ${pinName}
 description: >
-  Shortcut for /${containerName} ${action}. ${description}
-  Delegates to the parent container — updates to the container flow through automatically.
+  ${pinDescription}
 triggers:
   - /${action}
 allowed-tools:
@@ -87,7 +109,7 @@ ${tools.map(t => `  - ${t}`).join('\n')}
 
 Redirect: invoke \`/${containerName} ${action}\` with the same arguments.
 
-Load \`${relativeContainer}/actions/${action}.md\` and follow its instructions exactly.
+Load \`${relativeContainer}/references/${action}.md\` and follow its instructions exactly.
 The target is everything the user passed after \`/${action}\`.
 `;
 
@@ -120,7 +142,8 @@ function unpin(action, skillsDir) {
   }
 
   const claudeLink = path.join(process.cwd(), '.claude', 'skills', pinName);
-  if (fs.existsSync(claudeLink) || fs.lstatSync(claudeLink).isSymbolicLink?.()) {
+  const claudeLinkStat = fs.lstatSync(claudeLink, { throwIfNoEntry: false });
+  if (fs.existsSync(claudeLink) || claudeLinkStat?.isSymbolicLink()) {
     fs.rmSync(claudeLink, { force: true });
     removed = true;
   }

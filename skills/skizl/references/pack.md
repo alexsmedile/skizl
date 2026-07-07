@@ -62,6 +62,13 @@ Read each SKILL.md. Extract:
 - `name` and `description` from the frontmatter
 - The full body (the operational instructions)
 
+Description handling:
+- Treat Codex's skill description limit as a hard 1024-character ceiling.
+- Count only the generated frontmatter `description` value itself. Do not concatenate `description` with `when_to_use`, triggers, command menus, or body text for this check.
+- Use a conservative 900-character target for that `description` field so future edits have headroom.
+- If a source skill's description is over 900 characters, summarize it before adding it to the container description or command menu.
+- If any generated description would exceed 1024 characters, stop and rewrite it shorter before writing `SKILL.md`.
+
 ## Step 2 — Create the container structure
 
 ```bash
@@ -103,6 +110,12 @@ Generate a lean master with:
 3. Alias → canonical table with all aliases
 4. Routing in 3 rules
 5. Explicit `Read references/<name>.md` pointers for each command
+
+The aggregated `description` must be a real skill description, not just a list of commands:
+- Say what the container does and when to use it.
+- Mention the most important actions or workflows only.
+- Keep the frontmatter `description` under 900 characters whenever possible; never exceed the Codex 1024-character limit.
+- After drafting, count characters and report the count in the pack summary.
 
 Master template:
 
@@ -173,6 +186,7 @@ Shared knowledge extracted (N):
   ✓ platforms.md   (found in 2 reference files)
 
 Master SKILL.md: <path>
+Description length: <n> chars (Codex limit: 1024)
 Pin script: <path>/scripts/pin.mjs
 
 To create a shortcut: /<container-name> pin <action>

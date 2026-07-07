@@ -20,12 +20,18 @@ DEST=${skills_dir:-$(dirname <container-path>)}
 mkdir -p "$DEST/i-<action>"
 ```
 
+Before writing frontmatter, build a concise description:
+- Start with `Shortcut for /<container-name> <action>.`
+- Append the command description copied from the master menu.
+- Add that it delegates to the parent container only if there is room.
+- Keep the final `description:` under 900 characters where possible, and never over Codex's 1024-character limit.
+
 Write `$DEST/i-<action>/SKILL.md`:
 
 ```markdown
 ---
 name: i-<action>
-description: Shortcut for /<container-name> <action>. <description copied from master menu>
+description: <checked shortcut description under 1024 chars>
 triggers:
   - /<action>
 allowed-tools:
@@ -35,7 +41,7 @@ allowed-tools:
 Redirect to `/<container-name> <action>`.
 
 Invoke `/<container-name> <action>` with the same arguments and target.
-Load `<container-path>/actions/<action>.md` and follow its instructions.
+Load `<container-path>/references/<action>.md` and follow its instructions.
 ```
 
 ## Step 3 — Symlink into .claude/skills/ if present
