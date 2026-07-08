@@ -182,7 +182,7 @@ Antigravity has no marketplace or install CLI for third-party plugins — instal
 git clone https://github.com/alexsmedile/skizl .agents/plugins/skizl
 
 # global (all workspaces)
-git clone https://github.com/alexsmedile/skizl ~/.gemini/config/plugins/skizl
+git clone https://github.com/alexsmedile/skizl ~/.gemini/antigravity-cli/plugins/skizl
 ```
 
 ### npx skills

@@ -1,3 +1,5 @@
 {
-  "name": "skizl"
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "skizl",
+  "description": "Pack standalone skills into references-based containers, unpack containers, snapshot/bump versions, and publish plugin manifests."
 }
