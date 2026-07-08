@@ -212,11 +212,13 @@ Check each target file. For files that already exist, ask: **"<file> already exi
 
 ```json
 {
-  "name": "<repo-name>"
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "<repo-name>",
+  "description": "<description>"
 }
 ```
 
-> This is the **Antigravity plugin marker** — its presence makes the repo folder a valid Antigravity plugin. `name` is optional (defaults to the folder name), but always write it so installs under a renamed folder keep the canonical name. Do NOT add `version` or other fields — the documented Antigravity schema is name-only, and git-guard does not scan this file.
+> This is the **Antigravity plugin manifest** — its presence makes the repo folder a valid Antigravity plugin. Both `$schema` and `name` are required fields. `description` is optional but recommended. Do NOT add `version` or other fields — the documented Antigravity schema does not support them, and git-guard does not scan this file.
 > Antigravity auto-discovers `skills/<name>/SKILL.md` and `rules/*.md` inside the plugin folder. It does NOT read `agents/`, `.claude-plugin/`, or `.codex-plugin/` — those are inert for Antigravity.
 > Antigravity hooks live in a root `hooks.json` and MCP servers in a root `mcp_config.json` (Antigravity's own schemas — different from Claude's `hooks/hooks.json`). Only create these if the skill actually ships Antigravity hooks/MCP config; skip by default.
 
@@ -285,7 +287,7 @@ Before generating, ask:
 > **Which install methods should the README include?**
 > 1. Claude Code — `/plugin marketplace add` + `/plugin install`
 > 2. Codex — `npx codex-marketplace add <user>/<repo> --plugin` (one command, activates directly); or native CLI `codex plugin marketplace add ...` then install from `/plugins`
-> 3. Antigravity — clone/symlink into `.agents/plugins/` (workspace) or `~/.gemini/config/plugins/` (global)
+> 3. Antigravity — clone/symlink into `.agents/plugins/` (workspace) or `~/.gemini/antigravity-cli/plugins/` (global)
 > 4. `npx skills add` — Vercel skills CLI (**skills only** — installs `skills/`, does NOT install `agents/`, `hooks/`, or MCP config; reads `.claude-plugin/plugin.json` to discover skill paths but ignores all other plugin components)
 > 5. `git clone` — manual clone
 > 6. All of the above
@@ -358,7 +360,7 @@ Next steps:
     ln -s ../../<relative-path-to-repo> .agents/plugins/<repo-name>
 
   Install (Antigravity — global, all workspaces):
-    git clone https://github.com/<username>/<repo-name> ~/.gemini/config/plugins/<repo-name>
+    git clone https://github.com/<username>/<repo-name> ~/.gemini/antigravity-cli/plugins/<repo-name>
 
   New clones — activate git-guard:
     git config core.hooksPath scripts/hooks
@@ -404,7 +406,7 @@ Next steps:
 - Components Antigravity loads from the plugin folder: `skills/<name>/SKILL.md`, `rules/*.md`, root `hooks.json` (hooks), root `mcp_config.json` (MCP servers). It ignores `agents/`, `.claude-plugin/`, `.codex-plugin/`, and `hooks/`
 - Install locations (Antigravity auto-scans these):
   - Workspace: `<workspace>/.agents/plugins/<plugin-name>/` or `<workspace>/_agents/plugins/<plugin-name>/`
-  - Global: `~/.gemini/config/plugins/<plugin-name>/`
+  - Global: `~/.gemini/antigravity-cli/plugins/<plugin-name>/`
 - Coexistence note: `.agents/plugins/` is also where the Codex `marketplace.json` **file** lives. Antigravity only picks up **directories** containing a `plugin.json`, so the Codex marketplace file is ignored — they share the dir safely. In a consuming workspace, an installed plugin folder sits at `.agents/plugins/<name>/` right next to any Codex marketplace file
 - The root `plugin.json` is inert for Claude Code (which reads `.claude-plugin/plugin.json`) and Codex (`.codex-plugin/plugin.json`) — no conflicts
 

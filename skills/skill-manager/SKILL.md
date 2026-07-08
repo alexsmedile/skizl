@@ -1,23 +1,17 @@
 ---
-name: skizl
+name: skill-manager
 description: |
-  Pack standalone skills into references-based containers, unpack containers back to
-  standalone skills, create or remove shortcut pins, symlink skills into .claude/skills/
-  and .agents/skills/, snapshot and bump skill versions, inspect history, archive full
-  skill folders, fork skills, publish plugin manifests, and install git-guard version
-  checks. Use when consolidating skills, restoring standalone skills, wiring shortcuts,
-  checking install health, preparing skills for Claude, Codex, or Google Antigravity
-  distribution, or managing
-  a versioned skill library. Triggers include "pack skills", "unpack skill", "pin skill",
-  "skizl sym init", "snapshot skill", "publish skill", "archive skill", "/skizl",
-  "how does skizl work", and "explain skizl".
+  Manage the lifecycle of skills that already exist: pack/unpack references-based containers,
+  pin shortcuts, symlink into .claude/skills/, snapshot/bump/diff versions, fork, archive, and
+  publish plugin manifests (Claude, Codex, Antigravity). Invoked as /skizl <command>. Not for
+  authoring a skill's content — use skill-forge or skill-draft for that.
 argument-hint: "pack|unpack|pin|unpin|sym|list|diff|doctor|fork|publish|snapshot|bump|history|archive|status|onboard"
 allowed-tools:
   - Bash
   - Read
   - Write
   - Edit
-version: 1.5.4
+version: 1.6.1
 ---
 
 Manages the lifecycle of skill containers: pack, unpack, pin, unpin.

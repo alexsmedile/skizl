@@ -1,0 +1,19 @@
+{
+  "skill_name": "{{skill-name}}",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "{{realistic user prompt — concrete and messy: file names, context, typos}}",
+      "expected_output": "{{what good output looks like, specific enough to grade}}",
+      "should_trigger": true,
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "{{near-miss prompt that should NOT trigger the skill}}",
+      "expected_output": "{{what the agent should do instead}}",
+      "should_trigger": false,
+      "files": []
+    }
+  ]
+}

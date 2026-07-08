@@ -1,0 +1,56 @@
+project:
+  name: skizl
+  summary: ""
+  kit: blank
+
+# Structural version of .spectacular/ layout. Migrations bump this.
+# Run `spectacular migrate` if your skill expects a newer schema.
+workspace_schema: "2.0"
+
+# Provenance — which spectacular version scaffolded this workspace (write-once)
+# and which last structurally touched it (bumped by migrate / doctor --fix).
+created_with: "1.28.0"
+last_touched_with: "1.28.0"
+
+naming:
+  requests: kebab-case
+  prefix: ""
+
+required_files:
+  requests:
+    - PLAN.md
+    - TASKS.md
+
+agents:
+  file: AGENTS.md             # override to CLAUDE.md for Claude-only teams
+  tool_overrides:                  # per-tool agent files (read in addition to file: above)
+    # claude: CLAUDE.md            # uncomment if AGENTS.md is primary but Claude also needs CLAUDE.md
+  default_context:
+    - PRD.md
+    - STACK.md
+    - DECISIONS.md
+
+skills:
+  symlink_on_init: []
+
+# Convention pack — opt-in repo-shape opinions.
+# Uncomment + set source to a pack name (run `spectacular pack list` to see options).
+# convention_pack:
+#   source: minimal           # pack name (resolved via scope precedence)
+#   mode: suggest             # suggest | scaffold | enforce
+#   overrides: []             # optional list of rule paths to skip (e.g. naming.forbidden-words)
+
+# Policies — override layer over POLICY.md (the always-set practice layer).
+# POLICY.md defines the policies; this block tunes them per-project. See
+# 'spectacular policy' and references/policies-contract.md.
+# policies:
+#   understand-before-change:
+#     enabled: false          # disable a shipped default
+#   scaffold-contract:
+#     severity: block         # override shipped severity (warn → block)
+#   no-secrets-in-memory:     # register a custom policy (id = key)
+#     hook: "@Remember"       # required for custom: one of the 9 hooks
+#     severity: warn
+#     check: "memory entry contains no API keys, tokens, or passwords"
+
+last_build: 1

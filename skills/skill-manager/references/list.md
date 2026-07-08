@@ -92,10 +92,10 @@ fi
   ✓ grill-me   [linked → /path/to/skills_db/grill-me]
 
 === Project (.claude/skills/) ===
-  ✓ skizl      [linked → ../../skills/skizl]
-  ✗ old-skill  [broken → ../../skills/old-skill]
+  ✓ skill-manager  [linked → ../../skills/skill-manager]
+  ✗ old-skill      [broken → ../../skills/old-skill]
 
 === Source (skills/) ===
-  • skizl  → linked in .claude/skills/
+  • skill-manager  → linked in .claude/skills/
   • draft-skill
 ```

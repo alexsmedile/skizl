@@ -5,10 +5,28 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [Unreleased]
+
+## [1.6.1] — 2026-07-08
+
+### Added
+- `skill-forge` skill — a standalone skill-that-writes-skills: a lean router (`SKILL.md`) over four weight tracks (light / standard / empirical / audit), a fresh-context reviewer gate, a co-located `GLOSSARY.md`, minimal templates, and a mechanical `check.py` lint. Self-contained: the empirical track runs its own with-skill-vs-baseline eval loop rather than depending on another skill.
+- `skill-draft` skill — the fast lane: sketch a small skill in one pass (single `SKILL.md`, no tracks/reviewer/evals), meant to pair with `skill-forge` for the heavy build.
+
+### Changed
+- Renamed the packaged skill `skizl` → `skill-manager`: folder `skills/skizl/` → `skills/skill-manager/` and frontmatter `name:` updated. Invocation is unchanged — the plugin namespace stays `skizl`, so `/skizl <command>` and all `skizl <verb>` commands work as before.
+- Leaner, non-overlapping descriptions across the three skills to stop them colliding on triggering: `skill-draft` = quick single-file draft, `skill-forge` = full tracked build with reviewer + evals (each names the other as the off-ramp), `skill-manager` = post-authoring lifecycle only (no "create" verb; dropped the redundant trigger list). `skill-manager` bumped to 1.6.0.
+- `skill-forge` learns the draft→forge handoff: its audit track now forks into **repair** mode (trim/fix an aged or bloated skill) and **harden** mode (build up a validated fast draft, e.g. a `skill-draft` output plus human feedback). In harden mode, thinness is the starting point, not a defect — no ceremony is added unless a branch, a failing test, or the feedback demands it. Added the `brief-audit-harden.md` regression brief.
+
+### Removed
+- Archived `skill-creator`, `writing-great-skills`, and `progressive-skill-builder` into the repo-root `_archive/` — their doctrine (vocabulary, eval loop, scaffold weighting) is now folded into `skill-forge`, which no longer references them.
+
+---
+
 ## [1.6.0] — 2026-07-07
 
 ### Added
-- Google Antigravity plugin support: `publish` now scaffolds a root `plugin.json` marker (name-only, per the [Antigravity plugin spec](https://antigravity.google/docs/plugins)) alongside the Claude and Codex manifests, documents Antigravity's component discovery (`skills/`, `rules/`, root `hooks.json`, root `mcp_config.json`), and reports install paths — workspace `.agents/plugins/` / `_agents/plugins/` and global `~/.gemini/config/plugins/`. Docs are explicit that Antigravity has no marketplace/install CLI for third-party plugins — install is always manual (clone or symlink into a scan directory).
+- Google Antigravity plugin support: `publish` now scaffolds a root `plugin.json` manifest (conforming to the [Antigravity plugin spec](https://antigravity.google/docs/cli/plugins), including the required `$schema` field and description) alongside the Claude and Codex manifests, documents Antigravity's component discovery (`skills/`, `rules/`, root `hooks.json`, root `mcp_config.json`), and reports install paths — workspace `.agents/plugins/` / `_agents/plugins/` and global `~/.gemini/antigravity-cli/plugins/`. Docs are explicit that Antigravity has no marketplace/install CLI for third-party plugins — install is always manual (clone or symlink into a scan directory).
 - README: Antigravity install section; skizl repo itself now ships a root `plugin.json` so it installs as an Antigravity plugin directly.
 
 ### Changed

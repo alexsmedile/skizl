@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **skizl** is a Claude Code meta-skill that manages the lifecycle of skill containers. It packs multiple standalone skills into a unified container architecture (`references/`), unpacks containers back to standalone skills, manages lightweight redirect shortcuts (pins), and provides tooling to symlink, inspect, diff, fork, publish, version (snapshot/bump/history), and archive skills.
 
-The actual skill lives at `skills/skizl/` — the root holds only this documentation.
+The actual skill lives at `skills/skill-manager/` (its frontmatter `name:` is `skill-manager`) — the root holds only this documentation. The plugin/bundle is still named `skizl`, so it is invoked as `/skizl <command>`.
 
 ## Skill Architecture
 
 The skill uses a **container pattern** where a lean master `SKILL.md` routes to on-demand action files:
 
 ```
-skills/skizl/
+skills/skill-manager/
 ├── SKILL.md          ← routing + command table (<500 lines, auto-loaded)
 ├── references/       ← per-command logic + shared knowledge, loaded explicitly when needed
 │   ├── sym.md
