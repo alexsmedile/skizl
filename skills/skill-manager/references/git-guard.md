@@ -6,9 +6,9 @@ Installs a `pre-commit` git hook that checks all version strings in the repo agr
 
 | Command | What it does |
 |---|---|
-| `skizl git-guard install` | Writes `scripts/hooks/pre-commit`, configures `core.hooksPath`, saves config |
-| `skizl git-guard remove` | Removes the script, unsets `core.hooksPath` |
-| `skizl git-guard check` | Runs the version check now without committing |
+| `/skizl git-guard install` | Writes `scripts/hooks/pre-commit`, configures `core.hooksPath`, saves config |
+| `/skizl git-guard remove` | Removes the script, unsets `core.hooksPath` |
+| `/skizl git-guard check` | Runs the version check now without committing |
 
 ---
 

@@ -9,16 +9,16 @@ Archives the entire skill folder as a timestamped tarball. Unlike `snapshot` (wh
 ## Usage
 
 ```
-skizl archive <skill-path>                        # archive to _backups/ next to the skill
-skizl archive <skill-path> --dest <directory>     # archive to a specific directory
-skizl archive <skill-path> --tag <label>          # add a human label to the filename
+/skizl archive <skill-path>                        # archive to _backups/ at the repo root
+/skizl archive <skill-path> --dest <directory>     # archive to a specific directory
+/skizl archive <skill-path> --tag <label>          # add a human label to the filename
 ```
 
 **Examples:**
 ```
-skizl archive skills/my-skill
-skizl archive skills/my-skill --dest _backups/
-skizl archive skills/my-skill --tag before-refactor
+/skizl archive skills/my-skill
+/skizl archive skills/my-skill --dest _backups/
+/skizl archive skills/my-skill --tag before-refactor
 ```
 
 ---
@@ -27,7 +27,7 @@ skizl archive skills/my-skill --tag before-refactor
 
 1. Resolve the skill folder path.
 2. Determine destination:
-   - Default: `_backups/` one level above `<skill-path>` (create if missing).
+   - Default: `_backups/` at the repository root level (create if missing).
    - `--dest <dir>`: use that directory (create if missing).
 3. Build filename: `<skill-name>@<timestamp>[--<tag>].tar.gz`
    - Timestamp format: `YYYYMMDD-HHMM` (local time)
@@ -36,7 +36,8 @@ skizl archive skills/my-skill --tag before-refactor
 4. Run:
 
 ```bash
-DEST="${dest:-$(dirname <skill-path>)/_backups}"
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || dirname "$(dirname <skill-path>)")
+DEST="${dest:-$REPO_ROOT/_backups}"
 mkdir -p "$DEST"
 STAMP=$(date +%Y%m%d-%H%M)
 NAME=$(basename <skill-path>)
@@ -56,11 +57,11 @@ echo "✓ Archive saved: $OUTFILE"
 
 ## Suggest archive on large diffs
 
-When `skizl diff` shows a large-scale change (many lines added/removed, or structural changes across multiple reference files), offer:
+When `/skizl diff` shows a large-scale change (many lines added/removed, or structural changes across multiple reference files), offer:
 
 > **This diff is substantial — archive the full skill folder before continuing? (yes / skip)**
 
-If yes: run `skizl archive <skill-path>` with default destination. If skip: continue with the original diff flow.
+If yes: load `references/archive.md` and follow its steps to archive the skill with default destination. If skip: continue with the original diff flow.
 
 **"Large-scale" heuristic** (use judgment):
 - More than ~30 lines changed total, or
@@ -109,7 +110,7 @@ Archives are complete and self-contained — restoring is a simple `tar -xzf`.
 
 ## _backups/ convention
 
-- Default destination: `_backups/` one level above the skill folder (i.e., next to `skills/`)
-- `_backups/` is gitignored by default (added by `skizl publish` via `.gitignore`)
+- Default destination: `_backups/` at the repository root level (i.e., next to `skills/` or `agents/`)
+- `_backups/` is gitignored by default (added by `/skizl publish` via `.gitignore`)
 - Never delete archives manually without explicit user instruction
 - No automatic cleanup — archives accumulate until manually removed

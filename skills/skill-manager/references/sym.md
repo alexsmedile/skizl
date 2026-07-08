@@ -28,7 +28,7 @@ Skills live once in `skills/` and are symlinked into both locations. Relative pa
 | `sym migrate` | `sym out` | Move real dirs from `.claude/skills/` into `skills/` and re-link |
 | `sym status` | — | Show what's linked, what's missing |
 
-### `skizl sym init` / `skizl sym in`
+### `/skizl sym init` / `/skizl sym in`
 
 Links all skills from `skills/` into `.claude/skills/` and `.agents/skills/` that aren't already symlinked.
 
@@ -66,7 +66,7 @@ ls -la "$PROJECT/.claude/skills/"
 
 ---
 
-### `skizl sym migrate` / `skizl sym out`
+### `/skizl sym migrate` / `/skizl sym out`
 
 Moves any **real directories** from `.claude/skills/` into `skills/` and creates relative symlinks in both `.claude/skills/` and `.agents/skills/`. Leaves existing symlinks untouched.
 
@@ -106,7 +106,7 @@ ls -la "$PROJECT/.claude/skills/"
 
 ---
 
-### `skizl sym status`
+### `/skizl sym status`
 
 Shows the current state of all skills — what's in `skills/`, what's linked, what's missing.
 

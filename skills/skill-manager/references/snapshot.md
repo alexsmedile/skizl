@@ -13,9 +13,9 @@ Save the current `SKILL.md` as a timestamped snapshot in `versions/`.
 ### Usage
 
 ```
-skizl snapshot <skill-path>
-skizl snapshot <skill-path> --version 1.2.0     # use explicit version tag
-skizl snapshot <skill-path> --message "reason"  # annotate the snapshot
+/skizl snapshot <skill-path>
+/skizl snapshot <skill-path> --version 1.2.0     # use explicit version tag
+/skizl snapshot <skill-path> --message "reason"  # annotate the snapshot
 ```
 
 ### Behavior
@@ -32,8 +32,8 @@ skizl snapshot <skill-path> --message "reason"  # annotate the snapshot
 
 ### Auto-trigger rules
 
-- **On `skizl publish`**: before writing any manifest files, snapshot the current `SKILL.md` if it has a `version:` field. Skip silently if no version.
-- **On `skizl diff`**: if the local version is ahead of the global installed version (newer semver), offer: **"Local is ahead — snapshot current version? (yes / skip)"**
+- **On `/skizl publish` (publish action)**: before writing any manifest files, snapshot the current `SKILL.md` if it has a `version:` field. Skip silently if no version.
+- **On `/skizl diff` (diff action)**: if the local version is ahead of the global installed version (newer semver), offer: **"Local is ahead — snapshot current version? (yes / skip)"**
 
 ---
 
@@ -44,11 +44,11 @@ Increment the `version:` field in `SKILL.md` frontmatter and optionally snapshot
 ### Usage
 
 ```
-skizl bump <skill-path>              # interactive: ask patch/minor/major
-skizl bump <skill-path> patch        # 1.2.3 → 1.2.4
-skizl bump <skill-path> minor        # 1.2.3 → 1.3.0
-skizl bump <skill-path> major        # 1.2.3 → 2.0.0
-skizl bump <skill-path> 2.1.0        # set explicit version
+/skizl bump <skill-path>              # interactive: ask patch/minor/major
+/skizl bump <skill-path> patch        # 1.2.3 → 1.2.4
+/skizl bump <skill-path> minor        # 1.2.3 → 1.3.0
+/skizl bump <skill-path> major        # 1.2.3 → 2.0.0
+/skizl bump <skill-path> 2.1.0        # set explicit version
 ```
 
 ### Behavior
@@ -84,9 +84,9 @@ List all available snapshots for a skill.
 ### Usage
 
 ```
-skizl history <skill-path>
-skizl history <skill-path> --show 1.2.0    # print a specific snapshot
-skizl history <skill-path> --diff 1.1.0    # diff current vs snapshot
+/skizl history <skill-path>
+/skizl history <skill-path> --show 1.2.0    # print a specific snapshot
+/skizl history <skill-path> --diff 1.1.0    # diff current vs snapshot
 ```
 
 ### Behavior
@@ -107,8 +107,8 @@ Snapshots:
   SKILL@1.2.0.md
   SKILL@1.0.0.md
 
-Use `skizl history skills/my-skill --show 1.2.0` to read a snapshot.
-Use `skizl history skills/my-skill --diff 1.2.0` to diff current vs that snapshot.
+Use `/skizl history skills/my-skill --show 1.2.0` to read a snapshot.
+Use `/skizl history skills/my-skill --diff 1.2.0` to diff current vs that snapshot.
 ```
 
 ### --show

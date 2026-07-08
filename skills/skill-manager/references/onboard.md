@@ -4,6 +4,9 @@ Walk the user through how skizl works and guide them to their first action.
 
 ## What to explain
 
+> [!IMPORTANT]
+> `/skizl` is an in-agent meta-skill, NOT a CLI binary installed on the system shell. It is executed by the AI agent when invoked via the slash command `/skizl <command>` in the chat UI. The agent must *never* try to run `skizl` in bash.
+
 ### The problem skizl solves
 
 As your Claude Code skill library grows, flat folders become unmanageable. You end up with dozens of
@@ -11,7 +14,7 @@ standalone skills that have no shared structure, duplicated context, and no way 
 
 ### The container pattern
 
-skizl introduces the **container**: a single master skill that routes to on-demand action files.
+`/skizl` introduces the **container**: a single master skill that routes to on-demand action files.
 
 **Instead of:**
 ```

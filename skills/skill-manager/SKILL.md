@@ -14,6 +14,9 @@ allowed-tools:
 version: 1.6.1
 ---
 
+> [!IMPORTANT]
+> `skizl` is NOT a CLI binary installed on the system shell. It is a meta-skill interpreted and executed by the AI agent. The user invokes commands using the slash command `/skizl <command>` in the chat UI, and the AI agent performs the operations by reading these instructions. The AI agent must *never* try to execute a `skizl` command in the shell.
+
 Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 
 ## Commands
@@ -69,9 +72,9 @@ Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 
 Read `references/pack.md` for full instructions.
 
-**Quick usage:** `skizl pack <container-name> <skill1> <skill2> ...`
+**Quick usage:** `/skizl pack <container-name> <skill1> <skill2> ...`
 
-**Example:** `skizl pack cs brainstorm strategize generate design-pass`
+**Example:** `/skizl pack cs brainstorm strategize generate design-pass`
 
 ---
 
@@ -79,9 +82,9 @@ Read `references/pack.md` for full instructions.
 
 Read `references/unpack.md` for full instructions.
 
-**Quick usage:** `skizl unpack <container-path> [--dest <directory>]`
+**Quick usage:** `/skizl unpack <container-path> [--dest <directory>]`
 
-**Example:** `skizl unpack skills/cs --dest skills/`
+**Example:** `/skizl unpack skills/cs --dest skills/`
 
 ---
 
@@ -89,7 +92,7 @@ Read `references/unpack.md` for full instructions.
 
 Read `references/pin.md` for full instructions.
 
-**Quick usage:** `skizl pin <container-path> <action>`
+**Quick usage:** `/skizl pin <container-path> <action>`
 
 Or from inside a container: `/<container-name> pin <action>`
 
@@ -97,7 +100,7 @@ Or from inside a container: `/<container-name> pin <action>`
 
 ## UNPIN
 
-**Usage:** `skizl unpin <container-path> <action>`
+**Usage:** `/skizl unpin <container-path> <action>`
 
 ```bash
 SKILLS_DIR=$(dirname <container-path>)
@@ -113,9 +116,9 @@ echo "Unpinned: /<action> removed"
 Read `references/sym.md` for full instructions.
 
 **Sub-commands:**
-- `skizl sym init` / `skizl sym in` — link all skills from `skills/` into `.claude/skills/` and `.agents/skills/`
-- `skizl sym migrate` / `skizl sym out` — move real dirs from `.claude/skills/` into `skills/` and re-link
-- `skizl sym status` — show what's linked, what's missing
+- `/skizl sym init` / `/skizl sym in` — link all skills from `skills/` into `.claude/skills/` and `.agents/skills/`
+- `/skizl sym migrate` / `/skizl sym out` — move real dirs from `.claude/skills/` into `skills/` and re-link
+- `/skizl sym status` — show what's linked, what's missing
 
 ---
 
@@ -123,7 +126,7 @@ Read `references/sym.md` for full instructions.
 
 Read `references/list.md` for full instructions.
 
-**Quick usage:** `skizl list`
+**Quick usage:** `/skizl list`
 
 Lists all skills in `skills/`, `~/.claude/skills/`, and `.claude/skills/` with their symlink state (linked / unlinked / broken).
 
@@ -133,7 +136,7 @@ Lists all skills in `skills/`, `~/.claude/skills/`, and `.claude/skills/` with t
 
 Read `references/diff.md` for full instructions.
 
-**Quick usage:** `skizl diff <skill-path> [<other-skill-path>]`
+**Quick usage:** `/skizl diff <skill-path> [<other-skill-path>]`
 
 Compares two versions of a skill's `SKILL.md`. If only one path is given, diffs against the installed global version.
 
@@ -143,7 +146,7 @@ Compares two versions of a skill's `SKILL.md`. If only one path is given, diffs 
 
 Read `references/doctor.md` for full instructions.
 
-**Quick usage:** `skizl doctor [<skill-name>]`
+**Quick usage:** `/skizl doctor [<skill-name>]`
 
 Checks for broken symlinks, missing SKILL.md, version mismatches, and orphaned entries in `.claude/skills/`.
 
@@ -153,7 +156,7 @@ Checks for broken symlinks, missing SKILL.md, version mismatches, and orphaned e
 
 Read `references/fork.md` for full instructions.
 
-**Quick usage:** `skizl fork <source> [--name <new-name>]`
+**Quick usage:** `/skizl fork <source> [--name <new-name>]`
 
 `<source>` can be a local path or a GitHub URL (e.g. `https://github.com/user/repo`). Clones the skill into `skills/<new-name>/` and symlinks it.
 
@@ -163,9 +166,9 @@ Read `references/fork.md` for full instructions.
 
 Read `references/publish.md` for full instructions.
 
-**Quick usage:** `skizl publish <skill-path> [--username <github-username>]`
+**Quick usage:** `/skizl publish <skill-path> [--username <github-username>]`
 
-**Example:** `skizl publish skills/my-skill --username <username>`
+**Example:** `/skizl publish skills/my-skill --username <username>`
 
 Reads `SKILL.md` frontmatter to pre-fill name, description, and version. Creates `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, and a root `plugin.json` (Antigravity marker) at the repo root. Generates a `README.md` if missing.
 
@@ -175,7 +178,7 @@ Reads `SKILL.md` frontmatter to pre-fill name, description, and version. Creates
 
 Read `references/snapshot.md` for full instructions.
 
-**Quick usage:** `skizl snapshot <skill-path>`
+**Quick usage:** `/skizl snapshot <skill-path>`
 
 Saves the current `SKILL.md` as `versions/SKILL@<version>.md`. Auto-triggered on `publish` (before writing manifests) and after `diff` when local is ahead.
 
@@ -185,7 +188,7 @@ Saves the current `SKILL.md` as `versions/SKILL@<version>.md`. Auto-triggered on
 
 Read `references/snapshot.md` for full instructions.
 
-**Quick usage:** `skizl bump <skill-path> [patch|minor|major|<version>]`
+**Quick usage:** `/skizl bump <skill-path> [patch|minor|major|<version>]`
 
 Increments `version:` in frontmatter, then offers to snapshot. If bump type is omitted, asks interactively.
 
@@ -195,7 +198,7 @@ Increments `version:` in frontmatter, then offers to snapshot. If bump type is o
 
 Read `references/snapshot.md` for full instructions.
 
-**Quick usage:** `skizl history <skill-path>`
+**Quick usage:** `/skizl history <skill-path>`
 
 Lists all snapshots in `versions/`. Use `--show <ver>` to read one, `--diff <ver>` to diff current vs snapshot.
 
@@ -205,7 +208,7 @@ Lists all snapshots in `versions/`. Use `--show <ver>` to read one, `--diff <ver
 
 Read `references/archive.md` for full instructions.
 
-**Quick usage:** `skizl archive <skill-path> [--dest <directory>]`
+**Quick usage:** `/skizl archive <skill-path> [--dest <directory>]`
 
 Archives the entire skill folder (including `references/`, `scripts/`, `versions/`, etc.) as a timestamped tarball. Always manual — never auto-triggered. Skizl may suggest it when a diff shows large-scale changes.
 
@@ -213,7 +216,7 @@ Archives the entire skill folder (including `references/`, `scripts/`, `versions
 
 ## STATUS
 
-**Usage:** `skizl status <container-path>`
+**Usage:** `/skizl status <container-path>`
 
 ```bash
 echo "=== Container: <name> ==="
@@ -236,7 +239,7 @@ Read `references/onboard.md` for full instructions.
 
 Read `references/git-guard.md` for full instructions.
 
-**Quick usage:** `skizl git-guard install`
+**Quick usage:** `/skizl git-guard install`
 
 Installs a `pre-commit` git hook (via `core.hooksPath`) that checks all version strings in the repo agree before every commit — manifests, README badge, CHANGELOG, git tag, and optionally SKILL.md. Blocks commits when versions diverge and prints exactly which files are out of sync.
 

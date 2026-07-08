@@ -29,3 +29,8 @@ Standard subdirectory names for skill containers. Use these when they fit; add c
 - `scripts/` is universal and always this name
 - Everything in `assets/` is meant to be written to the user's project; everything in `references/` is meant to be read by Claude
 - Custom folder names are fine when none of the above fit — just document them in the master SKILL.md
+
+## Repository vs Skill Boundary
+
+- **The Repository is the Governor**: Repository-wide manifests (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, and `plugin.json` at the root), git hooks, git configurations (`core.hooksPath`), and backup directories (`_backups/`, `_archive/`) belong to the repository level. They govern the entire codebase as a single publishable plugin container.
+- **Skills are Self-Contained Packages**: Individual skill folders (e.g. `skills/skill-manager/`) must contain all assets, documentation references (`references/`), local versioned snapshots (`versions/`), and custom helper scripts (`scripts/`). They must be entirely self-contained and should not place any skill-specific logic or data directly at the repository root.

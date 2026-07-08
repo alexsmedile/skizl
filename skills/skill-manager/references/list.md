@@ -5,9 +5,9 @@ Displays all skills across the three standard locations with their symlink state
 ## Usage
 
 ```
-skizl list
-skizl list --global       # only ~/.claude/skills/
-skizl list --project      # only .claude/skills/ in cwd
+/skizl list
+/skizl list --global       # only ~/.claude/skills/
+/skizl list --project      # only .claude/skills/ in cwd
 ```
 
 ## What it shows

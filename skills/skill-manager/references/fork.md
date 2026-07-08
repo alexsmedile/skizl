@@ -6,15 +6,15 @@ The source can be a local path or a GitHub repo URL.
 ## Usage
 
 ```
-skizl fork <source> [--name <new-name>]
+/skizl fork <source> [--name <new-name>]
 ```
 
 **Examples:**
 ```
-skizl fork ~/.claude/skills/grill-me --name my-grill
-skizl fork https://github.com/<username>/skilz
-skizl fork https://github.com/user/repo --name my-variant
-skizl fork skills/cs --name cs-v2
+/skizl fork ~/.claude/skills/grill-me --name my-grill
+/skizl fork https://github.com/<username>/skilz
+/skizl fork https://github.com/user/repo --name my-variant
+/skizl fork skills/cs --name cs-v2
 ```
 
 ## Source types
@@ -101,5 +101,5 @@ echo "Linked → .agents/skills/$NEW_NAME"
 ## Notes
 
 - The fork is a clean copy — no connection to the original after cloning
-- To track upstream changes later, use `skizl diff skills/<name> <original-source>`
-- If the source is a bundle repo (multiple skills inside `skills/`), fork picks the whole repo — user can then `skizl unpack` to extract individual skills
+- To track upstream changes later, use `/skizl diff skills/<name> <original-source>`
+- If the source is a bundle repo (multiple skills inside `skills/`), fork picks the whole repo — user can then run `/skizl unpack` to extract individual skills

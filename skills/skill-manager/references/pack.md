@@ -2,8 +2,8 @@
 
 Create a container from a set of standalone skills.
 
-**Usage:** `skizl pack <container-name> <skill1> <skill2> ...`
-**Example:** `skizl pack cs brainstorm strategize generate design-pass`
+**Usage:** `/skizl pack <container-name> <skill1> <skill2> ...`
+**Example:** `/skizl pack cs brainstorm strategize generate design-pass`
 
 **Core rule: source skills are never modified, moved, or deleted.
 `pack` is a copy operation — it reads the originals and builds something new in `--dest`.**
@@ -154,7 +154,7 @@ allowed-tools:
 cp <skizl-skill-dir>/scripts/pin.mjs "$BASE/scripts/pin.mjs"
 ```
 
-`<skizl-skill-dir>` is the directory of this skill (`skizl`).
+`<skizl-skill-dir>` is the directory of this skill (`skill-manager`).
 
 ## Edge cases
 
@@ -190,5 +190,5 @@ Description length: <n> chars (Codex limit: 1024)
 Pin script: <path>/scripts/pin.mjs
 
 To create a shortcut: /<container-name> pin <action>
-To verify: skizl status <dest-path>
+To verify: /skizl status <dest-path>
 ```

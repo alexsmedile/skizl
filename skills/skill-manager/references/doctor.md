@@ -5,8 +5,8 @@ Checks the health of installed skills and reports issues.
 ## Usage
 
 ```
-skizl doctor              # check all skills in .claude/skills/ and skills/
-skizl doctor <name>       # check a specific skill
+/skizl doctor              # check all skills in .claude/skills/ and skills/
+/skizl doctor <name>       # check a specific skill
 ```
 
 ## Checks performed
@@ -90,7 +90,7 @@ if [ -d "$CLAUDE_SKILLS" ]; then
 
     # Direct directory (not symlinked)
     if [ ! -L "$link" ] && [ -d "$link" ]; then
-      echo "  [DIRECT]  .claude/skills/$name is a real directory — consider: skizl sym migrate"
+      echo "  [DIRECT]  .claude/skills/$name is a real directory — consider: /skizl sym migrate"
       issues=$((issues + 1))
     fi
 
@@ -104,7 +104,7 @@ if [ -d "$CLAUDE_SKILLS" ]; then
 
     # Orphaned .agents/skills link
     if [ ! -e "$AGENTS_SKILLS/$name" ] && [ ! -L "$AGENTS_SKILLS/$name" ]; then
-      echo "  [NO_AGENT] .agents/skills/$name missing — run: skizl sym init"
+      echo "  [NO_AGENT] .agents/skills/$name missing — run: /skizl sym init"
       issues=$((issues + 1))
     fi
   done
@@ -127,7 +127,7 @@ if [ -d "$SOURCE" ]; then
 
     # Not linked
     if [ ! -e "$CLAUDE_SKILLS/$name" ] && [ ! -L "$CLAUDE_SKILLS/$name" ]; then
-      echo "  [UNLINKED] skills/$name not linked — run: skizl sym init"
+      echo "  [UNLINKED] skills/$name not linked — run: /skizl sym init"
       issues=$((issues + 1))
     fi
   done
@@ -151,10 +151,10 @@ After listing issues, suggest the appropriate fix command for each:
 
 | Issue | Suggested fix |
 |-------|--------------|
-| Broken symlink | `rm .claude/skills/<name>` then `skizl sym init` |
-| Direct directory | `skizl sym migrate` |
+| Broken symlink | `rm .claude/skills/<name>` then `/skizl sym init` |
+| Direct directory | `/skizl sym migrate` |
 | Missing SKILL.md | Create minimal `SKILL.md` scaffold |
-| No agents link | `skizl sym init` |
-| Unlinked in skills/ | `skizl sym init` |
+| No agents link | `/skizl sym init` |
+| Unlinked in skills/ | `/skizl sym init` |
 | Empty description | Add a concise `description:` to frontmatter |
 | Long description | Rewrite under 900 chars; 1024 is the Codex hard limit |

@@ -7,14 +7,14 @@ All three runtimes share the same `skills/`, `agents/`, and `hooks/` at the plug
 ## Usage
 
 ```
-skizl publish <skill-path> [--username <github-username>] [--name <repo-name>]
+/skizl publish <skill-path> [--username <github-username>] [--name <repo-name>]
 ```
 
 **Examples:**
 ```
-skizl publish skills/my-skill
-skizl publish skills/my-skill --username <username>
-skizl publish . --name skizl --username <username>
+/skizl publish skills/my-skill
+/skizl publish skills/my-skill --username <username>
+/skizl publish . --name skizl --username <username>
 ```
 
 ---
@@ -42,6 +42,11 @@ Given a skill at `skills/<name>/`, publish scaffolds these files at the **repo r
 ├── .gitignore              ← only if missing
 └── README.md               ← only if missing
 ```
+
+> [!IMPORTANT]
+> **Repo as Governor, Skills as Self-Contained Packages**:
+> The repository acts as the governor. It contains the central manifests (`.claude-plugin/`, `.codex-plugin/`, and root `plugin.json`), git hook scripts (`scripts/hooks/`), and configuration.
+> Meanwhile, the skills residing in `skills/` (e.g., `skills/<name>/`) are self-contained packages. Each houses its own logic, references, scripts, and local versioned snapshots. They must never leak skill-specific config or backup directories to the repository root.
 
 ---
 
@@ -309,8 +314,8 @@ After writing all manifest files, check whether `scripts/hooks/pre-commit` exist
 [ -f scripts/hooks/pre-commit ] && echo "installed" || echo "missing"
 ```
 
-- **Missing** → run `skizl git-guard install` automatically (follow `references/git-guard.md`)
-- **Present** → run `skizl git-guard check` and report results
+- **Missing** → load `references/git-guard.md` and follow its steps to install git-guard automatically.
+- **Present** → run the pre-commit script manually via bash (`bash scripts/hooks/pre-commit --check`) and report results.
 
 This ensures every published plugin repo has version drift protection from day one.
 
