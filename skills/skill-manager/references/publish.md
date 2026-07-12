@@ -55,7 +55,7 @@ Given a skill at `skills/<name>/`, publish scaffolds these files at the **repo r
 Read `SKILL.md` frontmatter from the skill to pre-fill as many fields as possible:
 - `name:` → repo name
 - `description:` → plugin description
-- `version:` → plugin version (default `1.0.0` if missing)
+- `version:` → plugin version (read `metadata.version` first, falling back to top-level `version:`, default `1.0.0` if missing)
 
 Description rules:
 - Codex measures the `description` value by itself; do not concatenate it with `when_to_use`, triggers, command menus, plugin interface fields, or body text for this limit.
@@ -90,7 +90,7 @@ Then ask the user for any missing values:
 | GitHub username | `gh api user .login` → `--username` flag | yes if both empty |
 | Author name | `gh api user .name` → `git config user.name` | yes if both empty |
 | Description | frontmatter `description:` (first line) | yes if empty |
-| Version | frontmatter `version:` | no — default `1.0.0` |
+| Version | frontmatter `metadata.version` or `version:` | no — default `1.0.0` |
 | License | — | no — default `MIT` |
 | Category | — | no — default `productivity` |
 | Keywords | derived from name + description | show for confirmation |

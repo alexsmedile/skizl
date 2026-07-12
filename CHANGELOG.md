@@ -7,6 +7,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.7.0] — 2026-07-12
+
+### Added
+- `release` command (`ship`): an atomic, verified, and resumable plugin release workflow supporting scope checks, auth preflights, test suites, and distribution verification.
+
+### Changed
+- Upgraded `git-guard` pre-commit hook to support parsing `metadata.version` in skill frontmatter with fallback to top-level `version:`, and validation of arbitrary CLI version constants (e.g. `SPECTACULAR_VERSION` in `cli/spectacular`).
+
 ## [1.6.1] — 2026-07-08
 
 ### Added

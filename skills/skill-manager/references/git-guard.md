@@ -49,11 +49,15 @@ Create `scripts/hooks/` if missing, then write `scripts/hooks/pre-commit`:
 mkdir -p scripts/hooks
 ```
 
-Write `scripts/hooks/.git-guard.json` using the answers from Step 1b:
+Write `scripts/hooks/.git-guard.json` using the answers from Step 1b. You can also manually configure `cli_version` in this file to enforce a CLI version constant (e.g. `SPECTACULAR_VERSION` in `cli/spectacular`):
 
 ```json
 {
-  "skill_check": "all" | "none" | "ask"
+  "skill_check": "all" | "none" | "ask",
+  "cli_version": {
+    "file": "cli/spectacular",
+    "variable": "SPECTACULAR_VERSION"
+  }
 }
 ```
 
@@ -62,7 +66,11 @@ If `"ask"` resolved to specific skills, save instead:
 ```json
 {
   "skill_check": "selected",
-  "skill_paths": ["skills/scrapekit/SKILL.md"]
+  "skill_paths": ["skills/scrapekit/SKILL.md"],
+  "cli_version": {
+    "file": "cli/spectacular",
+    "variable": "SPECTACULAR_VERSION"
+  }
 }
 ```
 
@@ -180,6 +188,64 @@ semver_max() {
   fi
 }
 
+get_skill_version() {
+  local file="$1"
+  [ -f "$file" ] || return 1
+
+  # Extract frontmatter (lines between first --- and second ---)
+  local fm
+  fm=$(awk '
+    BEGIN { show=0; count=0 }
+    /^---$/ {
+      count++
+      if (count == 1) { show=1; next }
+      if (count == 2) { show=0; exit }
+    }
+    { if (show) print }
+  ' "$file")
+
+  # Detect if both formats exist
+  local has_top=0
+  local has_meta=0
+  local top_val=""
+  local meta_val=""
+
+  # Read top-level version
+  top_val=$(echo "$fm" | awk '
+    /^[[:space:]]*version:[[:space:]]*/ {
+      sub(/^[[:space:]]*version:[[:space:]]*/, "")
+      gsub(/^["\x27]|["\x27]$/, "")
+      print $0
+      exit
+    }
+  ')
+  [ -n "$top_val" ] && has_top=1
+
+  # Read metadata.version
+  meta_val=$(echo "$fm" | awk '
+    BEGIN { in_metadata=0; ver="" }
+    /^metadata:[[:space:]]*$/ { in_metadata=1; next }
+    /^[a-zA-Z0-9_-]+:[[:space:]]*/ { if ($0 !~ /^metadata:/) in_metadata=0 }
+    in_metadata && /^[[:space:]]+version:[[:space:]]*/ {
+      sub(/^[[:space:]]+version:[[:space:]]*/, "")
+      gsub(/^["\x27]|["\x27]$/, "")
+      ver=$0
+      exit
+    }
+    END { print ver }
+  ')
+  [ -n "$meta_val" ] && has_meta=1
+
+  if [ "$has_top" -eq 1 ] && [ "$has_meta" -eq 1 ]; then
+    echo "  [CONFLICT] $file has both top-level version ($top_val) and metadata.version ($meta_val). metadata.version wins." >&2
+    echo "$meta_val"
+  elif [ "$has_meta" -eq 1 ]; then
+    echo "$meta_val"
+  else
+    echo "$top_val"
+  fi
+}
+
 # ── Collect all version strings ───────────────────────────────────────────────
 
 # .claude-plugin/plugin.json
@@ -223,15 +289,25 @@ SKILL_CHECK=$(jq -r '.skill_check // "none"' "$CONFIG" 2>/dev/null || echo "none
 if [ "$SKILL_CHECK" = "all" ]; then
   for f in "$ROOT"/skills/*/SKILL.md; do
     [ -f "$f" ] || continue
-    v=$(grep -E '^version:' "$f" | head -1 | sed 's/version:[[:space:]]*//')
+    v=$(get_skill_version "$f")
     [ -n "$v" ] && collect "${f#$ROOT/}" "$v"
   done
 elif [ "$SKILL_CHECK" = "selected" ]; then
   while IFS= read -r f; do
     [ -f "$ROOT/$f" ] || continue
-    v=$(grep -E '^version:' "$ROOT/$f" | head -1 | sed 's/version:[[:space:]]*//')
+    v=$(get_skill_version "$ROOT/$f")
     [ -n "$v" ] && collect "$f" "$v"
   done < <(jq -r '.skill_paths[]? // empty' "$CONFIG" 2>/dev/null)
+fi
+
+# CLI constant check — controlled by config
+if [ -f "$CONFIG" ]; then
+  CLI_FILE=$(jq -r '.cli_version.file // empty' "$CONFIG" 2>/dev/null)
+  CLI_VAR=$(jq -r '.cli_version.variable // empty' "$CONFIG" 2>/dev/null)
+  if [ -n "$CLI_FILE" ] && [ -n "$CLI_VAR" ] && [ -f "$ROOT/$CLI_FILE" ]; then
+    v=$(grep -E "^[[:space:]]*${CLI_VAR}=" "$ROOT/$CLI_FILE" | head -1 | cut -d'=' -f2- | sed -E 's/^[[:space:]]*["\x27]?//; s/["\x27]?[[:space:]]*$//')
+    [ -n "$v" ] && collect "$CLI_FILE ($CLI_VAR)" "$v"
+  fi
 fi
 
 # ── Guard: nothing to check ───────────────────────────────────────────────────

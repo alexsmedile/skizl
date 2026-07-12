@@ -20,7 +20,13 @@ Save the current `SKILL.md` as a timestamped snapshot in `versions/`.
 
 ### Behavior
 
-1. Read `version:` from `SKILL.md` frontmatter. If missing, default to `1.0.0`.
+1. **Read Version:**
+   Read the version from `SKILL.md` frontmatter:
+   - Look for `metadata.version` (indented under the `metadata:` block).
+   - Fall back to the top-level `version:` key (unindented).
+   - If both formats exist, use `metadata.version` as the winner, print a warning to the user about the conflict, and suggest removing the duplicate top-level key.
+   - If missing in both, default to `1.0.0`.
+   - Ensure files inside the `versions/` subdirectory are ignored during active skill version checks.
 2. Resolve destination: `<skill-path>/versions/SKILL@<version>.md`
 3. If the file already exists, ask: **"SKILL@<version>.md already exists — overwrite? (yes / skip)"**
 4. Copy `SKILL.md` to `versions/SKILL@<version>.md` verbatim (no modification).
@@ -32,14 +38,14 @@ Save the current `SKILL.md` as a timestamped snapshot in `versions/`.
 
 ### Auto-trigger rules
 
-- **On `/skizl publish` (publish action)**: before writing any manifest files, snapshot the current `SKILL.md` if it has a `version:` field. Skip silently if no version.
+- **On `/skizl publish` (publish action)**: before writing any manifest files, snapshot the current `SKILL.md` if it has a version. Skip silently if no version.
 - **On `/skizl diff` (diff action)**: if the local version is ahead of the global installed version (newer semver), offer: **"Local is ahead — snapshot current version? (yes / skip)"**
 
 ---
 
 ## bump
 
-Increment the `version:` field in `SKILL.md` frontmatter and optionally snapshot.
+Increment the version field in `SKILL.md` frontmatter and optionally snapshot.
 
 ### Usage
 
@@ -53,10 +59,14 @@ Increment the `version:` field in `SKILL.md` frontmatter and optionally snapshot
 
 ### Behavior
 
-1. Read current `version:` from frontmatter. If missing, treat as `1.0.0`.
+1. **Read Version:**
+   Read current version from frontmatter using the same lookup rules as `snapshot` (checking `metadata.version` first, falling back to top-level `version:`, and flagging conflicts). If missing, treat as `1.0.0`.
 2. Compute new version based on bump type.
 3. Ask: **"Bump version <old> → <new>? (yes / edit / cancel)"**
-4. Edit the `version:` line in `SKILL.md` in-place.
+4. **Edit File In-Place:**
+   - If the skill has `metadata.version` (or both are present), update the `version:` line under the `metadata:` key in-place. Do not introduce a top-level key.
+   - If the skill only has top-level `version:`, update the top-level `version:` line.
+   - If neither exists, insert a top-level `version: <new_version>` line.
 5. Ask: **"Snapshot this version? (yes / skip)"**
    - If yes: run `snapshot <skill-path>` with the new version.
 6. Report:

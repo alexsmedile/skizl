@@ -55,11 +55,46 @@ After running diff:
 
 ## Version check
 
-If both files have a `version:` field in frontmatter, extract and compare:
+Extract the version from both files. To extract the version, check for `metadata.version` (indented under `metadata:` block in YAML frontmatter) first, falling back to top-level `version:` (unindented) if missing. If both exist, use `metadata.version` and report the conflict.
 
 ```bash
-local_ver=$(grep '^version:' "$LOCAL" | head -1 | awk '{print $2}')
-global_ver=$(grep '^version:' "$GLOBAL" | head -1 | awk '{print $2}')
+# Helper function to get skill version
+get_version() {
+  local f="$1"
+  # Read metadata.version (YAML block parser)
+  local mv=$(awk '
+    BEGIN { in_meta=0; ver="" }
+    /^---$/ { count++ }
+    count == 2 { exit }
+    in_meta && /^[[:space:]]+version:[[:space:]]*/ {
+      sub(/^[[:space:]]+version:[[:space:]]*/, "")
+      gsub(/^["\x27]|["\x27]$/, "")
+      ver=$0
+      exit
+    }
+    /^metadata:[[:space:]]*$/ { in_meta=1 }
+    /^[a-zA-Z0-9_-]+:[[:space:]]*/ { if ($0 !~ /^metadata:/) in_meta=0 }
+    END { print ver }
+  ' "$f")
+  if [ -n "$mv" ]; then
+    echo "$mv"
+  else
+    # Fallback to top-level version
+    awk '
+      /^---$/ { count++ }
+      count == 2 { exit }
+      /^[[:space:]]*version:[[:space:]]*/ {
+        sub(/^[[:space:]]*version:[[:space:]]*/, "")
+        gsub(/^["\x27]|["\x27]$/, "")
+        print $0
+        exit
+      }
+    ' "$f"
+  fi
+}
+
+local_ver=$(get_version "$LOCAL")
+global_ver=$(get_version "$GLOBAL")
 echo "Local:  $local_ver"
 echo "Global: $global_ver"
 ```

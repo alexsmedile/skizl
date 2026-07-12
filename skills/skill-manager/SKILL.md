@@ -11,7 +11,7 @@ allowed-tools:
   - Read
   - Write
   - Edit
-version: 1.6.1
+version: 1.7.0
 ---
 
 > [!IMPORTANT]
@@ -32,7 +32,8 @@ Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 | `diff` | compare, changes | Compare two versions of a skill |
 | `doctor` | check, diagnose, health | Diagnose skill installation issues |
 | `fork` | clone, copy, branch | Clone a skill (local or GitHub URL) as a personal variant |
-| `publish` | release, scaffold, plugin | Scaffold plugin manifests to publish a skill on GitHub |
+| `publish` | scaffold, plugin | Scaffold plugin manifests to publish a skill on GitHub |
+| `release` | ship | Make a verified, atomic plugin release |
 | `snapshot` | save, checkpoint, freeze | Save current SKILL.md as a versioned snapshot in versions/ |
 | `bump` | version, semver, increment | Bump version: field in frontmatter (patch/minor/major) |
 | `history` | log, versions, changelog | List or inspect snapshots for a skill |
@@ -57,7 +58,8 @@ Manages the lifecycle of skill containers: pack, unpack, pin, unpin.
 - compare / changes → `diff`
 - check / diagnose / health → `doctor`
 - clone / copy / branch → `fork`
-- release / scaffold / plugin → `publish`
+- scaffold / plugin → `publish`
+- ship → `release`
 - save / checkpoint / freeze → `snapshot`
 - version / semver / increment → `bump`
 - log / versions / changelog → `history`
@@ -174,6 +176,18 @@ Reads `SKILL.md` frontmatter to pre-fill name, description, and version. Creates
 
 ---
 
+## RELEASE
+
+Read `references/release.md` for full instructions.
+
+**Quick usage:** `/skizl release [--dry-run] [--scope <paths>] [--bump <type>]`
+
+**Example:** `/skizl release --dry-run`
+
+Runs a verified, atomic release workflow for the plugin repository. It ensures Git hygiene, runs checks, bumps all version sources (including CLI constants), commits, tags, pushes, creates the GitHub Release, and verifies remote distribution.
+
+---
+
 ## SNAPSHOT
 
 Read `references/snapshot.md` for full instructions.
@@ -256,6 +270,7 @@ Installs a `pre-commit` git hook (via `core.hooksPath`) that checks all version 
 - [doctor](references/doctor.md)
 - [fork](references/fork.md)
 - [publish](references/publish.md)
+- [release](references/release.md)
 - [snapshot / bump / history](references/snapshot.md)
 - [archive](references/archive.md)
 - [onboard](references/onboard.md)

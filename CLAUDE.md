@@ -49,7 +49,8 @@ skills/skill-manager/
 | `diff` | compare, changes | Compare two versions of a skill |
 | `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
 | `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
-| `publish` | release, scaffold | Scaffold plugin manifests to publish a skill on GitHub |
+| `publish` | scaffold | Scaffold plugin manifests to publish a skill on GitHub |
+| `release` | ship | Make a verified, atomic plugin release |
 | `snapshot` | save, checkpoint, freeze | Save SKILL.md as a versioned snapshot in `versions/` |
 | `bump` | version, semver, increment | Increment `version:` in frontmatter (patch/minor/major) |
 | `history` | log, versions, changelog | List, show, or diff versioned snapshots |

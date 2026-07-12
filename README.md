@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.6.1-green)
+![Version](https://img.shields.io/badge/version-1.7.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -103,7 +103,8 @@ Benefits:
 | `diff` | compare, changes | Compare two versions of a skill's `SKILL.md` |
 | `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
 | `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
-| `publish` | release, scaffold | Scaffold plugin manifests for Claude, Codex + Antigravity |
+| `publish` | scaffold | Scaffold plugin manifests for Claude, Codex + Antigravity |
+| `release` | ship | Make a verified, atomic plugin release |
 | `snapshot` | save, checkpoint, freeze | Save `SKILL.md` as `versions/SKILL@x.y.z.md` |
 | `bump` | version, semver, increment | Increment `version:` in frontmatter (patch/minor/major) |
 | `history` | log, versions, changelog | List, show, or diff versioned snapshots |
@@ -128,7 +129,7 @@ skizl covers the full skill lifecycle in four phases:
 
 **Version** — `snapshot` saves the current `SKILL.md` as `versions/SKILL@x.y.z.md` before changes. `bump` increments the version field and offers to snapshot. `diff` compares two versions — and offers to snapshot if local is ahead. `history` lists all snapshots with `--show` and `--diff` flags. `archive` tarballs the whole skill folder when a diff shows large-scale changes.
 
-**Distribute** — `fork` clones a skill from a local path or GitHub URL. `publish` scaffolds all plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, root `plugin.json` for Antigravity) from your `SKILL.md` frontmatter in one pass.
+**Distribute** — `fork` clones a skill from a local path or GitHub URL. `publish` scaffolds all plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, root `plugin.json` for Antigravity) from your `SKILL.md` frontmatter in one pass. `release` executes an atomic, verified, and resumable plugin release to GitHub and Codex.
 
 ---
 
