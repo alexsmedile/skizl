@@ -1,0 +1,46 @@
+[
+  {
+    "query": "Build a reusable skill for our incident response workflow and make sure it chooses mitigation vs postmortem correctly.",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit this existing SKILL.md; it overtriggers and its references are bloated.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create an agent skill with paired baseline evals for a deterministic CSV transform.",
+    "should_trigger": true
+  },
+  {
+    "query": "Harden the little skill-draft we tested yesterday into something publishable.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me optimize when this skill activates without making it fire on adjacent tasks.",
+    "should_trigger": true
+  },
+  {
+    "query": "Write a one-off prompt that asks an assistant to summarize this meeting.",
+    "should_trigger": false
+  },
+  {
+    "query": "Update the human-facing README for my plugin and add installation instructions.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a Claude Code plugin that bundles hooks, an MCP server, and two finished skills.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain the difference between an agent, a prompt, and a skill; don't create anything.",
+    "should_trigger": false
+  },
+  {
+    "query": "Make a short checklist for this deployment; I will use it only once today.",
+    "should_trigger": false
+  },
+  {
+    "query": "Just draft a tiny single-file personal skill for my preferred greeting style; no review or eval ceremony.",
+    "should_trigger": false
+  }
+]

@@ -1,17 +1,13 @@
 # Regression brief — empirical track
 
-## Prompt
-
-"Make a skill that converts our messy CSV exports (inconsistent headers, mixed date formats)
-into our canonical JSON schema. It has to be right every time — column mapping mistakes cost
-us real money."
+Runner prompt: [prompts/empirical.md](prompts/empirical.md).
 
 ## Expected shape
 
 - Routed to **empirical** track (file transform, objectively checkable, correctness matters)
-- Passes the entry test: assertions are writable (schema validity, column mapping, date normalization)
+- Passes the entry test: expectations are writable (schema validity, column mapping, date normalization)
 - 3–5 realistic eval prompts + 1–2 near-misses saved to evals/evals.json
-- With-skill vs baseline loop run per prompt, outputs graded against the assertions
+- With-skill vs baseline loop run per prompt, outputs graded against the expectations
 - If every test run writes the same parsing helper → bundled into scripts/
 - Reviewer verdict: pass, right-sized
 

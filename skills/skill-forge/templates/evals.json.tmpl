@@ -3,15 +3,17 @@
   "evals": [
     {
       "id": 1,
+      "kind": "behavior",
       "prompt": "{{realistic user prompt — concrete and messy: file names, context, typos}}",
-      "expected_output": "{{what good output looks like, specific enough to grade}}",
-      "should_trigger": true,
+      "expectations": [
+        "{{objective, discriminating condition with evidence available in the output}}"
+      ],
       "files": []
     },
     {
       "id": 2,
+      "kind": "trigger",
       "prompt": "{{near-miss prompt that should NOT trigger the skill}}",
-      "expected_output": "{{what the agent should do instead}}",
       "should_trigger": false,
       "files": []
     }

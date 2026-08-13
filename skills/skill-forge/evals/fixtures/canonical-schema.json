@@ -1,0 +1,13 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["customer_id", "signup_date", "net_total_cents"],
+    "properties": {
+      "customer_id": {"type": "string"},
+      "signup_date": {"type": "string", "format": "date"},
+      "net_total_cents": {"type": "integer"}
+    },
+    "additionalProperties": false
+  }
+}

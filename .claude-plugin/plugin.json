@@ -1,6 +1,6 @@
 {
   "name": "skizl",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, and git-guard.",
   "author": {
     "name": "Alessandro Smedile"

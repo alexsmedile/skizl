@@ -10,31 +10,43 @@ reviewer carry quality. Benchmarking taste produces numbers, not truth.
 
 ## Flow
 
-1. **Draft via the standard track** — all eight steps, gates included. Arrive here with a
-   reviewed draft, not an idea.
-2. **Eval prompts.** Write 3–5 realistic task prompts — concrete and messy, the way users
-   actually type: file names, personal context, typos, abbreviations — plus 1–2 near-misses
-   that should NOT trigger the skill. Save to `evals/evals.json` from
-   [../templates/evals.json.tmpl](../templates/evals.json.tmpl). Done when: each prompt
-   names what good output looks like.
-3. **Run the with-skill vs baseline loop.** For each eval prompt, spawn two fresh subagents
-   in the same turn: one with the draft skill available, one without (baseline). Draft the
-   pass/fail assertion for each prompt while the runs execute. Grade both outputs against the
-   assertion, then compare: the skill earns its keep only where with-skill beats baseline.
-   Show the user the paired outputs and the win/loss tally. Done when: the user has seen the
-   outputs and the tally.
-4. **Iterate on feedback.** Generalize from complaints rather than overfitting to the test
-   set; read the transcripts, not just the outputs. If every run independently wrote the
-   same helper script, bundle it in `scripts/` and point the skill at it. Repeat step 3
-   until feedback is clean or progress stalls.
-5. **Description optimization (optional).** When triggering accuracy is the concern, split
-   the eval prompts (train/test), draft several candidate descriptions, and score each on the
-   held-out prompts by whether the skill fires when it should and stays silent on near-misses.
-   Keep the description with the best fire/silence balance.
-6. **Gates.** `check.py`, then the reviewer on the final iteration — evals prove the skill
+1. **Draft via the standard track** — steps 1–7 only. Arrive here with a pruned draft, not an
+   idea; defer the reviewer gate until empirical evidence exists.
+2. **Eval contract.** Separate two questions: behavior (does the skill improve the result?)
+   and discovery (does the description fire correctly?). Write 3–5 realistic behavior prompts
+   — concrete and messy, with files/context/typos where natural — and an objective expectation
+   for each. Add 1–2 difficult near-misses to a separate trigger set; irrelevant negatives
+   prove nothing. Save all cases to `evals/evals.json` from
+   [../templates/evals.json.tmpl](../templates/evals.json.tmpl). Done when:
+   every expectation is discriminating: a plausible baseline can fail it and a grader can cite
+   evidence for pass/fail.
+3. **Run paired, uncontaminated trials.** Keep workspaces outside the skill folder. For each
+   behavior prompt, launch fresh-context with-skill and baseline runs together: no skill for a
+   new package, or an untouched snapshot for a repair. Give each run only the task, inputs,
+   output path, and relevant skill; never leak the intended fix. Grade with scripts where
+   possible and an independent grader otherwise. Repeat noisy or high-stakes trials enough to
+   expose variance; record pass rate plus time/token cost when available. Done when: every pair
+   has raw outputs, evidence-backed grades, and no run could inspect another run's artifacts.
+4. **Human + analyst review.** Present paired outputs before revising. Ask the user to judge
+   qualities that expectations cannot capture. Inspect transcripts for wasted work, expectations
+   that both configurations always pass, regressions hidden by an average, and time/token
+   tradeoffs. For a consequential close call, blind the labels and use an independent
+   comparator. Done when: the user has seen representative outputs and every metric has a
+   qualitative explanation.
+5. **Iterate without overfitting.** Generalize from failures, rerun the full set into a clean
+   iteration, and keep the baseline stable. If independent runs repeatedly create the same
+   helper, bundle and test it. Stop when feedback is clean, the skill shows no meaningful gain,
+   or further edits trade one covered behavior for another.
+6. **Description optimization (when discovery matters).** Build balanced should-trigger and
+   difficult should-not-trigger queries. Keep substantive real-user phrasing; split train from
+   held-out test; evaluate repeated trials when selection is stochastic. Choose on held-out
+   precision/recall balance, not training score. Done when: the final description beats the
+   original on held-out cases without expanding into adjacent skills.
+7. **Gates.** `check.py`, then the reviewer on the final iteration — evals prove the skill
    works; the reviewer still owns sizing and prose quality.
 
 ## Completion criterion
 
-With-skill beats baseline on the eval set, the user has reviewed the outputs, near-miss
-prompts do not trigger the skill, and the reviewer verdict is pass + right-sized.
+With-skill beats a stable baseline on discriminating expectations, the user has reviewed the
+paired outputs, held-out near-misses stay silent, variance/cost are reported when relevant,
+and the reviewer verdict is pass + right-sized.

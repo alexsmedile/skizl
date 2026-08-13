@@ -12,27 +12,29 @@ diverge). Every other term is a lever on it.
 
 ## Invocation — how a skill is reached
 
-**Model-invoked** — the skill keeps its **description**, so the agent can discover and fire
-it autonomously (the human can still type its name, and other skills can reach it). Pays a
-permanent **context load**. Pick only when the agent must reach the skill on its own.
+**Model-invoked** — the host advertises the skill's **description**, so the agent can discover
+and fire it autonomously (the human may still invoke it explicitly). Pays a persistent
+**context load**. Pick only when the agent must reach the skill on its own.
 
-**User-invoked** — the description is stripped (`disable-model-invocation: true`); only the
-human typing its name can fire it, and no other skill can. Zero context load; the human is
-the index.
+**Manual-only** — the host suppresses autonomous activation while preserving valid `name` and
+`description` metadata. Claude and Cursor use `disable-model-invocation: true`; Codex uses
+`agents/openai.yaml` policy; other hosts may lack this mode. The human is the index, so this
+pays **cognitive load** and usually zero discovery-context cost.
 
 **Description** — the machine-readable trigger surface, not a summary. It answers "when
 should the agent reach for this?" — one trigger per real **branch**, plus near-misses that
-should NOT trigger. Its presence *is* the invocation axis.
+should NOT trigger. Keep the leading use case and trigger words first because hosts may
+truncate skill listings. Invocation policy is a separate host-specific axis.
 
 **Context load** — the cost a model-invoked skill imposes on the context window: its
 description, loaded every turn, spending tokens and attention.
 
-**Cognitive load** — the cost a user-invoked skill imposes on the human: remembering it
+**Cognitive load** — the cost a manual-only skill imposes on the human: remembering it
 exists and when to reach for it. Not a cost to minimize to zero — it is the price of human
 agency; spend it where human judgment matters.
 
-**Router skill** — one user-invoked skill that names your other user-invoked skills and when
-to reach for each. The cure when user-invoked skills multiply past what the human can recall.
+**Router skill** — one manual-only skill that names your other manual-only skills and when
+to reach for each. The cure when manual-only skills multiply past what the human can recall.
 
 ## Structure — how content is arranged
 

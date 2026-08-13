@@ -7,6 +7,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.8.0] — 2026-08-13
+
+### Added
+- Skill Forge host profiles for the portable Agent Skills specification plus Claude Code, Codex, Cursor, Gemini CLI, and skizl conventions, with official documentation links and explicit portability rules.
+- Executable Skill Forge regression fixtures, isolated prompt briefs, a held-out trigger suite, and profile-aware validation for portable and host-specific packages.
+
+### Changed
+- Skill Forge now recovers demonstrated workflows before interviewing, preserves descriptions for manual-only skills, chooses instruction rigidity by task fragility, applies least-surprise security rules, and evaluates empirical skills against isolated baselines.
+- The fresh-context reviewer now checks host compatibility, invocation behavior, permissions, script dependencies, and evidence quality in addition to sizing and progressive disclosure.
+- Expanded Skill Forge guidance, templates, and evals from four illustrative briefs to a repeatable five-scenario regression protocol covering light, standard, empirical, repair, and hardening workflows.
+
+### Fixed
+- Replaced shell-looking `skizl` lifecycle examples with an explicit handoff to the installed `skill-manager` skill; `skizl` is a plugin/meta-skill namespace, not a CLI binary.
+- Corrected host-specific invocation guidance so portable skills stay portable and vendor-only fields are emitted only for their target host.
+
 ## [1.7.0] — 2026-07-12
 
 ### Added

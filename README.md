@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.7.0-green)
+![Version](https://img.shields.io/badge/version-1.8.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -18,7 +18,7 @@ Pack. Version. Publish. One skill to manage them all.
 
 As your skill library grows, flat folders stop working. You end up with 20 loose `SKILL.md` files — no shared context, no version history, no way to publish, no way to know what's installed where.
 
-`skizl` is the skill lifecycle manager Claude Code was missing. It gives your skills the same workflows you'd expect from any serious package: organize into containers, wire up shortcuts, diff versions, snapshot before big changes, and publish to the marketplace in one command.
+`skizl` is a cross-host skill lifecycle manager. It gives your skills the same workflows you'd expect from any serious package: organize into containers, wire up shortcuts, diff versions, snapshot before big changes, and publish to supported plugin formats through an agent workflow.
 
 ---
 
@@ -53,6 +53,21 @@ npx skills add alexsmedile/skizl
 ```
 /skizl publish skills/writing --username your-github-username
 ```
+
+`/skizl` is a skill/plugin invocation shown to the agent host, not a terminal executable.
+Do not run `skizl ...` in a shell. In Codex, invoke the installed `skizl:skill-manager`
+skill and request the same lifecycle action in natural language.
+
+### Build skills with Skill Forge
+
+This plugin also includes `skill-forge`, the full authoring and audit workflow for skills that
+need branches, progressive disclosure, a fresh-context review gate, or measurable evals. It
+targets portable Agent Skills by default and has explicit profiles for Claude Code, Codex,
+Cursor, Gemini CLI, and skizl.
+
+Use `skill-draft` for a small one-file skill. Use `skill-forge` to design a non-trivial skill,
+harden a validated draft, or audit and debloat an existing one. Versioning and publishing then
+hand off to `skill-manager`; installing or symlinking remains an explicit deployment action.
 
 ---
 
@@ -207,11 +222,11 @@ Invoke as `/skizl <command>` after install. Run `/skizl onboard` if it's your fi
 
 ## Who It's For
 
-- Claude Code users with 10+ skills who want structure without overhead
+- Agent-skill authors with growing libraries who want structure without overhead
 - Anyone building a skill container library to share or reuse
-- Developers who want to publish skills for Claude Code, Codex, and Google Antigravity
+- Developers who want to author for Claude Code, Codex, Cursor, or Gemini and publish supported plugin formats
 
 ## Who It's Not For
 
 - Users with just a few skills — a flat folder works fine at small scale
-- Non-Claude-Code environments — skizl is Claude Code-native
+- Workflows that require a standalone `skizl` terminal binary — skizl is an agent skill/plugin, not a CLI

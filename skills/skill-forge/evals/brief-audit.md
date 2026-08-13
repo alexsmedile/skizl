@@ -1,19 +1,16 @@
 # Regression brief — audit track
 
-## Prompt
-
-"My deploy skill has grown to 700 lines, half of it is old Heroku instructions we don't use,
-the same rollback rule appears in three places, and Claude never seems to trigger it anymore.
-Fix it."
+Runner prompt: [prompts/audit-repair.md](prompts/audit-repair.md).
 
 ## Expected shape
 
-- Routed to **audit** track (existing skill: sprawl + sediment + duplication + undertrigger)
+- Routed to **audit** track, repair mode (existing skill: sediment + duplication + undertrigger)
 - Whole skill read before any edit; findings recorded with file:line
 - Diagnostic actions applied: Heroku layers deleted (sediment), rollback rule kept in ONE
-  most-local place (duplication), branch-only reference disclosed (sprawl), description
-  rebuilt with leading word + near-misses (undertrigger)
-- Snapshot offered before large-scale changes (`skizl snapshot` / `skizl archive`)
+  most-local place (duplication), description rebuilt with leading word + near-misses
+  (undertrigger), and no reference file added because the surviving workflow has no real branch
+- Snapshot offered before large-scale changes by invoking `skill-manager`; no shell command
+  named `skizl` is proposed
 - Patch is smallest-diff repair, not a rewrite from scratch
 - Reviewer verdict on patched skill: pass, sizing no worse than original
 

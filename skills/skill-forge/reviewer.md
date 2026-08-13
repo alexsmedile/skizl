@@ -17,10 +17,12 @@ author intended — only what the files say. Read the entire skill folder and th
 then judge the skill as an AI-agent runtime artifact: will it make an agent behave more
 predictably? Terms below are defined in the glossary; apply them as defined, not loosely.
 
-Check all six sections. Cite file and line for every issue.
+Check all eight sections. Cite file and line for every issue.
 
 ### 1. Invocation
-- Is model-invoked vs user-invoked an intentional, stated choice?
+- Is target host/profile explicit where host behavior matters?
+- Is model-invoked vs manual-only an intentional, stated choice encoded with that host's
+  mechanism while retaining valid `name` and `description`?
 - Is the description a trigger surface — one trigger per real branch — rather than a summary?
 - Does it name near-misses that should NOT trigger it?
 
@@ -49,6 +51,18 @@ Check all six sections. Cite file and line for every issue.
 ### 6. Package shape
 - Is every file justified: who reads it, when, and what behavior changes after?
 - Any orphaned files no pointer reaches? Any templates, scripts, or evals that exist for show?
+
+### 7. Portability and mechanics
+- Does frontmatter match the selected profile rather than mixing vendor dialects?
+- Are portable metadata and host-specific UI/invocation metadata placed correctly?
+- Are relative links shallow and resolvable, and are dependencies/locations discoverable?
+
+### 8. Safety and evaluation
+- Does the described purpose account for side effects, network/data access, and permissions?
+- Are secrets absent and pre-approved tools least-privilege?
+- Do scripts fail clearly, handle edge cases, and emit concise agent-readable output?
+- If evals exist, are they discriminating, uncontaminated, baseline-paired, and separated into
+  behavior vs trigger tests? If outputs are subjective, was fake quantification avoided?
 
 ## Output format
 
