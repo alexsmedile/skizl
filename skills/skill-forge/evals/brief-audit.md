@@ -4,7 +4,8 @@ Runner prompt: [prompts/audit-repair.md](prompts/audit-repair.md).
 
 ## Expected shape
 
-- Routed to **audit** track, repair mode (existing skill: sediment + duplication + undertrigger)
+- Selects **Update**, then routes to **audit** track, repair mode (existing skill: sediment +
+  duplication + undertrigger)
 - Whole skill read before any edit; findings recorded with file:line
 - Diagnostic actions applied: Heroku layers deleted (sediment), rollback rule kept in ONE
   most-local place (duplication), description rebuilt with leading word + near-misses

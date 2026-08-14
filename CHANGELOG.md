@@ -7,6 +7,27 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.9.0] — 2026-08-14
+
+### Added
+- Skill Forge **operations** (`Create` / `Update` / `Resume`) — a lifecycle dimension orthogonal to the existing weight tracks. The operation decides where a run starts; the track still decides how much evidence and process the work needs. A completed skill receiving a new request is an Update, not a Resume.
+- **Forge record**: compact continuation state (operation, contract, architecture decisions, track, completed gates, feedback deltas, review issue dispositions, evidence, next action) kept outside the distributable skill folder, so process state is never mistaken for runtime content. A new session resumes from the first incomplete gate instead of restarting or relitigating settled decisions.
+- **Architecture workshop**: a pre-draft pass over boundary, capability clusters, runtime modes and branches, rules, routing, and only then package shape. Every proposed file must name the branch that reads it and the behavior it changes. Deliberately scale-aware — for a Light skill it stays one compact paragraph and is never expanded into a separate artifact.
+- Two-phase review: the reviewer's single prompt splits into a **Full-review prompt** and an issue-scoped **Verification prompt** that checks disposition of a closed issue list without reopening general review.
+- Issue **severity and stable IDs** — `blocking` vs `advisory`, with an explicit calibration rule tied to concrete consequence rather than section label. Two reviewer calls are the default maximum; a third requires a major structural rewrite and a recorded reason.
+- `extend` mode on the audit track, for a completed skill receiving a new behavioral delta.
+- Sixth regression scenario covering the Resume operation: `evals/brief-resume.md`, `evals/prompts/resume.md`, and fixtures (`resume-forge-record.yaml`, `resume-repaired/`), plus a held-out trigger case for resuming an unfinished review.
+
+### Changed
+- The standard track reorders around the workshop: contract and architecture map are confirmed first, routing is validated before prose, and the package plan is committed as its own step (8 steps → 9). The empirical track's cross-reference follows to "steps 1–8".
+- Reviewer checks expanded with failure recovery, safe resume and rerun idempotency, explicit approval boundaries before consequential actions, tool availability and declared fallbacks, portable path and environment assumptions, output-contract explicitness, evidence-backed completion claims, and proportional evaluation effort with a stopping condition.
+- `pass` now always pairs with **right-sized** — an underbuilt or overbuilt verdict requires a blocking issue naming the missing behavior or unjustified process weight. Blockers are never truncated; advisories cap at five.
+- Every regression brief now asserts the selected operation before the track, and the light and standard briefs test that workshop output stays proportional to the decision surface.
+- Skill Forge bumped 1.1.0 → 1.4.0. Its description now covers create, update, resume, audit, debloat, repair, and activation-boundary tuning. (1.2.0 and 1.3.0 were development increments and were never released separately.)
+
+### Fixed
+- `.gitignore` now excludes local secrets (`.env*`, with `*.example` re-included), Python build artifacts, Skill Forge continuation state (`/.skill-forge/`), and local feedback, planning, and article drafts that were never part of the plugin.
+
 ## [1.8.0] — 2026-08-13
 
 ### Added

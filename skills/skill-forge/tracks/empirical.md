@@ -10,7 +10,7 @@ reviewer carry quality. Benchmarking taste produces numbers, not truth.
 
 ## Flow
 
-1. **Draft via the standard track** — steps 1–7 only. Arrive here with a pruned draft, not an
+1. **Draft via the standard track** — steps 1–8 only. Arrive here with a pruned draft, not an
    idea; defer the reviewer gate until empirical evidence exists.
 2. **Eval contract.** Separate two questions: behavior (does the skill improve the result?)
    and discovery (does the description fire correctly?). Write 3–5 realistic behavior prompts

@@ -4,7 +4,7 @@ Runner prompt: [prompts/audit-harden.md](prompts/audit-harden.md).
 
 ## Expected shape
 
-- Routed to **audit** track, **harden** mode (validated fast draft brought to build up — not a
+- Selects **Update**, then routes to **audit** track, **harden** mode (validated fast draft brought to build up — not a
   from-scratch build, not a bloated skill to trim)
 - Whole draft read first; the human feedback is treated as the primary work list
 - Thinness is NOT flagged as a defect: single-file / no-disclosure is the starting point, not

@@ -7,7 +7,9 @@ complex output validation.
 ## Flow
 
 1. **Contract.** From the three captured answers (do / trigger / output), write a one-line
-   job statement and select a target profile. Done when: you have written one realistic
+   job statement, boundary, and single capability; record that no runtime branch or extra file
+   is justified, then select a target profile. Do not expand the architecture workshop into a
+   separate artifact for this track. Done when: you have written one realistic
    working prompt against it and can name the host validator profile; this prompt need not ship
    for a subjective skill.
 2. **Invocation.** Manual-only when the human should control timing; model-invoked only when

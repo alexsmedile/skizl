@@ -12,8 +12,30 @@ _backups/
 .claude/settings.local.json
 **/settings.local.json
 
+# local secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Python-generated artifacts
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# local Skill Forge continuation state
+/.skill-forge/
+
 # local-only skills, not part of the skizl plugin
 skills/skill-creator/
 skills/progressive-skill-builder/
 skills/writing-great-skills/
 .spectacular.local/
+
+# local feedback, planning, and article drafts
+/FEEDBACK*.md
+/feedback*.md
+/TODO.md
+/todo.md
+/articles/

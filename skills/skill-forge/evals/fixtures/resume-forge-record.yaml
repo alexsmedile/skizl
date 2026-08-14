@@ -1,0 +1,23 @@
+operation: resume
+target_profile: portable
+track: audit
+audit_mode: harden
+contract_status: accepted
+architecture_status: accepted
+completed_gates:
+  - mechanical-check
+  - full-review
+review:
+  verdict: revise
+  blocking_issues:
+    - id: INV-01
+      disposition: repaired
+      where: SKILL.md:3
+      what: Trigger surface includes a near-miss as a positive trigger.
+      fix: Move the near-miss into an explicit exclusion.
+    - id: STP-01
+      disposition: repaired
+      where: SKILL.md:18
+      what: One compound step has no independently checkable midpoint.
+      fix: Split the compound step and give both steps observable completion criteria.
+next_action: scoped-verification

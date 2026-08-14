@@ -116,15 +116,35 @@ a stronger word (*relentless*), not a different technique.
 **Gate zero** — the refusal step: deciding whether the request deserves to be a skill at
 all, before drafting. The cheapest gate is the one that fires first.
 
+**Operation** — the run's lifecycle entry: **Create** starts without a usable skill, **Update**
+applies a behavioral delta to a completed skill, and **Resume** continues an unfinished forge
+run from recovered state. Orthogonal to a **track**, which controls process weight.
+
+**Forge record** — compact continuation state kept outside the distributable skill: operation,
+contract, architecture decisions, track, completed gates, feedback deltas, review issue
+dispositions, evidence, and next action. It prevents a new session from restarting or reopening
+settled decisions.
+
+**Architecture workshop** — the pre-draft decision pass that establishes boundaries,
+**capability clusters**, runtime modes and branches, rules, routing, and only then package shape.
+
+**Capability cluster** — behavior sharing inputs, tools, permissions, outputs, validation, or
+update cadence. A cluster is an analysis unit, not automatically a file or skill; its behavioral
+differences decide whether it becomes a step, branch, reference, helper, or separate skill.
+
+**Runtime mode** — a named execution route that changes workflow, context, tools, output,
+permissions, or validation. A presentation-only variant is not a mode.
+
 **Smallest viable skill (MVS)** — the least package that could work — usually one SKILL.md.
 Depth is added only where a track step, reviewer verdict, or failing test demands it.
 
 **Track** — a weight-classed path through the forge (light / standard / empirical / audit),
 so a small skill never pays for ceremony a heavy one needs.
 
-**Reviewer** — the fresh-context subagent that judges a draft against this glossary without
-seeing the intent conversation. The only honest gate for judgment calls (no-op, duplication,
-negation); mechanical faults belong to `check.py`.
+**Reviewer** — the fresh-context subagent that performs one full judgment of a draft against
+this glossary without seeing the intent conversation. The only honest gate for judgment
+calls (no-op, duplication, negation); mechanical faults belong to `check.py`. When it finds
+blockers, one issue-scoped verifier checks their disposition without reopening general review.
 
 **Sizing verdict** — the reviewer's one-word calibration: **right-sized**, **underbuilt**
 (missing steps, criteria, or disclosure the job needs), or **overbuilt** (files or process

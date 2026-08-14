@@ -20,6 +20,10 @@
     "should_trigger": true
   },
   {
+    "query": "Continue the unfinished review of this skill from the existing blocker list; the repairs are already applied.",
+    "should_trigger": true
+  },
+  {
     "query": "Write a one-off prompt that asks an assistant to summarize this meeting.",
     "should_trigger": false
   },

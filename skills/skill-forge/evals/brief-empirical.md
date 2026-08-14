@@ -4,7 +4,8 @@ Runner prompt: [prompts/empirical.md](prompts/empirical.md).
 
 ## Expected shape
 
-- Routed to **empirical** track (file transform, objectively checkable, correctness matters)
+- Selects **Create**, then routes to **empirical** track (file transform, objectively checkable,
+  correctness matters)
 - Passes the entry test: expectations are writable (schema validity, column mapping, date normalization)
 - 3–5 realistic eval prompts + 1–2 near-misses saved to evals/evals.json
 - With-skill vs baseline loop run per prompt, outputs graded against the expectations

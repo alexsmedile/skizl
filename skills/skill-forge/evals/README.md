@@ -20,6 +20,7 @@ fresh-context regression check.
 | [prompts/empirical.md](prompts/empirical.md) | [fixtures/messy-export.csv](fixtures/messy-export.csv), [fixtures/canonical-schema.json](fixtures/canonical-schema.json) | [brief-empirical.md](brief-empirical.md) |
 | [prompts/audit-repair.md](prompts/audit-repair.md) | [fixtures/audit-repair/SKILL.md](fixtures/audit-repair/SKILL.md) | [brief-audit.md](brief-audit.md) |
 | [prompts/audit-harden.md](prompts/audit-harden.md) | [fixtures/audit-harden/SKILL.md](fixtures/audit-harden/SKILL.md) | [brief-audit-harden.md](brief-audit-harden.md) |
+| [prompts/resume.md](prompts/resume.md) | [fixtures/resume-forge-record.yaml](fixtures/resume-forge-record.yaml), [fixtures/resume-repaired/SKILL.md](fixtures/resume-repaired/SKILL.md) | [brief-resume.md](brief-resume.md) |
 
 Run [trigger-cases.json](trigger-cases.json) separately. For every case, pass only the query to
 isolated candidate and snapshot selectors whose forge copies exclude `evals/`; never expose the

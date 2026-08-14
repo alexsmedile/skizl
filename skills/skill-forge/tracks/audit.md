@@ -7,13 +7,17 @@ is diagnosis, not creation — resist redrafting from scratch.
 
 1. **Classify.** Read the whole skill first — SKILL.md and every disclosed file. Note:
    target/host assumptions, invocation mode, line count, branch structure, which track would
-   have produced it. Decide
-   the mode: **repair** (a real, aged, or bloated skill — trim and fix) or **harden** (a fast
+   have produced it. Carry forward the global operation and decide the audit mode: **repair**
+   (a real, aged, or bloated skill — trim and fix), **extend** (a completed skill receiving a
+   new behavioral delta), or **harden** (a fast
    draft whose idea is validated, brought to be built up — e.g. a skill-draft output plus the
    human feedback it earned). In harden mode, thinness is the starting point, not a defect:
    don't flag "no disclosure" or "single file" as faults — add structure only where a branch,
-   a failing test, or the feedback demands it. Done when: you can state the skill's job, its
-   weight class, and the mode in two lines.
+   a failing test, or the feedback demands it. In extend mode, map the delta to affected
+   branches, invariants, package elements, and regression checks before editing. On Resume,
+   preserve the recovered audit mode, findings, and completed gates unless current files
+   contradict them. Done when: you can state the skill's job, weight class, operation, and mode
+   in two lines.
 2. **Diagnose.** Walk the table below against the skill. Each row is an action, not a
    checkbox — a finding means you do the thing on the right. Record findings with file:line.
    Done when: every row has been applied and every finding has an action attached.
@@ -34,10 +38,11 @@ is diagnosis, not creation — resist redrafting from scratch.
 | Files no pointer reaches, or folders for show | Delete them — every file must answer: who reads this, when, and what behavior changes |
 | Script surprises, broad permissions, or hidden dependencies | Align actions with stated purpose; narrow permissions; declare dependencies; add clear success/failure output and edge handling |
 
-3. **Patch.** Smallest diffs that resolve the findings — this is repair, not rewrite. Before
+3. **Patch.** Smallest diffs that resolve the findings or implement the mapped delta — this is
+   evolution, not a blank-page rewrite. Before
    large-scale changes, invoke the installed `skill-manager` skill and request `snapshot` (or
    `archive` for a full-folder tarball). Never run `skizl` in the shell. Done when: every
-   recorded finding is resolved or explicitly accepted with a reason.
+   recorded finding and feedback delta is resolved or explicitly accepted with a reason.
 4. **Gates.** `check.py --profile <target>`, execute changed scripts on representative inputs,
    then the reviewer on the patched skill (see SKILL.md § Gates).
    The reviewer sees only the result — if the patch doesn't stand on its own, it isn't done.

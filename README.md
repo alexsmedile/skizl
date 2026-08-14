@@ -6,7 +6,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.8.0-green)
+![Version](https://img.shields.io/badge/version-1.9.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -68,6 +68,18 @@ Cursor, Gemini CLI, and skizl.
 Use `skill-draft` for a small one-file skill. Use `skill-forge` to design a non-trivial skill,
 harden a validated draft, or audit and debloat an existing one. Versioning and publishing then
 hand off to `skill-manager`; installing or symlinking remains an explicit deployment action.
+
+Each run picks an **operation** — `Create` (no usable skill yet), `Update` (a completed skill
+needs a behavioral delta), or `Resume` (an unfinished run continues from its recorded state).
+The operation says where the run starts; the track still says how much process the work needs.
+Resume reads a **forge record** kept outside the skill folder, so a new session picks up at the
+first incomplete gate instead of restarting or reopening settled decisions.
+
+Before any folders are chosen, an **architecture workshop** maps boundaries, capability clusters,
+real runtime branches, and routing — so the scaffold follows how the skill actually runs rather
+than mirroring topic headings. It scales to the decision surface: a single-rule skill gets one
+paragraph, not a table. The review gate then runs a fresh-context full review, and — only if it
+found blockers — one issue-scoped verification, with two reviewer calls as the hard default.
 
 ---
 
