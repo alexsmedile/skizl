@@ -4,13 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-**skizl** is a Claude Code meta-skill that manages the lifecycle of skill containers. It packs multiple standalone skills into a unified container architecture (`references/`), unpacks containers back to standalone skills, manages lightweight redirect shortcuts (pins), and provides tooling to symlink, inspect, diff, fork, publish, version (snapshot/bump/history), and archive skills.
+**skizl** is a Claude Code plugin bundling three skills that together cover the full life of a skill — authoring it, then managing it after it exists. The root holds only documentation and plugin manifests; every skill lives under `skills/`.
 
-The actual skill lives at `skills/skill-manager/` (its frontmatter `name:` is `skill-manager`) — the root holds only this documentation. The plugin/bundle is still named `skizl`, so it is invoked as `/skizl <command>`.
+| Skill | Frontmatter `name:` | Owns |
+|-------|--------------------|------|
+| `skills/skill-manager/` | `skill-manager` | Post-authoring lifecycle: pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, release, git-guard |
+| `skills/skill-forge/` | `skill-forge` | Building a skill properly: routed tracks, architecture workshop, fresh-context reviewer gate, evals |
+| `skills/skill-draft/` | `skill-draft` | The fast lane: one-pass single-`SKILL.md` draft, no tracks or reviewer |
 
-## Skill Architecture
+The division is deliberate and load-bearing: **forge and draft author content; skill-manager never does.** skill-manager handles a skill only once it exists. Route "create/audit/repair a skill" to `skill-forge` (or `skill-draft` for something small), and "version/publish/symlink a skill" to `skill-manager`.
 
-The skill uses a **container pattern** where a lean master `SKILL.md` routes to on-demand action files:
+The plugin/bundle is named `skizl`, so the lifecycle commands below are invoked as `/skizl <command>`.
+
+## Skill Architecture — `skill-manager`
+
+`skill-manager` uses a **container pattern** where a lean master `SKILL.md` routes to on-demand action files:
 
 ```
 skills/skill-manager/
@@ -36,7 +44,43 @@ skills/skill-manager/
 
 `SKILL.md` is the only file Claude loads automatically. `references/` files are read explicitly when a command is invoked.
 
-## Commands
+## Skill Architecture — `skill-forge`
+
+`skill-forge` routes by **weight track** rather than by command:
+
+```
+skills/skill-forge/
+├── SKILL.md          ← operation + track routing, gates, ship criteria (<500 lines)
+├── GLOSSARY.md       ← shared vocabulary; also handed to the reviewer
+├── reviewer.md       ← two prompts: Full-review, then issue-scoped Verification
+├── tracks/           ← light.md, standard.md, empirical.md, audit.md
+├── references/       ← disclosed knowledge (e.g. platforms.md host profiles)
+├── templates/        ← SKILL.md.tmpl, reference.md.tmpl, evals.json.tmpl
+├── scripts/check.py  ← mechanical lint, profile-aware
+└── evals/            ← regression briefs, runner prompts, fixtures, trigger cases
+```
+
+Two orthogonal dimensions, easy to conflate:
+
+- **Operation** — where a run *starts*: `Create` (no usable skill), `Update` (behavioral delta to a finished skill), `Resume` (continue an unfinished run from its **forge record**).
+- **Track** — how much process the work *needs*: light / standard / empirical / audit.
+
+A finished skill receiving a new request is an **Update**, not a Resume. The forge record lives **outside** the distributable skill folder (gitignored `/.skill-forge/`) so process state is never mistaken for runtime content.
+
+Validate a skill with the profile that matches its target host:
+
+```bash
+python3 skills/skill-forge/scripts/check.py <skill-dir> --profile <target>
+# profiles: portable | claude | codex | cursor | gemini | skizl
+```
+
+Skills in this repo carry skizl metadata (`category`, `status`, `tags`, `version`), so use `--profile skizl`. The `portable` profile rejects those fields by design — a failure there is a profile mismatch, not a defect.
+
+`check.py` catches mechanical faults only. Behavioral changes to the forge itself require the regression protocol in [evals/README.md](skills/skill-forge/evals/README.md): run all six briefs against a sanitized baseline snapshot, with `evals/` excluded from both copies so the oracles stay hidden.
+
+## Commands — `skill-manager`
+
+These are `skill-manager`'s lifecycle commands, invoked as `/skizl <command>`. `skill-forge` and `skill-draft` are not command-driven — they are invoked by intent ("build me a skill", "audit this skill"). Note that the `pack` alias `forge` is unrelated to the `skill-forge` skill.
 
 | Command | Aliases | What it does |
 |---------|---------|--------------|
@@ -65,6 +109,8 @@ skills/skill-manager/
 - **Master SKILL.md must stay under 500 lines** — move verbose content to `references/` files
 - **Reference files must be explicitly loaded** — Claude reads them on demand when a command is invoked
 - **Pin shortcuts** follow the naming convention `i-<action>` and are symlinked into `.claude/skills/`
+- **Authoring and lifecycle stay separate** — `skill-forge`/`skill-draft` write skill content; `skill-manager` never authors, it only acts on skills that already exist
+- **Version consistency is enforced at commit time** — a `git-guard` pre-commit hook blocks the commit unless all six version sites agree: `.claude-plugin/plugin.json`, both `.claude-plugin/marketplace.json` fields (`metadata` and `plugins[0]`), `.codex-plugin/plugin.json`, the README badge, and the top CHANGELOG entry. Bump all of them together; `marketplace.json` holds two and is the one most often missed.
 
 ## scripts/pin.mjs
 

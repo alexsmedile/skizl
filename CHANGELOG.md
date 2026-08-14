@@ -7,6 +7,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Changed
+- `CLAUDE.md` now documents all three bundled skills (`skill-manager`, `skill-forge`, `skill-draft`) instead of describing skizl as a single-skill repository, and states the authoring/lifecycle boundary between them.
+- Added a `skill-forge` architecture section to `CLAUDE.md`: package layout, the operation-vs-track distinction, `check.py` profile guidance (including why `portable` rejects skizl metadata by design), and a pointer to the six-brief regression protocol.
+- Documented the commit-time version-consistency invariant across all six version sites, noting that `marketplace.json` carries two of them.
+
 ## [1.9.0] — 2026-08-14
 
 ### Added
