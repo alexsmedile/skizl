@@ -291,7 +291,7 @@ Before generating, ask:
 
 > **Which install methods should the README include?**
 > 1. Claude Code — `/plugin marketplace add` + `/plugin install`
-> 2. Codex — `npx codex-marketplace add <user>/<repo> --plugin` (one command, activates directly); or native CLI `codex plugin marketplace add ...` then install from `/plugins`
+> 2. Codex — `npx codex-marketplace add <user>/<repo> --plugin` (one command, activates directly); or native CLI `codex plugin marketplace add <user>/<repo>` then `codex plugin add <repo>@<repo>`
 > 3. Antigravity — clone/symlink into `.agents/plugins/` (workspace) or `~/.gemini/antigravity-cli/plugins/` (global)
 > 4. `npx skills add` — Vercel skills CLI (**skills only** — installs `skills/`, does NOT install `agents/`, `hooks/`, or MCP config; reads `.claude-plugin/plugin.json` to discover skill paths but ignores all other plugin components)
 > 5. `git clone` — manual clone
@@ -353,7 +353,10 @@ Next steps:
 
   Install (Codex):
     npx codex-marketplace add <username>/<repo-name> --plugin   (one command, activates directly)
-    or: codex plugin marketplace add <username>/<repo-name>  then  codex /plugins
+    or: codex plugin marketplace add <username>/<repo-name>
+        codex plugin add <repo-name>@<repo-name>
+    (Git marketplace — `codex plugin marketplace upgrade` refreshes Git snapshots
+     only; a local-path marketplace never updates.)
 
   Install (npx skills — skills only, no agents/hooks/MCP):
     npx skills add <username>/<repo-name>

@@ -194,12 +194,18 @@ Fastest — one command, activates the plugin directly:
 npx codex-marketplace add alexsmedile/skizl --plugin
 ```
 
-Or via the built-in plugin manager:
+Or via the native Codex CLI — two commands, no interactive step:
 
 ```bash
 codex plugin marketplace add alexsmedile/skizl
-# then: codex /plugins → browse and install
+codex plugin add skizl@skizl
 ```
+
+Or add the marketplace and browse interactively with `codex /plugins`.
+
+> Prefer a Git marketplace over a local one. `codex plugin marketplace upgrade`
+> refreshes **Git** snapshots only — a marketplace added from a local path never
+> updates, and its plugins stay pinned at the version you first installed.
 
 ### Google Antigravity
 
