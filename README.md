@@ -209,7 +209,8 @@ Or add the marketplace and browse interactively with `codex /plugins`.
 
 ### Google Antigravity
 
-Antigravity has no marketplace or install CLI for third-party plugins — installing means manually placing the folder in a scan directory yourself:
+Antigravity ships both a CLI and an app. Plugins are discovered from a scan
+directory, so cloning or symlinking into one installs the plugin:
 
 ```bash
 # workspace-level (this workspace only)
