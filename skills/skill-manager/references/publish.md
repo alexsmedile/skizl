@@ -297,6 +297,17 @@ Before generating, ask:
 > 5. `git clone` — manual clone
 > 6. All of the above
 
+If the target repo is private (or the skill is meant for a team rather than the
+public), also include a short auth note in the README — the marketplace commands
+themselves are identical, only credentials differ:
+
+> Private repos install exactly like public ones. Both Claude Code and Codex
+> `git clone` over HTTPS and inherit git's existing credentials, so each
+> teammate needs `gh auth login` && `gh auth setup-git` once per machine.
+> Access is then governed by GitHub repo/org-team permissions.
+> Add `--scope project` to commit the marketplace declaration to the project,
+> `--sparse` to narrow a monorepo checkout, or Codex's `--ref` to pin a branch/tag.
+
 Wait for the user's answer, then generate a README with:
 - `# <repo-name>` heading
 - Description paragraph

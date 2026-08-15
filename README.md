@@ -236,6 +236,38 @@ npx codex-marketplace add ./skizl --plugin   # Codex
 
 Invoke as `/skizl <command>` after install. Run `/skizl onboard` if it's your first time.
 
+### Private repos and team sharing
+
+Marketplaces are not public-only. Claude Code and Codex both `git clone` over
+HTTPS, so a private repo installs exactly like a public one as long as git can
+already authenticate. Once per machine:
+
+```bash
+gh auth login
+gh auth setup-git    # routes HTTPS github.com clones through your gh token
+```
+
+Then the usual commands work unchanged against a private repo:
+
+```bash
+/plugin marketplace add yourorg/private-skills
+/plugin install toolkit@private-skills
+```
+
+To share a skill with a team, publish it to a private org repo and grant access
+by GitHub team membership — distribution is governed by repo permissions, not by
+anything plugin-specific. Useful extras:
+
+| Flag | Effect |
+|------|--------|
+| `--scope project` | Declares the marketplace in the project's committed `.claude/settings.json`, so teammates get it on clone (they still need repo access). |
+| `--sparse <paths>` | Limits the checkout to given directories — for skills living inside a larger monorepo. |
+| `--ref <ref>` | Codex only. Pins the marketplace to a branch or tag, so the team tracks `stable` instead of `main`. |
+
+> Teammates who skip `gh auth setup-git` see a failure that reads like a missing
+> repo rather than a permission error — worth calling out, since it looks like a
+> typo in the owner or repo name.
+
 ---
 
 ## Who It's For
