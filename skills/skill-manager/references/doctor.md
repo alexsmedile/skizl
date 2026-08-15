@@ -188,18 +188,113 @@ link into it stops resolving.
 Marketplace clones do **not** auto-refresh. A stale clone pins every plugin
 installed from it, with no signal anywhere in the CLI.
 
-```bash
-# Claude — compare installed version against the marketplace clone
-claude plugin marketplace update <name>    # refresh the clone first
-# then diff installed_plugins.json against marketplaces/<name>/plugin.json
+Run the clone refresh first, or every version below is read from a stale copy:
 
-# Codex — refresh all Git marketplaces, then inspect
-codex plugin marketplace upgrade
-codex plugin marketplace list
-codex plugin list
+```bash
+# Claude — refresh each configured marketplace clone
+python3 -c 'import json;print("\n".join(json.load(open("'"$HOME"'/.claude/plugins/known_marketplaces.json"))))' \
+  | while read -r m; do claude plugin marketplace update "$m" >/dev/null 2>&1; done
+
+# Codex — refreshes all Git marketplaces at once (local ones are skipped)
+codex plugin marketplace upgrade >/dev/null 2>&1
 ```
 
-Three failure modes worth checking explicitly:
+### Stale installs (Claude)
+
+Compares each installed plugin against the version its refreshed clone declares.
+
+```bash
+python3 - <<'PY'
+import json, os
+
+home = os.path.expanduser("~")
+installed = f"{home}/.claude/plugins/installed_plugins.json"
+markets   = f"{home}/.claude/plugins/marketplaces"
+
+if not os.path.isfile(installed):
+    raise SystemExit("  no installed_plugins.json — nothing to check")
+
+def clone_version(marketplace, plugin):
+    """Version declared by the clone. Layout varies, so try each known shape."""
+    base = os.path.join(markets, marketplace)
+    for rel in (".claude-plugin/plugin.json", "plugin.json",
+                f"{plugin}/.claude-plugin/plugin.json",
+                f"plugins/{plugin}/.claude-plugin/plugin.json"):
+        path = os.path.join(base, rel)
+        if os.path.isfile(path):
+            try:
+                return json.load(open(path)).get("version")
+            except Exception:
+                continue
+    return None
+
+issues = 0
+for key, entries in sorted(json.load(open(installed)).get("plugins", {}).items()):
+    plugin, _, marketplace = key.partition("@")
+    for e in entries:
+        have, want = e.get("version", "unknown"), clone_version(marketplace, plugin)
+        if want and want != have:
+            print(f"  [STALE]   {key}: {have} -> {want}")
+            issues += 1
+print(f"  {issues} stale plugin(s)" if issues else "  ✓ all plugins current")
+PY
+```
+
+### Local-source marketplaces (Codex)
+
+```bash
+codex plugin marketplace list 2>/dev/null | tail -n +2 | while read -r name root; do
+  case "$name" in openai-*) continue ;; esac          # app-managed
+  if [ -d "$HOME/.codex/.tmp/marketplaces/$name/.git" ]; then
+    continue                                           # git-backed, updates fine
+  elif [ "$(codex plugin list 2>/dev/null | grep -c "@${name}\b")" -eq 0 ]; then
+    continue                                           # empty: nothing to pin
+  else
+    echo "  [LOCAL]   $name ($root) — 'marketplace upgrade' skips it; plugins never update"
+  fi
+done
+```
+
+### Escaping `source.path`
+
+A manifest whose plugin source resolves outside the marketplace root fails at
+install with a misleading `plugin <name> was not found in marketplace <name>`.
+
+```bash
+for mf in "$HOME/.agents/plugins/marketplace.json" \
+          "$HOME"/.codex/.tmp/marketplaces/*/.agents/plugins/marketplace.json; do
+  [ -f "$mf" ] || continue
+  python3 - "$mf" <<'PY'
+import json, sys
+mf = sys.argv[1]
+try:
+    plugins = json.load(open(mf)).get("plugins", [])
+except Exception as exc:
+    print(f"  [BADJSON] {mf}: {exc}"); raise SystemExit
+for p in plugins:
+    src = p.get("source")
+    if not isinstance(src, dict) or src.get("source") != "local":
+        continue
+    path = src.get("path", "")
+    if path.startswith("../"):
+        print(f"  [ESCAPES] {mf}: {p.get('name')} -> {path}  (use \"./\")")
+PY
+done
+```
+
+### Orphaned plugin folders (Codex)
+
+```bash
+for d in "$HOME"/.codex/plugins/*/; do
+  name=$(basename "$d")
+  case "$name" in cache|.*) continue ;; esac
+  if [ -d "$HOME/.codex/plugins/cache/$name" ]; then
+    echo "  [ORPHAN]  ~/.codex/plugins/$name superseded by cache/$name — safe to remove"
+  fi
+done
+```
+
+Three failure modes these checks cover:
 
 1. **Local-source marketplace.** `codex plugin marketplace upgrade` refreshes
    **Git** snapshots only. A marketplace added from a local path is never
