@@ -26,6 +26,12 @@ the **plugin layer**, and neither is visible from `$(pwd)` — see
 | Empty skill | `SKILL.md` exists but has no frontmatter or description |
 | Name mismatch | `name:` in frontmatter differs from folder name |
 | Long description | Frontmatter `description:` alone is over Codex's 1024-character limit, or close enough to shorten |
+| Non-conformant manifest | Root `plugin.json` missing, wrong `$schema`, bad `name`, or unknown top-level fields (the Agent Plugins schema is closed) |
+| Undiscoverable skill | A `skills/<name>/` folder with no immediate-child `SKILL.md` — clients do not recurse, so it silently never loads |
+| Untyped MCP server | An `mcp.json` entry missing its explicit `type`, or using deprecated `sse` |
+| Dead plugin variable | `PLUGIN_ROOT`/`PLUGIN_DATA` used in `command`, `url`, or headers, where they never expand |
+| Missing hook script | A `hooks.json` entry pointing at a script that does not exist, or exists but is not executable — fails silently at run time |
+| Unparseable vendor config | Antigravity's root `hooks.json` or `mcp_config.json` present but not valid JSON |
 | Stale marketplace clone | Installed plugin version differs from the version its marketplace clone now declares |
 | Local-source marketplace | Codex marketplace added from a local path — `marketplace upgrade` skips it, so its plugins never update |
 | Escaping source path | A marketplace manifest whose plugin `source.path` resolves outside the marketplace root |
@@ -165,7 +171,8 @@ Each harness keeps skills in its own place:
 | Claude Code | `~/.claude/skills/`, agents in `~/.claude/agents/` |
 | Codex | `~/.codex/skills/` |
 | opencode | `~/.config/opencode/skills/` (also `agents/`, `commands/`, `plugins/`) |
-| Antigravity | `~/.gemini/antigravity-cli/plugins/` |
+| Antigravity CLI (`agy`) | `~/.gemini/antigravity-cli/plugins/`, skills in `~/.gemini/antigravity-cli/` |
+| Antigravity 2.0 desktop | `~/.gemini/config/plugins/`, app skills in `~/.gemini/antigravity/skills/` |
 | Shared library | `~/.agents/skills/` |
 
 ```bash
@@ -182,6 +189,99 @@ done
 A dead link here is silent: the skill simply never loads, with no error. This is
 the single most common breakage — a source folder gets renamed or moved and every
 link into it stops resolving.
+
+## Manifest conformance (Agent Plugins)
+
+Run this whenever the target repo is a plugin root — it validates the portable
+manifest before any vendor-specific install path is considered. A plugin whose
+root `plugin.json` fails here is not installable on any conformant host, and the
+failure is silent at install time on most of them.
+
+```bash
+python3 <path-to>/skill-forge/scripts/check.py <plugin-root> --plugin --profile <profile>
+```
+
+This validates, in order:
+
+1. **Manifest** — `plugin.json` exists, parses, declares the Agent Plugins
+   `$schema`, and carries a legal `name`. The schema is **closed**, so any
+   unknown top-level field is an error, not a warning.
+2. **`mcp.json`** — every server declares an explicit `type`; its `$schema`
+   version matches `plugin.json`'s; and `PLUGIN_ROOT`/`PLUGIN_DATA` appear only
+   where they actually expand (`args`, `env` values, `cwd`) — never in
+   `command`, URLs, or headers, where they ship as a literal string.
+3. **Skills** — each immediate child of `skills/` holding a `SKILL.md` is
+   validated on its own.
+
+Failure isolation matches the specification: a fatal manifest error rejects the
+whole plugin, but one broken skill or server never disables the others. A
+non-zero exit means the manifest failed **or** at least one skill did — read the
+per-skill output to tell which.
+
+> [!NOTE]
+> `agents/`, `commands/`, and `hooks/` are outside the Agent Plugins
+> specification and are not checked here. They are vendor surface: only the
+> runtimes that define them will read them, and they do not travel between
+> hosts. A clean `--plugin` run says the *portable* core is sound, not that
+> every component ships everywhere.
+
+## Vendor component health (Antigravity)
+
+The `--plugin` run above deliberately stops at the portable core. Antigravity's
+own components sit outside it and fail *silently* — a hook whose script is
+missing or not executable simply never runs, with no error surfaced anywhere.
+
+Run this at the plugin root when the plugin ships `hooks.json` or
+`mcp_config.json`:
+
+```bash
+ROOT=$(pwd)
+issues=0
+
+# Antigravity root configs must parse before anything reads them
+for f in "$ROOT/hooks.json" "$ROOT/mcp_config.json"; do
+  [ -f "$f" ] || continue
+  if ! jq empty "$f" 2>/dev/null; then
+    echo "  [BAD_JSON] $(basename "$f") is not valid JSON"
+    issues=$((issues + 1))
+  fi
+done
+
+# Hook scripts must exist AND be executable — a non-executable hook fails silently
+if [ -f "$ROOT/hooks.json" ] && jq empty "$ROOT/hooks.json" 2>/dev/null; then
+  # feed the loop from a here-string, not a pipe, so it runs in this shell
+  while read -r cmd; do
+    [ -n "$cmd" ] || continue
+    script=${cmd%% *}                     # first token; drop any arguments
+    case "$script" in
+      /*) path="$script" ;;
+      *)  path="$ROOT/$script" ;;
+    esac
+    if [ -e "$path" ]; then
+      [ -x "$path" ] || {
+        echo "  [NOT_EXEC] hooks.json → $script exists but is not executable (chmod +x)"
+        issues=$((issues + 1))
+      }
+    elif [ "${script#*/}" != "$script" ]; then
+      # contains a slash → a real path that should resolve inside the plugin
+      echo "  [NO_HOOK]  hooks.json → $script not found in plugin"
+      issues=$((issues + 1))
+    else
+      # bare command name → resolved from PATH at run time; only note if absent here
+      command -v -- "$script" >/dev/null 2>&1 \
+        || echo "  [WARN]     hooks.json → '$script' not on this machine's PATH (may exist on the target)"
+    fi
+  done <<EOF
+$(jq -r '.hooks // {} | to_entries[] | .value[]? | .hooks[]? | .command // empty' "$ROOT/hooks.json" 2>/dev/null)
+EOF
+fi
+```
+
+> [!NOTE]
+> Antigravity's `hooks.json` and `mcp_config.json` are its own schemas at its own
+> paths. They are **not** interchangeable with Claude's `hooks/hooks.json`,
+> Codex's `hooks/hooks-codex.json`, or the Agent Plugins `mcp.json`. Finding one
+> does not mean the others are configured.
 
 ## Plugin and marketplace health
 

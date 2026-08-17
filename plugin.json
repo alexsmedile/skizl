@@ -1,5 +1,27 @@
 {
-  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "skizl",
-  "description": "Pack standalone skills into references-based containers, unpack containers, snapshot/bump versions, and publish plugin manifests."
+  "version": "1.10.0",
+  "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, and git-guard.",
+  "author": {
+    "name": "Alessandro Smedile",
+    "url": "https://github.com/alexsmedile"
+  },
+  "homepage": "https://github.com/alexsmedile/skizl",
+  "repository": "https://github.com/alexsmedile/skizl",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "skill-container",
+    "skill-management",
+    "pack",
+    "unpack",
+    "claude-code",
+    "apm"
+  ],
+  "extensions": {
+    "com.google.antigravity": {
+      "description": "Pack standalone skills into references-based containers, unpack containers, snapshot/bump versions, and publish plugin manifests."
+    }
+  }
 }

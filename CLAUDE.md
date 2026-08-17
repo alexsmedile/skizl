@@ -74,6 +74,12 @@ python3 skills/skill-forge/scripts/check.py <skill-dir> --profile <target>
 # profiles: portable | claude | codex | cursor | gemini | skizl
 ```
 
+The same script validates a **plugin root** with `--plugin`, checking the Agent Plugins 1.0.0 manifest, `mcp.json`, and every discovered skill:
+
+```bash
+python3 skills/skill-forge/scripts/check.py . --plugin --profile skizl
+```
+
 Skills in this repo carry skizl metadata (`category`, `status`, `tags`, `version`), so use `--profile skizl`. The `portable` profile rejects those fields by design — a failure there is a profile mismatch, not a defect.
 
 `check.py` catches mechanical faults only. Behavioral changes to the forge itself require the regression protocol in [evals/README.md](skills/skill-forge/evals/README.md): run all six briefs against a sanitized baseline snapshot, with `evals/` excluded from both copies so the oracles stay hidden.
@@ -110,7 +116,7 @@ These are `skill-manager`'s lifecycle commands, invoked as `/skizl <command>`. `
 - **Reference files must be explicitly loaded** — Claude reads them on demand when a command is invoked
 - **Pin shortcuts** follow the naming convention `i-<action>` and are symlinked into `.claude/skills/`
 - **Authoring and lifecycle stay separate** — `skill-forge`/`skill-draft` write skill content; `skill-manager` never authors, it only acts on skills that already exist
-- **Version consistency is enforced at commit time** — a `git-guard` pre-commit hook blocks the commit unless all six version sites agree: `.claude-plugin/plugin.json`, both `.claude-plugin/marketplace.json` fields (`metadata` and `plugins[0]`), `.codex-plugin/plugin.json`, the README badge, and the top CHANGELOG entry. Bump all of them together; `marketplace.json` holds two and is the one most often missed.
+- **Version consistency is enforced at commit time** — a `git-guard` pre-commit hook blocks the commit unless all seven version sites agree: `.claude-plugin/plugin.json`, both `.claude-plugin/marketplace.json` fields (`metadata` and `plugins[0]`), the root `plugin.json` (Agent Plugins manifest), `.codex-plugin/plugin.json`, the README badge, and the top CHANGELOG entry. Bump all of them together; `marketplace.json` holds two and is the one most often missed. `version` is optional in the Agent Plugins schema, so the root manifest is only checked when it declares one.
 
 ## scripts/pin.mjs
 

@@ -1,8 +1,10 @@
 # publish — Prepare a skill for publication as a plugin
 
-Scaffolds the complete plugin manifest structure on an existing skill folder, making it installable via Claude Code marketplace, Codex, Google Antigravity, and `npx skills` (skills only).
+Scaffolds the complete plugin manifest structure on an existing skill folder, making it installable via the [Agent Plugins](https://agent-plugins.org) standard (ChatGPT, Codex, Cursor, GitHub Copilot, Kiro, VS Code), the Claude Code marketplace, Google Antigravity, and `npx skills` (skills only).
 
-All three runtimes share the same `skills/`, `agents/`, and `hooks/` at the plugin root — no duplication, no runtime-specific trees. Antigravity additionally discovers the repo root as a plugin via a root `plugin.json` marker.
+**Portable first, vendor second.** The root `plugin.json` is the Agent Plugins manifest — the portable core that every conformant host reads. The `.claude-plugin/` and `.codex-plugin/` manifests are vendor fallbacks for runtimes that have not adopted the standard. Write the portable manifest first, then add only the sidecars the target hosts actually require.
+
+All runtimes share the same `skills/`, `agents/`, and `hooks/` at the plugin root — no duplication, no runtime-specific trees. Note that only `skills/` (and `mcp.json`) are covered by the standard; `agents/`, `commands/`, and `hooks/` are vendor surface and do not travel between hosts.
 
 ## Usage
 
@@ -30,7 +32,7 @@ Given a skill at `skills/<name>/`, publish scaffolds these files at the **repo r
 │   └── marketplace.json    ← Claude marketplace metadata
 ├── .codex-plugin/
 │   └── plugin.json         ← Codex plugin manifest
-├── plugin.json             ← Antigravity plugin marker (root-level)
+├── plugin.json             ← Agent Plugins manifest (root-level, portable core)
 ├── .agents/
 │   └── plugins/
 │       └── marketplace.json  ← Codex marketplace file
@@ -213,19 +215,131 @@ Check each target file. For files that already exist, ask: **"<file> already exi
 > `interface` extras: `"logo"`, `"composerIcon"` (paths to `.codex-plugin/assets/`); `"privacyPolicyURL"`, `"termsOfServiceURL"` (any URL — local or external).  
 > Codex auto-discovers `agents/` — do not add an `agents` field.
 
-### `plugin.json` (repo root — Antigravity)
+### `plugin.json` (repo root — Agent Plugins)
+
+This is the **portable core**: the [Agent Plugins](https://agent-plugins.org) manifest, an open
+vendor-neutral standard (TSC: AWS, Cursor, Microsoft, OpenAI, Vercel; Google as Core Maintainer).
+One conformant file makes the repo installable on ChatGPT, Codex, Cursor, GitHub Copilot, Kiro,
+and VS Code. Write this first; the vendor manifests below are fallbacks for hosts that have not
+adopted the standard yet.
 
 ```json
 {
-  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "<repo-name>",
-  "description": "<description>"
+  "version": "<version>",
+  "description": "<description>",
+  "author": { "name": "<author>", "url": "<author-url>" },
+  "homepage": "https://github.com/<username>/<repo-name>",
+  "repository": "https://github.com/<username>/<repo-name>",
+  "license": "MIT",
+  "keywords": ["<keyword>"],
+  "extensions": {
+    "com.google.antigravity": { "description": "<antigravity-description>" }
+  }
 }
 ```
 
-> This is the **Antigravity plugin manifest** — its presence makes the repo folder a valid Antigravity plugin. Both `$schema` and `name` are required fields. `description` is optional but recommended. Do NOT add `version` or other fields — the documented Antigravity schema does not support them, and git-guard does not scan this file.
-> Antigravity auto-discovers `skills/<name>/SKILL.md` and `rules/*.md` inside the plugin folder. It does NOT read `agents/`, `.claude-plugin/`, or `.codex-plugin/` — those are inert for Antigravity.
-> Antigravity hooks live in a root `hooks.json` and MCP servers in a root `mcp_config.json` (Antigravity's own schemas — different from Claude's `hooks/hooks.json`). Only create these if the skill actually ships Antigravity hooks/MCP config; skip by default.
+> [!IMPORTANT]
+> **The schema is closed** (`additionalProperties: false`) — only `$schema`, `name`, `version`,
+> `description`, `author`, `homepage`, `repository`, `license`, `keywords`, and `extensions` are
+> legal at the top level. Anything else fails validation. `$schema` and `name` are the only
+> required fields; everything else is optional.
+>
+> `name` must be 1–64 characters: lowercase alphanumeric plus hyphens and periods, no leading or
+> trailing separator, and no `--` or `..` runs. The schema enforces this as a regex pattern —
+> see the published schema for the exact expression.
+>
+> `author` accepts only `name`, `email`, and `url`.
+>
+> **Vendor-specific data goes in `extensions`**, keyed by reverse-domain namespace
+> (`com.google.antigravity`, `com.example.client`). This is the spec's official escape hatch:
+> clients read their own namespace and ignore the rest, so vendor extras never break portability.
+> Extension contents are entirely client-defined — the standard assigns them no meaning.
+
+**Portable core vs. vendor surface.** The standard covers **skills and MCP servers only**.
+`skills/<name>/SKILL.md` and `mcp.json` travel to every conformant host. `agents/`, `commands/`,
+and `hooks/` are **not** in the specification and do not travel — they are read only by the
+specific runtimes that define them. Do not assume a plugin's full surface is portable just
+because its manifest validates.
+
+Skill discovery is fixed and shallow: an immediate child of `skills/` counts as a skill when it
+contains `SKILL.md`. Clients do not recurse deeper, and an invalid skill is skipped without
+affecting the others.
+
+> **Antigravity note.** Antigravity previously used its own root manifest
+> (`$schema: https://antigravity.google/schemas/v1/plugin.json`). Since only one `$schema` value
+> can occupy the field, the Agent Plugins schema takes it and Antigravity data moves under
+> `extensions["com.google.antigravity"]`. Google is a Core Maintainer of the standard, so
+> convergence is expected — but **verify the Antigravity install path still resolves** before
+> relying on it for a release.
+> Antigravity auto-discovers `skills/<name>/SKILL.md`, `agents/*.md`, `commands/*.md`, and `rules/*.md` inside the plugin folder, plus root `hooks.json` and `mcp_config.json`. It does NOT read `.claude-plugin/`, `.codex-plugin/`, or `hooks/` — those are inert for Antigravity.
+#### Antigravity components (optional — scaffold only when the plugin ships them)
+
+Antigravity auto-loads four things from the plugin root. Each is Antigravity's own schema at
+Antigravity's own path — none is interchangeable with the Claude or Codex equivalent, and none
+is part of the Agent Plugins standard. **Skip all of these by default**; empty scaffolds are
+noise, not a starting point.
+
+| Component | Path | Loads when |
+|-----------|------|-----------|
+| Skills | `skills/<name>/SKILL.md` | always — shared with the portable core |
+| Agents | `agents/*.md` | plugin ships subagents |
+| Commands | `commands/*.md` | plugin ships slash commands — **converted to skills** on load |
+| Rules | `rules/*.md` | markdown injected into agent context while the plugin is active |
+| Hooks | `hooks.json` (root) | plugin ships lifecycle hooks |
+| MCP servers | `mcp_config.json` (root) | plugin bundles MCP tool integrations |
+
+Verify any of this with `agy plugin validate <path>`, which reports each component
+class it actually processed. Confirmed against `agy` 1.1.13: `agents/` and
+`commands/` **are** loaded, despite not appearing in the plugins documentation —
+and `commands/` entries are converted into skills rather than kept as a separate
+type.
+
+**`rules/AGENTS.md`** — plugin-scoped standing context. Write rules only if the plugin needs
+behavior applied for its whole active session; a skill that should fire on a trigger belongs in
+`skills/`, not here.
+
+```markdown
+# <plugin-name> rules
+
+<Standing guidance Antigravity should apply whenever this plugin is active.>
+```
+
+**`hooks.json`** (repo root — Antigravity) — distinct from Claude's `hooks/hooks.json` and
+Codex's `hooks/hooks-codex.json`. Do not copy either into this path.
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "<tool-name-pattern>",
+        "hooks": [
+          { "type": "command", "command": "<script>", "timeout": 30 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Referenced scripts must exist and be executable (`chmod +x`) — a missing or non-executable hook
+script fails silently at run time.
+
+**`mcp_config.json`** (repo root — Antigravity) — separate from the standard's `mcp.json`. If the
+plugin ships MCP servers for both, maintain both files; they are not aliases.
+
+```json
+{
+  "mcpServers": {
+    "<server-name>": {
+      "command": "<executable>",
+      "args": ["<arg>"]
+    }
+  }
+}
+```
 
 ### `.agents/plugins/marketplace.json`
 
@@ -292,7 +406,7 @@ Before generating, ask:
 > **Which install methods should the README include?**
 > 1. Claude Code — `/plugin marketplace add` + `/plugin install`
 > 2. Codex — `npx codex-marketplace add <user>/<repo> --plugin` (one command, activates directly); or native CLI `codex plugin marketplace add <user>/<repo>` then `codex plugin add <repo>@<repo>`
-> 3. Antigravity — clone/symlink into `.agents/plugins/` (workspace) or `~/.gemini/antigravity-cli/plugins/` (global)
+> 3. Antigravity — clone/symlink into `.agents/plugins/` (workspace, both surfaces), `~/.gemini/config/plugins/` (2.0 desktop, global), or `~/.gemini/antigravity-cli/plugins/` (`agy` CLI, global)
 > 4. `npx skills add` — Vercel skills CLI (**skills only** — installs `skills/`, does NOT install `agents/`, `hooks/`, or MCP config; reads `.claude-plugin/plugin.json` to discover skill paths but ignores all other plugin components)
 > 5. `git clone` — manual clone
 > 6. All of the above
@@ -344,7 +458,7 @@ Files created:
   .claude-plugin/plugin.json
   .claude-plugin/marketplace.json
   .codex-plugin/plugin.json
-  plugin.json                (Antigravity marker)
+  plugin.json                (Agent Plugins manifest — portable core)
   .agents/plugins/marketplace.json
   hooks/hooks.json
   hooks/hooks-codex.json
@@ -379,6 +493,9 @@ Next steps:
     ln -s ../../<relative-path-to-repo> .agents/plugins/<repo-name>
 
   Install (Antigravity — global, all workspaces):
+    # Antigravity 2.0 desktop:
+    git clone https://github.com/<username>/<repo-name> ~/.gemini/config/plugins/<repo-name>
+    # agy CLI (separate state tree):
     git clone https://github.com/<username>/<repo-name> ~/.gemini/antigravity-cli/plugins/<repo-name>
 
   New clones — activate git-guard:
@@ -422,15 +539,19 @@ Next steps:
 - Docs: https://antigravity.google/docs/plugins
 - **No marketplace, no registry, no install CLI.** The docs define exactly two ways to add a plugin: (1) Google's own bundled plugins, browsable/addable from the Antigravity UI's Customizations page — third-party plugins are never listed there; (2) manually placing a plugin folder in a scan directory. For any repo you or someone else publishes (including skizl), option 2 is the only path — there is nothing equivalent to `/plugin marketplace add` (Claude) or `codex plugin marketplace add` (Codex). Installing from GitHub means `git clone` (or symlink) into a scan dir yourself; Antigravity has no command that fetches a repo for you
 - A plugin is any folder with a root `plugin.json` marker — `{"name": "..."}` is the whole documented schema (`name` optional, defaults to folder name)
-- Components Antigravity loads from the plugin folder: `skills/<name>/SKILL.md`, `rules/*.md`, root `hooks.json` (hooks), root `mcp_config.json` (MCP servers). It ignores `agents/`, `.claude-plugin/`, `.codex-plugin/`, and `hooks/`
-- Install locations (Antigravity auto-scans these):
-  - Workspace: `<workspace>/.agents/plugins/<plugin-name>/` or `<workspace>/_agents/plugins/<plugin-name>/`
-  - Global: `~/.gemini/antigravity-cli/plugins/<plugin-name>/`
+- Components Antigravity loads from the plugin folder: `skills/<name>/SKILL.md`, `agents/*.md`, `commands/*.md` (converted to skills), `rules/*.md`, root `hooks.json` (hooks), root `mcp_config.json` (MCP servers). It ignores `.claude-plugin/`, `.codex-plugin/`, and `hooks/`
+- Verify with `agy plugin validate <path>` — it prints every component class it processed, and errors on a missing or unparseable `plugin.json`
+- Install locations (Antigravity auto-scans these). **Antigravity is two products** — the 2.0 desktop app and the `agy` CLI keep separate state trees, and the published plugin docs sit under the 2.0 section, so their paths describe the desktop app:
+  - Workspace (**both surfaces**): `<workspace>/.agents/plugins/<plugin-name>/` or `<workspace>/_agents/plugins/<plugin-name>/`
+  - Global, Antigravity 2.0 desktop: `~/.gemini/config/plugins/<plugin-name>/`
+  - Global, `agy` CLI: `~/.gemini/antigravity-cli/plugins/<plugin-name>/`
+  - Prefer the workspace path when the plugin is project-scoped — it is the one location both surfaces read.
+  - The 2.0 desktop also exposes bundled plugins through its **Customizations** page.
 - Coexistence note: `.agents/plugins/` is also where the Codex `marketplace.json` **file** lives. Antigravity only picks up **directories** containing a `plugin.json`, so the Codex marketplace file is ignored — they share the dir safely. In a consuming workspace, an installed plugin folder sits at `.agents/plugins/<name>/` right next to any Codex marketplace file
 - The root `plugin.json` is inert for Claude Code (which reads `.claude-plugin/plugin.json`) and Codex (`.codex-plugin/plugin.json`) — no conflicts
 
 **All runtimes:**
-- Bump `version` in all `plugin.json` and `.claude-plugin/marketplace.json` on each release (the root Antigravity `plugin.json` has no version — nothing to bump)
+- Bump `version` in all `plugin.json` and `.claude-plugin/marketplace.json` on each release. The root Agent Plugins `plugin.json` carries a `version` too (optional in that schema, but recommended and checked by git-guard when present) — bump it with the rest
 - Hooks split by runtime: `hooks/hooks.json` for Claude, `hooks/hooks-codex.json` for Codex, root `hooks.json` for Antigravity (only if needed)
 - Claude, Codex, and Antigravity all share `skills/` at the plugin root; Claude and Codex additionally share `agents/` and `hooks/` — no duplication
 - If the repo already has a `.git/` with a remote, extract `username` and `repo-name` automatically:

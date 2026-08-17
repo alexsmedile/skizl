@@ -6,7 +6,8 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
-![Version](https://img.shields.io/badge/version-1.9.0-green)
+![Agent Plugins](https://img.shields.io/badge/Agent%20Plugins-1.0.0-orange)
+![Version](https://img.shields.io/badge/version-1.10.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -177,6 +178,12 @@ The script reads `SKILL.md` frontmatter to extract `name`, `allowed-tools`, and 
 
 ## 💾 Install
 
+skizl ships a conformant [Agent Plugins 1.0.0](https://agent-plugins.org) manifest
+at its repo root — the open, vendor-neutral packaging standard maintained by AWS,
+Cursor, Microsoft, OpenAI, and Vercel, with Google as a Core Maintainer. Any host
+that reads the standard can install it directly from the repository. The
+per-runtime instructions below cover hosts that use their own format.
+
 ### Claude Code — marketplace
 
 ```bash
@@ -213,12 +220,18 @@ Antigravity ships both a CLI and an app. Plugins are discovered from a scan
 directory, so cloning or symlinking into one installs the plugin:
 
 ```bash
-# workspace-level (this workspace only)
+# workspace-level (this workspace only) — read by BOTH the app and the CLI
 git clone https://github.com/alexsmedile/skizl .agents/plugins/skizl
 
-# global (all workspaces)
+# global — Antigravity 2.0 desktop app
+git clone https://github.com/alexsmedile/skizl ~/.gemini/config/plugins/skizl
+
+# global — agy CLI (separate state tree from the app)
 git clone https://github.com/alexsmedile/skizl ~/.gemini/antigravity-cli/plugins/skizl
 ```
+
+The app and the CLI keep independent global roots, so a global install in one is
+not visible to the other. The workspace path is the only location both scan.
 
 ### npx skills
 

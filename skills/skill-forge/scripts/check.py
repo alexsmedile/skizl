@@ -49,6 +49,30 @@ PROFILE_FIELDS["skizl"] = PROFILE_FIELDS["claude"] | {
     "tags",
 }
 
+# --- Agent Plugins 1.0.0 (https://agent-plugins.org) ---
+# The manifest schema is CLOSED: unknown top-level keys are a validation failure,
+# so this set is exhaustive by design, not a convenience subset.
+PLUGIN_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+PLUGIN_FIELDS = {
+    "$schema",
+    "name",
+    "version",
+    "description",
+    "author",
+    "homepage",
+    "repository",
+    "license",
+    "keywords",
+    "extensions",
+}
+PLUGIN_NAME = re.compile(r"^(?!.*(?:--|\.\.))[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$")
+AUTHOR_FIELDS = {"name", "email", "url"}
+REVERSE_DOMAIN = re.compile(r"^[a-z0-9]+(?:[.-][a-z0-9]+)+$")
+MCP_TRANSPORTS = {"stdio", "streamable-http", "sse"}
+# PLUGIN_ROOT/PLUGIN_DATA expand textually in args, env values, and cwd — never in
+# command, urls, or headers. Substituting them elsewhere silently ships a literal.
+PLUGIN_VARS = re.compile(r"\$\{?(PLUGIN_ROOT|PLUGIN_DATA)\}?")
+
 
 def validate_inline_yaml(value, line_number):
     if not value:
@@ -162,6 +186,189 @@ def frontmatter(lines):
             indented_context = "metadata"
         fields[key] = value.strip('"\'')
     return fields, "\n".join(raw)
+
+
+def check_mcp(root, errors, warns, plugin_schema_version):
+    """Validate mcp.json against the Agent Plugins server contract."""
+    mcp_path = root / "mcp.json"
+    if not mcp_path.exists():
+        return
+    try:
+        mcp = json.loads(mcp_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        errors.append(f"mcp.json: invalid JSON — {error}")
+        return
+    if not isinstance(mcp, dict):
+        errors.append("mcp.json: top level must be an object")
+        return
+
+    schema = mcp.get("$schema")
+    if schema and plugin_schema_version and schema != plugin_schema_version:
+        errors.append(
+            "mcp.json: $schema version must match plugin.json's "
+            f"(plugin.json={plugin_schema_version}, mcp.json={schema})"
+        )
+
+    servers = mcp.get("mcpServers")
+    if servers is None:
+        warns.append("mcp.json: no 'mcpServers' object — file has no effect")
+        return
+    if not isinstance(servers, dict):
+        errors.append("mcp.json: 'mcpServers' must be an object")
+        return
+
+    for server_name, config in sorted(servers.items()):
+        label = f"mcp.json: server '{server_name}'"
+        if not isinstance(config, dict):
+            errors.append(f"{label}: entry must be an object")
+            continue
+        transport = config.get("type")
+        if not transport:
+            errors.append(f"{label}: missing required 'type' — transport must be declared explicitly")
+        elif transport not in MCP_TRANSPORTS:
+            errors.append(
+                f"{label}: unknown type '{transport}' — expected one of {', '.join(sorted(MCP_TRANSPORTS))}"
+            )
+        elif transport == "sse":
+            warns.append(f"{label}: 'sse' is the deprecated HTTP+SSE transport — prefer 'streamable-http'")
+
+        if transport == "stdio" and not config.get("command"):
+            errors.append(f"{label}: stdio transport requires 'command'")
+        if transport in {"streamable-http", "sse"} and not config.get("url"):
+            errors.append(f"{label}: {transport} transport requires 'url'")
+
+        # Plugin variables expand ONLY in args, env values, and cwd.
+        for field in ("command", "url"):
+            value = config.get(field)
+            if isinstance(value, str) and PLUGIN_VARS.search(value):
+                errors.append(
+                    f"{label}: PLUGIN_ROOT/PLUGIN_DATA do not expand in '{field}' — "
+                    "they ship as a literal string"
+                )
+        headers = config.get("headers")
+        if isinstance(headers, dict):
+            for key, value in headers.items():
+                if isinstance(value, str) and PLUGIN_VARS.search(value):
+                    errors.append(
+                        f"{label}: PLUGIN_ROOT/PLUGIN_DATA do not expand in headers['{key}'] — "
+                        "they ship as a literal string"
+                    )
+
+
+def check_plugin(plugin_dir, profile):
+    """Validate an Agent Plugins 1.0.0 plugin root, then each discovered skill.
+
+    Failure isolation mirrors the spec: a fatal manifest error rejects the plugin,
+    but one invalid skill or server never disables the others.
+    """
+    root = Path(plugin_dir).resolve()
+    errors, warns = [], []
+
+    manifest_path = root / "plugin.json"
+    if not manifest_path.exists():
+        print(f"ERROR: {root}/plugin.json missing — an Agent Plugin requires a root manifest")
+        print(f"\n{root.name}: 1 error(s), 0 warning(s)")
+        return 1
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        print(f"ERROR: plugin.json: invalid JSON — {error}")
+        print(f"\n{root.name}: 1 error(s), 0 warning(s)")
+        return 1
+    if not isinstance(manifest, dict):
+        print("ERROR: plugin.json: top level must be an object")
+        print(f"\n{root.name}: 1 error(s), 0 warning(s)")
+        return 1
+
+    schema = manifest.get("$schema")
+    if not schema:
+        errors.append("plugin.json: required '$schema' is missing")
+    elif schema != PLUGIN_SCHEMA:
+        errors.append(f"plugin.json: $schema must be {PLUGIN_SCHEMA} (found '{schema}')")
+
+    name = manifest.get("name")
+    if not name:
+        errors.append("plugin.json: required 'name' is missing")
+    elif not isinstance(name, str):
+        errors.append("plugin.json: 'name' must be a string")
+    else:
+        if not 1 <= len(name) <= 64:
+            errors.append(f"plugin.json: name is {len(name)} characters; must be 1-64")
+        if not PLUGIN_NAME.fullmatch(name):
+            errors.append(
+                "plugin.json: name must be lowercase alphanumeric with hyphens or periods, "
+                "no leading/trailing separator and no '--' or '..' runs"
+            )
+
+    unknown = sorted(set(manifest) - PLUGIN_FIELDS)
+    if unknown:
+        errors.append(
+            f"plugin.json: unknown top-level fields (schema is closed): {', '.join(unknown)}"
+        )
+
+    author = manifest.get("author")
+    if author is not None:
+        if not isinstance(author, dict):
+            errors.append("plugin.json: 'author' must be an object")
+        else:
+            extra = sorted(set(author) - AUTHOR_FIELDS)
+            if extra:
+                errors.append(f"plugin.json: 'author' allows only name/email/url; found {', '.join(extra)}")
+
+    keywords = manifest.get("keywords")
+    if keywords is not None and (
+        not isinstance(keywords, list) or not all(isinstance(k, str) for k in keywords)
+    ):
+        errors.append("plugin.json: 'keywords' must be an array of strings")
+
+    extensions = manifest.get("extensions")
+    if extensions is not None:
+        if not isinstance(extensions, dict):
+            errors.append("plugin.json: 'extensions' must be an object")
+        else:
+            for key, value in sorted(extensions.items()):
+                if not REVERSE_DOMAIN.fullmatch(key):
+                    errors.append(
+                        f"plugin.json: extension key '{key}' must be a reverse-domain "
+                        "namespace (e.g. com.example.client)"
+                    )
+                if not isinstance(value, dict):
+                    errors.append(f"plugin.json: extension '{key}' must be an object")
+
+    check_mcp(root, errors, warns, schema if isinstance(schema, str) else None)
+
+    # --- skills: immediate children of skills/ holding a SKILL.md ---
+    skills_dir = root / "skills"
+    discovered = []
+    if not skills_dir.is_dir():
+        warns.append("skills/: no skills directory — plugin ships no Agent Skills")
+    else:
+        for child in sorted(p for p in skills_dir.iterdir() if p.is_dir()):
+            if (child / "SKILL.md").exists():
+                discovered.append(child)
+            else:
+                warns.append(
+                    f"skills/{child.name}/: no SKILL.md — not discovered as a skill "
+                    "(clients do not recurse deeper)"
+                )
+        if not discovered:
+            warns.append("skills/: no discoverable skills (each needs an immediate-child SKILL.md)")
+
+    for e in errors:
+        print(f"ERROR: {e}")
+    for w in warns:
+        print(f"warn:  {w}")
+    print(f"\n{root.name} [plugin]: {len(errors)} error(s), {len(warns)} warning(s)")
+
+    # Skills validate independently — one failure never disables the others.
+    failed = []
+    for skill in discovered:
+        print(f"\n── skills/{skill.name}")
+        if main(str(skill), profile) != 0:
+            failed.append(skill.name)
+    if failed:
+        print(f"\nskills with errors: {', '.join(failed)}")
+    return 1 if errors or failed else 0
 
 
 def main(skill_dir, profile):
@@ -291,8 +498,17 @@ def main(skill_dir, profile):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Mechanically validate an Agent Skill folder.")
-    parser.add_argument("skill_dir")
+    parser = argparse.ArgumentParser(
+        description="Mechanically validate an Agent Skill folder, or an Agent Plugins root with --plugin."
+    )
+    parser.add_argument("skill_dir", help="skill folder, or plugin root when --plugin is set")
     parser.add_argument("--profile", choices=sorted(PROFILE_FIELDS), default="portable")
+    parser.add_argument(
+        "--plugin",
+        action="store_true",
+        help="validate the target as an Agent Plugins 1.0.0 plugin root (manifest, mcp.json, skills/)",
+    )
     args = parser.parse_args()
+    if args.plugin:
+        raise SystemExit(check_plugin(args.skill_dir, args.profile))
     raise SystemExit(main(args.skill_dir, args.profile))

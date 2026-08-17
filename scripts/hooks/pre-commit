@@ -122,6 +122,12 @@ if [ -f "$ROOT/.claude-plugin/marketplace.json" ]; then
   [ -n "$v" ] && collect ".claude-plugin/marketplace.json (plugins[0])" "$v"
 fi
 
+# plugin.json (repo root — Agent Plugins manifest; version is optional there)
+if [ -f "$ROOT/plugin.json" ]; then
+  v=$(jq -r '.version // empty' "$ROOT/plugin.json" 2>/dev/null)
+  [ -n "$v" ] && collect "plugin.json (root)" "$v"
+fi
+
 # .codex-plugin/plugin.json
 if [ -f "$ROOT/.codex-plugin/plugin.json" ]; then
   v=$(jq -r '.version // empty' "$ROOT/.codex-plugin/plugin.json" 2>/dev/null)

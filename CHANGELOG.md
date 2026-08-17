@@ -7,10 +7,32 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.10.0] — 2026-08-17
+
+### Added
+- **Agent Plugins 1.0.0 conformance.** The root `plugin.json` is now a conformant [Agent Plugins](https://agent-plugins.org) manifest (`$schema: https://agent-plugins.org/schemas/1.0.0/plugin.schema.json`) — the open, vendor-neutral packaging standard governed by AWS, Cursor, Microsoft, OpenAI, and Vercel, with Google as Core Maintainer. This makes skizl installable on ChatGPT, Codex, Cursor, GitHub Copilot, Kiro, and VS Code from one manifest.
+- `git-guard` now checks the root `plugin.json` for version drift, bringing the count to seven version sites. The Agent Plugins schema makes `version` optional, so the file is only checked when it declares one.
+- **Plugin-layer validation.** `check.py --plugin` validates an Agent Plugins root: manifest `$schema`, the `name` pattern, the closed top-level field set, `author` sub-keys, `keywords` typing, and reverse-domain `extensions` namespacing. It then validates `mcp.json` — explicit per-server `type`, transport-required fields, `$schema` version agreement with `plugin.json`, and misuse of `PLUGIN_ROOT`/`PLUGIN_DATA` in `command`, URLs, or headers, where they never expand — and finally each discovered skill. Failure isolation follows the spec: a fatal manifest error rejects the plugin, but one broken skill or server never disables the others.
+- `doctor` gained four manifest-conformance checks (non-conformant manifest, undiscoverable skill, untyped MCP server, dead plugin variable) and a section documenting the `--plugin` run and what it deliberately does not cover.
+- `doctor` gained a **vendor component health** pass for Antigravity: root `hooks.json` and `mcp_config.json` must parse, and every hook script must exist and be executable. A hook script that is missing or non-executable fails silently at run time, so nothing else surfaces it. Bare command names are reported as warnings only, since PATH differs on the target machine.
+- `publish` now documents Antigravity's four auto-loaded root components — `skills/`, `rules/*.md`, `hooks.json`, `mcp_config.json` — with templates for each, and states plainly that none is interchangeable with the Claude, Codex, or Agent Plugins equivalent. They stay opt-in: empty scaffolds are noise.
+- `platforms.md` gained an **Agent Plugins packaging** section establishing the standard as the portable packaging target, plus guidance on carrying Antigravity as a namespaced `extensions` entry rather than a competing root manifest.
+
 ### Changed
-- `CLAUDE.md` now documents all three bundled skills (`skill-manager`, `skill-forge`, `skill-draft`) instead of describing skizl as a single-skill repository, and states the authoring/lifecycle boundary between them.
-- Added a `skill-forge` architecture section to `CLAUDE.md`: package layout, the operation-vs-track distinction, `check.py` profile guidance (including why `portable` rejects skizl metadata by design), and a pointer to the six-brief regression protocol.
-- Documented the commit-time version-consistency invariant across all six version sites, noting that `marketplace.json` carries two of them.
+- The root `plugin.json` previously carried Antigravity's private schema. Since only one `$schema` value can occupy the field, the Agent Plugins schema takes it and Antigravity-specific data moves to `extensions["com.google.antigravity"]` — the standard's reverse-domain escape hatch for client-specific data. Verified with `agy plugin validate` (CLI 1.1.13): the conformant and the old Antigravity-style manifest validate identically (`[ok]`, all skills processed), while a missing or unparseable `plugin.json` errors. Antigravity ignores `$schema` entirely, so conformance costs nothing there.
+- `publish` now scaffolds **portable-first**: the Agent Plugins manifest is the core, and `.claude-plugin/` / `.codex-plugin/` are documented as vendor fallbacks for hosts that have not adopted the standard. `publish.md` also records the closed-schema field list, the `name` pattern constraint, the `extensions` namespacing rule, and the boundary between the portable surface (`skills/`, `mcp.json`) and the vendor-only surface (`agents/`, `commands/`, `hooks/`).
+- Antigravity install guidance now distinguishes **two products with separate state trees**. The published plugin docs sit under the Antigravity 2.0 section, so their `~/.gemini/config/plugins/` path describes the desktop app; the `agy` CLI installs to `~/.gemini/antigravity-cli/plugins/`, and the two keep independent skill directories. Both surfaces read the workspace path `.agents/plugins/<name>/`, now documented as the preferred install location.
+- `CLAUDE.md` documents all three bundled skills (`skill-manager`, `skill-forge`, `skill-draft`) instead of describing skizl as a single-skill repository, states the authoring/lifecycle boundary between them, and adds a `skill-forge` architecture section covering package layout, the operation-vs-track distinction, `check.py` profile guidance, and the six-brief regression protocol.
+
+### Fixed
+- **Incomplete Antigravity install instructions** in `publish.md`, `doctor.md`, and `README.md`. Each named a single global root when there are two — one per surface — so a user following them could install into the tree their Antigravity does not scan. All three now list the desktop root, the CLI root, and the workspace path both surfaces read.
+- `publish.md` claimed Antigravity ignores `agents/`. It does not: `agy plugin validate` confirms `agents/` and `commands/` both load, and `commands/` entries are converted to skills. Neither appears in the published documentation.
+- `publish.md` claimed the root `plugin.json` carries no version and there was "nothing to bump". It does now, and git-guard checks it — corrected in the release checklist.
+- `platforms.md` replaced the stale `gemini` row (which cited `geminicli.com` and a `.gemini/skills/` root) with the documented Antigravity discovery roots and the official `antigravity.google` references. Also corrected the frontmatter guidance: Antigravity documents only `name` and `description`, and `name` defaults to the folder name.
+
+### Notes
+- Verified on the `agy` CLI (1.1.13) only. The **Antigravity 2.0 desktop** app has a separate state tree and was not exercised — its plugin loading is documented but untested here.
+- Declarative `.agents/skills.json` / `plugins.json` (with `entries`/`inherits`/`include_only`/`exclude`) is not implemented: the format does not appear in the published Antigravity skills, plugins, or CLI reference documentation. Revisit if a specification surfaces.
 
 ## [1.9.0] — 2026-08-14
 
