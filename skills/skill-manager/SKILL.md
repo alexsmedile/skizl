@@ -121,6 +121,7 @@ Read `references/sym.md` for full instructions.
 - `/skizl sym init` / `/skizl sym in` — link all skills from `skills/` into `.claude/skills/` and `.agents/skills/`
 - `/skizl sym migrate` / `/skizl sym out` — move real dirs from `.claude/skills/` into `skills/` and re-link
 - `/skizl sym status` — show what's linked, what's missing
+- `/skizl sym declare` / `/skizl sym json` — register skills via `.agents/skills.json` instead of symlinks (Antigravity; works where symlinks don't)
 
 ---
 

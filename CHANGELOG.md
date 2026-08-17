@@ -7,6 +7,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.10.1] — 2026-08-17
+
+### Added
+- **`sym declare` / `sym json`** — registers skills through Antigravity's declarative `.agents/skills.json` (and `.agents/plugins.json`) instead of symlinks. Full schema documented: `entries`, `inherits`, `include_only`, `exclude`, and the absolute / home-relative / repo-root path resolution rules. Use where git will not store symlinks, on Windows, or to commit the registration so teammates get skills on clone. Merges into an existing file rather than overwriting.
+- `publish` documents Antigravity's **plugin enable/disable model**: `"disabled": true` ships a plugin switched off, while the user's choice is recorded in `config.json` under a `plugins` map keyed by *directory* name and always wins. Notes the trade-off — `disabled` is rejected by the closed Agent Plugins schema, so it belongs only in an Antigravity-specific manifest (verified: `check.py --plugin` errors on it, `agy` accepts it).
+
+### Changed
+- `agents/` and `commands/` are now marked **CLI-verified only**. Both load under `agy` 1.1.13, but neither appears in the Antigravity 2.0 plugin specification, which documents four components (skills, rules, hooks, MCP servers). Load-bearing behavior belongs in `skills/`, which both surfaces are specified to read.
+- `platforms.md` records that Antigravity's authoritative customization reference ships **inside the app** at `~/.gemini/antigravity/builtin/skills/agy-customizations/` and is more complete than the public docs site — the declarative-config schema appears only there. It also notes that Agent Plugins conformance is now confirmed on the **Antigravity 2.0 desktop app** (2.8.1), not just the `agy` CLI: installed at `~/.gemini/config/plugins/`, all three skills load and are listed as `Plugin: skizl`.
+
 ## [1.10.0] — 2026-08-17
 
 ### Added

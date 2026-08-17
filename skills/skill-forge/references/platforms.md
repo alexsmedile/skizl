@@ -83,13 +83,31 @@ Both surfaces read the **workspace** path, so it is the portable answer:
 `.agents/plugins/<name>/` (also `_agents/plugins/`). Prefer it over either global
 root when a plugin should apply to one project.
 
+Skills and plugins can also be registered **declaratively**, without symlinks or
+moving anything, via `.agents/skills.json` and `.agents/plugins.json` (same
+schema: `entries`, `inherits`, `include_only`, `exclude`; paths resolve absolute
+for `/`, home-relative for `~/`, otherwise from the repository root). Commit the
+file and teammates get the skills on clone. Prefer this over symlinks where git
+will not store them or on Windows. Declared configs rank below workspace
+discovery in loading priority.
+
 Verify rather than trust: `agy plugin validate <path>` reports exactly which
 component classes were loaded. Confirmed against `agy` 1.1.13 — `skills/`,
 `agents/`, `commands/` (converted to skills), `mcp_config.json`, and `hooks.json`
 all load, and `$schema` is ignored entirely, so an Agent Plugins manifest
-validates identically to an Antigravity-style one. Note that `agents/` and
-`commands/` do **not** appear in the published documentation; treat the doc list
-as incomplete rather than authoritative.
+validates identically to an Antigravity-style one. Both the manifest and skill
+loading are also confirmed on the Antigravity 2.0 desktop app (2.8.1), which
+lists plugin skills tagged with their source plugin.
+
+`agents/` and `commands/` are **CLI-verified only** — the 2.0 plugin
+specification documents four components (skills, rules, hooks, MCP servers) and
+does not mention them. Put load-bearing behavior in `skills/`, which both
+surfaces are specified to read.
+
+Antigravity's own customization reference ships inside the app at
+`~/.gemini/antigravity/builtin/skills/agy-customizations/`, and is more complete
+than the public docs site — consult it before concluding a feature is
+undocumented.
 
 ## Selection rules
 

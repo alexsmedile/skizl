@@ -292,9 +292,46 @@ noise, not a starting point.
 
 Verify any of this with `agy plugin validate <path>`, which reports each component
 class it actually processed. Confirmed against `agy` 1.1.13: `agents/` and
-`commands/` **are** loaded, despite not appearing in the plugins documentation —
-and `commands/` entries are converted into skills rather than kept as a separate
-type.
+`commands/` **are** loaded, and `commands/` entries are converted into skills
+rather than kept as a separate type.
+
+> [!IMPORTANT]
+> **`agents/` and `commands/` are CLI-verified only.** Neither appears in the
+> Antigravity 2.0 plugin specification, which documents exactly four components:
+> skills, rules, hooks, and MCP servers. Treat them as an `agy` CLI capability,
+> not a guaranteed part of the plugin contract — a plugin that *depends* on them
+> may silently lose that surface in the desktop app or in a future release.
+> Anything load-bearing belongs in `skills/`, which both surfaces are specified
+> to read.
+
+**Enabled by default — unless you ship it off.** A discovered plugin is active
+without any user action. To ship one switched off, declare it in `plugin.json`:
+
+```json
+{ "name": "<plugin-name>", "disabled": true }
+```
+
+The user's choice is recorded separately, in `config.json` under a `plugins` map
+keyed by the plugin's **directory name** (not its manifest `name`, if they
+differ):
+
+```json
+{ "plugins": { "<directory-name>": { "enabled": false } } }
+```
+
+`config.json` always wins over the manifest, so a user's toggle survives
+reinstalling or updating the plugin — Antigravity never writes the preference
+back into the plugin folder. A plugin with no `config.json` entry falls back to
+its own `disabled` declaration, which is how a plugin that ships off stays off
+until switched on. Users toggle from the settings UI or `agy plugin enable` /
+`agy plugin disable`. A disabled plugin still appears in the list, but none of
+its skills, rules, hooks, or MCP servers load.
+
+> [!NOTE]
+> `disabled` is an Antigravity field. The Agent Plugins schema is closed and does
+> **not** permit it in the portable root manifest — adding it there fails
+> validation. Ship `disabled` only in an Antigravity-specific plugin manifest, or
+> keep the plugin enabled and let users toggle it.
 
 **`rules/AGENTS.md`** — plugin-scoped standing context. Write rules only if the plugin needs
 behavior applied for its whole active session; a skill that should fire on a trigger belongs in

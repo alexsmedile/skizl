@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "skizl",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, and git-guard.",
   "author": {
     "name": "Alessandro Smedile",

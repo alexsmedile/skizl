@@ -27,6 +27,7 @@ Skills live once in `skills/` and are symlinked into both locations. Relative pa
 | `sym init` | `sym in` | Link all skills from `skills/` into `.claude/skills/` and `.agents/skills/` |
 | `sym migrate` | `sym out` | Move real dirs from `.claude/skills/` into `skills/` and re-link |
 | `sym status` | — | Show what's linked, what's missing |
+| `sym declare` | `sym json` | Write `.agents/skills.json` instead of symlinks (Antigravity) |
 
 ### `/skizl sym init` / `/skizl sym in`
 
@@ -130,6 +131,79 @@ for s in "$PROJECT/skills"/*/; do
   [ -e "$PROJECT/.claude/skills/$name" ] || echo "  missing: $name"
 done
 ```
+
+---
+
+### `/skizl sym declare` / `/skizl sym json`
+
+Use this when: registering skills with **Antigravity** without creating symlinks —
+on Windows, in a repo where git will not store symlinks, or when the registration
+should be committed so teammates get skills on clone.
+
+Antigravity reads a declarative pointer file instead of scanning a magic folder.
+It supports two, sharing one schema:
+
+| File | Registers |
+|------|-----------|
+| `.agents/skills.json` | skill directories |
+| `.agents/plugins.json` | plugin directories |
+
+Write the minimal form — one entry pointing at the existing `skills/` folder:
+
+```json
+{
+  "entries": [
+    { "path": "skills" }
+  ]
+}
+```
+
+Full schema:
+
+```json
+{
+  "inherits": [
+    { "path": "/path/to/shared/skills.json", "include_only": ["linter-.*"], "exclude": ["deprecated-.*"] }
+  ],
+  "entries": [
+    { "path": "tools/agents/skills", "exclude": ["experimental-.*"] },
+    { "path": "~/personal-skills" }
+  ]
+}
+```
+
+| Field | Required | Meaning |
+|-------|----------|---------|
+| `entries` | no | Directories to scan for skills (or plugins) |
+| `inherits` | no | Other config files to merge in, processed in listed order |
+| `path` | yes | Directory (in `entries`) or another config file (in `inherits`) |
+| `include_only` | no | Regex list — load only directories whose **name** matches one |
+| `exclude` | no | Regex list — skip directories whose **name** matches one |
+
+Path resolution:
+
+| Path starts with | Resolved against |
+|------------------|------------------|
+| `/` | absolute filesystem path |
+| `~/` | user's home directory |
+| anything else | repository root (the folder containing `.git`) |
+
+Steps:
+
+1. Confirm the target root — `.agents/` for a workspace, `~/.gemini/config/` for a global registration.
+2. If the file already exists, read it and **merge** a new entry rather than overwriting; report what was already declared.
+3. Write the file with an `entries` array pointing at the skill directories.
+4. Verify with `agy plugin validate <path>` (for plugins) or by confirming the skills appear in the host.
+
+> [!NOTE]
+> `include_only` and `exclude` match the **directory name**, not the path or the
+> skill's frontmatter `name`. A skill whose folder and `name:` differ is filtered
+> on the folder.
+
+> Declared configs sit *below* workspace discovery in Antigravity's loading
+> priority: workspace project → declared configs → global discovery
+> (`~/.gemini/config/`) → built-ins → global declared configs. A skill found by
+> plain discovery therefore wins over the same name declared here.
 
 ---
 
