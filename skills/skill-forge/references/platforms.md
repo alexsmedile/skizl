@@ -83,6 +83,9 @@ Both surfaces read the **workspace** path, so it is the portable answer:
 `.agents/plugins/<name>/` (also `_agents/plugins/`). Prefer it over either global
 root when a plugin should apply to one project.
 
+> [!CAUTION]
+> **Never run `agy plugin install` on a symlinked plugin.** It is destructive toward the link target. Either symlink/clone directly into the plugin scan directory OR install via CLI — never both.
+
 Skills and plugins can also be registered **declaratively**, without symlinks or
 moving anything, via `.agents/skills.json` and `.agents/plugins.json` (same
 schema: `entries`, `inherits`, `include_only`, `exclude`; paths resolve absolute

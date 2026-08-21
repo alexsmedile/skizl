@@ -227,6 +227,9 @@ git clone https://github.com/alexsmedile/skizl ~/.gemini/config/plugins/skizl
 git clone https://github.com/alexsmedile/skizl ~/.gemini/antigravity-cli/plugins/skizl
 ```
 
+> [!CAUTION]
+> **Never run `agy plugin install` on a symlinked plugin.** It is destructive toward the link target. Either symlink/clone directly into the plugin scan directory OR install via CLI — never both.
+
 The app and the CLI keep independent global roots, so a global install in one is
 not visible to the other. The workspace path is the only location both scan.
 

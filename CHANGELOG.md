@@ -18,6 +18,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
   - `skill-manager`: Compressed from 291 lines down to 56 lines (~80% reduction) using telegraphic micro-kernel routing and silent fast-lane execution format.
   - `skill-forge`: Compressed from 195 lines down to 69 lines (~65% reduction) with tabular operation/track matrices.
   - `skill-draft`: Compressed from 163 lines down to 48 lines (~70% reduction) into a compact single-pass decision engine.
+- **Antigravity Safeguards**: Documented critical warning against executing `agy plugin install` on a symlinked plugin target (destructive towards link target). Either symlink/clone directly or install, never both.
 
 ## [1.10.1] — 2026-08-17
 

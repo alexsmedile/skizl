@@ -214,3 +214,4 @@ Steps:
 - `migrate` only moves real directories — existing symlinks are untouched
 - After `migrate`, verify with `ls -la .claude/skills/` that all entries are symlinks (`->`)
 - If a skill lives outside the project entirely (e.g. `~/.claude/skills/`), use an absolute path as the symlink target since relative paths can't reach across unrelated directories
+- **Antigravity caution**: Never run `agy plugin install` on a symlinked plugin — it is destructive toward the link target. Either symlink/clone into the scan directory OR install via CLI, never both.
