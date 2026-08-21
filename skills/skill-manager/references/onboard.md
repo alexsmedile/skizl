@@ -53,6 +53,16 @@ Only `SKILL.md` is loaded automatically. Actions and knowledge are pulled on dem
 
 All operations are **non-destructive** — pack and unpack are copy operations. Nothing is ever deleted or modified.
 
+### Installation & Consumption Models
+
+Skills and plugins can be consumed in 4 distinct ways:
+1. **Local Library Symlinks** (`/skizl sym in`): Links a central library directly into project folders. Best for authors who want instant live edits across workspaces.
+2. **Git Clone / Checkouts**: Direct clone into `.agents/plugins/` or global scan paths. Best for standalone workspace checkouts.
+3. **Managed Plugin Install** (`/plugin install`, `agy plugin install`, `codex plugin add`, `npx skills add`): Handled by the host package manager. Turnkey and cached.
+4. **Declarative Pointers** (`/skizl sym declare` / `.agents/skills.json`): Pointers written to JSON without filesystem symlinks. Portable for Windows and team commits.
+
+*Rule: Pick one installation method per plugin. Never run a managed CLI installer on a symlinked folder.*
+
 ### Routing in any container
 
 Every container built by skizl follows the same routing:

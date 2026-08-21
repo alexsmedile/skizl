@@ -173,7 +173,21 @@ The script reads `SKILL.md` frontmatter to extract `name`, `allowed-tools`, and 
 
 ---
 
-## 💾 Install
+## 💾 Install & Consumption Models
+
+Users choose their installation method based on their workflow:
+
+| Method | How to Use | Best For | Advantage |
+|---|---|---|---|
+| **1. Local Library Symlinks** | `/skizl sym in` | Skill authors & central library maintainers (`skills_db`) | **Instant live edits**: edit once in your library, immediately active everywhere without reinstalling |
+| **2. Git Clone** | `git clone ... .agents/plugins/skizl` | Isolated workspace pinning, standalone checkouts | **Self-contained**: tracks a branch/tag, clean git updates |
+| **3. Managed Plugin Install** | `/plugin install`, `codex plugin add`, `npx skills add` | End-users, automated distribution, team setups | **Turnkey**: automatic caching, version pinning, and host registry |
+| **4. Declarative Pointers** | `/skizl sym declare` (`.agents/skills.json`) | Windows environments, committing configs without symlinks | **Clean**: portable repo-level registration |
+
+> [!TIP]
+> **Pick one method per skill/plugin.** Never run a managed CLI installer over a directory that is already symlinked to a local development workspace.
+
+### Host-Specific Instructions
 
 skizl ships a conformant [Agent Plugins 1.0.0](https://agent-plugins.org) manifest
 at its repo root — the open, vendor-neutral packaging standard maintained by AWS,
