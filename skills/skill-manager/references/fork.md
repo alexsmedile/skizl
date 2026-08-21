@@ -1,5 +1,7 @@
 # fork — Clone a skill as a personal variant
 
+Use this when: cloning a local or remote skill as a personal variant.
+
 Copies a skill into `skills/<new-name>/` and symlinks it, ready for local customization.
 The source can be a local path or a GitHub repo URL.
 

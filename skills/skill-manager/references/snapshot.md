@@ -1,5 +1,7 @@
 # snapshot — Version management for skills
 
+Use this when: creating a versioned snapshot, bumping semver, or inspecting version history.
+
 Manages versioning snapshots, version bumps, and history for skills.
 
 Three sub-commands: `snapshot`, `bump`, `history`.

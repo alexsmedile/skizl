@@ -1,5 +1,7 @@
 # publish — Prepare a skill for publication as a plugin
 
+Use this when: scaffolding plugin manifests to publish a skill across Claude, Codex, Cursor, and Antigravity.
+
 Scaffolds the complete plugin manifest structure on an existing skill folder, making it installable via the [Agent Plugins](https://agent-plugins.org) standard (ChatGPT, Codex, Cursor, GitHub Copilot, Kiro, VS Code), the Claude Code marketplace, Google Antigravity, and `npx skills` (skills only).
 
 **Portable first, vendor second.** The root `plugin.json` is the Agent Plugins manifest — the portable core that every conformant host reads. The `.claude-plugin/` and `.codex-plugin/` manifests are vendor fallbacks for runtimes that have not adopted the standard. Write the portable manifest first, then add only the sidecars the target hosts actually require.

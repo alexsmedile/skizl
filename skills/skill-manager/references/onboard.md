@@ -1,5 +1,7 @@
 # onboard
 
+Use this when: guiding a user through first-time skizl concepts and workflows.
+
 Walk the user through how skizl works and guide them to their first action.
 
 ## What to explain

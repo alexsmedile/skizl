@@ -1,5 +1,7 @@
 # doctor — Diagnose skill installation
 
+Use this when: diagnosing broken symlinks, missing files, or manifest version drift.
+
 Checks the health of installed skills and reports issues.
 
 ## Usage

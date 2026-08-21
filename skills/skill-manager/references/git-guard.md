@@ -1,5 +1,7 @@
 # git-guard — version drift protection via git hooks
 
+Use this when: installing, removing, or checking the pre-commit version consistency hook.
+
 Installs a `pre-commit` git hook that checks all version strings in the repo agree before every commit. Uses `core.hooksPath` so hooks are committed to the repo and apply to anyone who clones it.
 
 ## Commands

@@ -1,5 +1,7 @@
 # archive — Full skill folder backup
 
+Use this when: archiving the entire skill folder as a timestamped tarball backup.
+
 Archives the entire skill folder as a timestamped tarball. Unlike `snapshot` (which saves only `SKILL.md`), `archive` captures every file in the skill directory: `references/`, `scripts/`, `versions/`, `examples/`, etc.
 
 **Always manual** — never auto-triggered. Skizl may *suggest* it when a diff reveals large-scale changes.

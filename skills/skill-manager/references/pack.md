@@ -1,5 +1,7 @@
 # pack
 
+Use this when: packing multiple standalone skills into a container with progressive disclosure.
+
 Create a container from a set of standalone skills.
 
 **Usage:** `/skizl pack <container-name> <skill1> <skill2> ...`
@@ -91,7 +93,7 @@ Identify blocks that are identical or nearly identical across more than one of t
 
 For each shared block found:
 1. Create `references/<topic>.md` with that content
-2. In the files that contain it, replace the block with: `See [references/<topic>.md](references/<topic>.md)`
+2. In the files that contain it, replace the block with: `See references/<topic>.md`
 
 Do not modify the original source skills.
 
@@ -144,8 +146,8 @@ allowed-tools:
 
 ## References
 
-- [<command>](references/<command>.md)
-- [<shared-topic>](references/<shared-topic>.md)
+- `<command>` (`references/<command>.md`)
+- `<shared-topic>` (`references/<shared-topic>.md`)
 ```
 
 ## Step 6 — Copy pin.mjs

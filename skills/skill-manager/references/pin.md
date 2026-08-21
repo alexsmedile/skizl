@@ -1,5 +1,7 @@
 # pin
 
+Use this when: creating or removing redirect shortcut skills.
+
 Create a lightweight redirect skill that delegates to the container.
 
 **Usage:** `/skizl pin <container-path> <action> [--skills-dir <dir>]`

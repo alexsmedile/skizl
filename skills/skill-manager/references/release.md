@@ -1,5 +1,7 @@
 # release — Make a verified, atomic plugin release
 
+Use this when: making a verified, atomic plugin release.
+
 Runs a verified, atomic release workflow for a plugin repository. It coordinates version updates across all manifests, ensures git status hygiene, performs project checks, handles authentication preflights, pushes code and tags, and creates the GitHub Release.
 
 ## Usage

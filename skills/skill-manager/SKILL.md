@@ -44,7 +44,7 @@ Route enum strictly pinned to: `pack | unpack | pin | unpin | sym | list | diff 
 | `fork` / `archive` | clone, copy, branch / backup, tar, zip-full | Read [references/fork.md](references/fork.md) or [archive.md](references/archive.md) |
 | `publish` / `release` | scaffold, plugin / ship | Read [references/publish.md](references/publish.md) or [release.md](references/release.md) |
 | `git-guard` | version-guard, hook, drift | Read [references/git-guard.md](references/git-guard.md) -> Pre-commit hook |
-| `onboard` | help, intro, explain, tour, howto | Read [references/onboard.md](references/onboard.md) -> First-time guide |
+| `onboard` / `folders` | help, intro, explain / structure, convention | Read [references/onboard.md](references/onboard.md) or [folders.md](references/folders.md) |
 
 ## 3. Fast-Lane Execution & Report Box
 

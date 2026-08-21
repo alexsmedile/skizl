@@ -1,5 +1,7 @@
 # unpack
 
+Use this when: restoring container actions as standalone skills.
+
 Restore a container's actions as standalone skills.
 
 **Usage:** `/skizl unpack <container-path> [--dest <directory>]`

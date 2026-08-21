@@ -1,5 +1,7 @@
 # Folder Conventions
 
+Use this when: choosing standard folder conventions for skill containers.
+
 Standard subdirectory names for skill containers. Use these when they fit; add custom ones when the tool requires it — the names below are conventions, not constraints.
 
 ## Standard folders

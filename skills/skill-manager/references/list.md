@@ -1,5 +1,7 @@
 # list — Show installed skills
 
+Use this when: listing installed skills and their symlink states.
+
 Displays all skills across the three standard locations with their symlink state.
 
 ## Usage

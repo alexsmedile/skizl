@@ -1,5 +1,7 @@
 # diff — Compare skill versions
 
+Use this when: comparing two versions of a skill's SKILL.md.
+
 Compares two versions of a skill's `SKILL.md` side by side.
 
 ## Usage
