@@ -7,11 +7,11 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
 ![Agent Plugins](https://img.shields.io/badge/Agent%20Plugins-1.0.0-orange)
-![Version](https://img.shields.io/badge/version-1.10.1-green)
+![Version](https://img.shields.io/badge/version-1.11.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
-Pack. Version. Publish. One skill to manage them all.
+Pack. Version. Publish. Densify. One plugin to manage them all.
 
 ---
 
@@ -19,7 +19,7 @@ Pack. Version. Publish. One skill to manage them all.
 
 As your skill library grows, flat folders stop working. You end up with 20 loose `SKILL.md` files — no shared context, no version history, no way to publish, no way to know what's installed where.
 
-`skizl` is a cross-host skill lifecycle manager. It gives your skills the same workflows you'd expect from any serious package: organize into containers, wire up shortcuts, diff versions, snapshot before big changes, and publish to supported plugin formats through an agent workflow.
+`skizl` is a cross-host skill lifecycle manager. It gives your skills the same workflows you'd expect from any serious package: organize into containers, wire up shortcuts, diff versions, snapshot before big changes, compress verbose skills into high-density micro-kernels, and publish to supported plugin formats through an agent workflow.
 
 ---
 
@@ -59,16 +59,13 @@ npx skills add alexsmedile/skizl
 Do not run `skizl ...` in a shell. In Codex, invoke the installed `skizl:skill-manager`
 skill and request the same lifecycle action in natural language.
 
-### Build skills with Skill Forge
+### Author, Harden & Densify Skills
 
-This plugin also includes `skill-forge`, the full authoring and audit workflow for skills that
-need branches, progressive disclosure, a fresh-context review gate, or measurable evals. It
-targets portable Agent Skills by default and has explicit profiles for Claude Code, Codex,
-Cursor, Gemini CLI, and skizl.
-
-Use `skill-draft` for a small one-file skill. Use `skill-forge` to design a non-trivial skill,
-harden a validated draft, or audit and debloat an existing one. Versioning and publishing then
-hand off to `skill-manager`; installing or symlinking remains an explicit deployment action.
+This plugin includes a cohesive 4-skill suite:
+- `skill-manager`: Full lifecycle management (pack, unpack, pin, sym, diff, snapshot, bump, publish, release, git-guard).
+- `skill-forge`: Full authoring and audit workflow with routed tracks, architecture workshop, fresh-context review gate, and evals.
+- `skill-draft`: Fast single-pass draft engine for small single-file skills.
+- `skill-densify`: High-density 5-layer micro-kernel compressor that transforms verbose conversational skills into ≤65-line kernels with decision matrices and mechanical script offloading.
 
 Each run picks an **operation** — `Create` (no usable skill yet), `Update` (a completed skill
 needs a behavioral delta), or `Resume` (an unfinished run continues from its recorded state).

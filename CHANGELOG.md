@@ -7,6 +7,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.11.0] — 2026-08-21
+
+### Added
+- **`skill-densify` skill**: High-density 5-layer micro-kernel compressor that transforms verbose conversational skills into ≤65-line kernels with compact decision tables, mechanical script offloading, silent fast-lanes, and progressive disclosure boundaries. Includes `densify.py` automated density analyzer and token budget auditor.
+- **`scripts/skizl-ops.sh`**: Deterministic mechanical helper script providing single-turn CLI execution for `sym-status`, `doctor`, `diffsum`, and `guard-check` (saving up to 96% tokens on exploration turns).
+
+### Changed
+- **Micro-Kernel Refactoring across all bundle skills**:
+  - `skill-manager`: Compressed from 291 lines down to 56 lines (~80% reduction) using telegraphic micro-kernel routing and silent fast-lane execution format.
+  - `skill-forge`: Compressed from 195 lines down to 69 lines (~65% reduction) with tabular operation/track matrices.
+  - `skill-draft`: Compressed from 163 lines down to 48 lines (~70% reduction) into a compact single-pass decision engine.
+
 ## [1.10.1] — 2026-08-17
 
 ### Added

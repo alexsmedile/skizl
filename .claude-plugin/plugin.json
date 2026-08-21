@@ -1,7 +1,7 @@
 {
   "name": "skizl",
-  "version": "1.10.1",
-  "description": "Full lifecycle manager for agentic skills — pack, unpack, pin, sym, diff, snapshot, bump, history, archive, fork, publish, and git-guard.",
+  "version": "1.11.0",
+  "description": "Full lifecycle manager and optimizer for agentic skills — author, densify into micro-kernels, pack, unpack, pin, sym, diff, snapshot, bump, archive, fork, publish, and git-guard.",
   "author": {
     "name": "Alessandro Smedile"
   },
@@ -12,6 +12,9 @@
     "skills",
     "skill-container",
     "skill-management",
+    "micro-kernel",
+    "compression",
+    "densify",
     "pack",
     "unpack",
     "claude-code",
