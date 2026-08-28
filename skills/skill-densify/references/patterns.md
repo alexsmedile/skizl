@@ -6,7 +6,7 @@ Use this when: refactoring an existing skill into a high-density, token-efficien
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 1. Telegraphic Micro-Kernel (Prose Compression & Matrices)   │  <= 55-65 lines in SKILL.md
+│ 1. Telegraphic Micro-Kernel (Prose Compression & Matrices)   │  body sized to its branches
 ├─────────────────────────────────────────────────────────────┤
 │ 2. Mechanical Script Offloading (Discovery -> Scripts)      │  Single-turn CLI tools in scripts/
 ├─────────────────────────────────────────────────────────────┤

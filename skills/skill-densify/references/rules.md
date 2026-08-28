@@ -41,10 +41,11 @@ Unlike human summarization (which can smooth away nuance), agent skills are **st
 
 ## 4. Density Checklist
 
-- [ ] Front-door `SKILL.md` is ≤ 65 lines.
+- [ ] Front-door `SKILL.md` body sits in `COMPACT`/`NORMAL`, or is `LARGE`/`REVIEW` with tables + references carrying real branches.
 - [ ] Core workflow is represented as a compact decision table or pipeline.
 - [ ] Discovery actions use deterministic helper scripts in `scripts/`.
 - [ ] Routine executions use silent fast-lane execution.
 - [ ] Completion reports use a standard left-border text box.
-- [ ] Situational logic is moved to `references/*.md` with `Use this when:` activation rules.
+- [ ] Situational logic is moved to `references/*.md` with `Use this when:` activation rules — and every run's core path stays inline.
+- [ ] Every reference link resolves to a file that exists.
 - [ ] All CLI flags, parameters, and done conditions remain exact and unambiguous.

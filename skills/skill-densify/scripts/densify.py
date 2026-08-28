@@ -20,6 +20,65 @@ FILLER_PATTERNS = [
     (r"\b(here is a|here is the|in this section|the following is)\b", "Output wrapper / preamble"),
 ]
 
+# Size bands, measured on body lines. These are calibrated against real skill
+# libraries: skills that have already applied progressive disclosure cluster
+# around a 120-150 line body, so a single low ceiling flags healthy skills.
+# Size alone is never a defect -- it is a prompt to check whether the content
+# is structured and whether branch-only detail has been disclosed.
+BANDS = [
+    (60, "COMPACT", "Single-purpose kernel."),
+    (150, "NORMAL", "Typical for a routed skill with references."),
+    (300, "LARGE", "Check for branch-only detail that could be disclosed."),
+    (float("inf"), "REVIEW", "Likely several skills, or reference material inlined."),
+]
+
+
+def classify(body_lines, structured, ref_count, unresolved):
+    """Judge a skill on structure, not on line count alone."""
+    for ceiling, band, note in BANDS:
+        if body_lines <= ceiling:
+            break
+
+    # A large skill that is densely structured is doing its job; an
+    # unstructured one of the same size is the actual problem.
+    if body_lines > 150:
+        density = structured / body_lines if body_lines else 0
+        if density >= 0.15 and ref_count:
+            note = "Structured and disclosed -- size is carrying real branches."
+        elif density < 0.08:
+            note = "Mostly prose -> convert forks to decision tables first."
+        else:
+            note = "Check for branch-only detail that could be disclosed."
+
+    # Over-disclosure: small only because the operational content was pushed
+    # out of reach. A working 150-line skill beats a 60-line one whose steps
+    # live behind links the agent must chase mid-task.
+    if body_lines <= 60 and ref_count >= 3:
+        band, note = "THIN", "Small but heavily disclosed -> inline what every run needs."
+    return band, note
+
+
+def strip_fences(body):
+    """Drop fenced code blocks -- links inside them are sample output, not links."""
+    out, in_fence = [], False
+    for line in body:
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if not in_fence:
+            out.append(line)
+    return out
+
+
+def broken_links(skill_md, body):
+    """Reference links in SKILL.md that point at files which do not exist."""
+    missing = []
+    for target in re.findall(r"\]\((?!https?:)([^)#]+\.md)\)", "\n".join(strip_fences(body))):
+        if not (skill_md.parent / target).exists():
+            missing.append(target)
+    return sorted(set(missing))
+
+
 def analyze_skill(target_path):
     target = Path(target_path).resolve()
     if target.is_dir():
@@ -34,14 +93,31 @@ def analyze_skill(target_path):
     text = skill_md.read_text(encoding="utf-8")
     lines = text.splitlines()
     total_lines = len(lines)
-    
+
+    # Measure the body only. Frontmatter is the trigger surface -- a rich
+    # description is what makes a skill fire correctly, so counting it would
+    # penalize the one part that should never be compressed.
+    body = lines
+    fm_lines = 0
+    if lines and lines[0].strip() == "---":
+        for i in range(1, len(lines)):
+            if lines[i].strip() == "---":
+                body, fm_lines = lines[i + 1:], i + 1
+                break
+    body_lines = len(body)
+
     # Estimate tokens (~4 chars per token)
     est_tokens = len(text) // 4
     
-    # Check tables & pipelines
-    table_lines = sum(1 for line in lines if line.strip().startswith("|") and line.strip().endswith("|"))
-    table_ratio = (table_lines / total_lines * 100) if total_lines > 0 else 0
-    pipeline_lines = sum(1 for line in lines if " → " in line or " -> " in line)
+    # Check tables & pipelines (body only -- frontmatter holds neither)
+    table_lines = sum(1 for line in body if line.strip().startswith("|") and line.strip().endswith("|"))
+    structured = table_lines + sum(1 for line in body if " → " in line or " -> " in line)
+    table_ratio = (table_lines / body_lines * 100) if body_lines > 0 else 0
+    pipeline_lines = sum(1 for line in body if " → " in line or " -> " in line)
+
+    # Progressive disclosure already applied?
+    ref_count = len(list(skill_md.parent.glob("references/*.md")))
+    has_scripts = any(skill_md.parent.glob("scripts/*"))
 
     # Scan for filler
     findings = []
@@ -50,15 +126,22 @@ def analyze_skill(target_path):
             if re.search(pattern, line, re.IGNORECASE):
                 findings.append((idx, label, line.strip()))
 
+    unresolved = broken_links(skill_md, body)
+    band, verdict = classify(body_lines, structured, ref_count, unresolved)
+
     print("┌─ SKIZL · densify analysis")
     print(f"│ target:    {skill_md.name} ({skill_md.parent.name})")
-    print(f"│ volume:    {total_lines} lines (~{est_tokens} tokens)")
-    print(f"│ density:   {table_lines} table lines ({table_ratio:.1f}%), {pipeline_lines} pipeline line(s)")
-    
-    if total_lines > 70:
-        print(f"│ [WARN]     Micro-kernel exceeds budget (>65 lines) -> extract references")
-    else:
-        print(f"│ [PASS]     Micro-kernel within budget (<= 65 lines)")
+    print(f"│ volume:    {body_lines} body lines + {fm_lines} frontmatter (~{est_tokens} tokens)")
+    print(f"│ density:   {table_lines} table lines ({table_ratio:.1f}%), {pipeline_lines} pipeline line(s)"
+          f"{f', {ref_count} reference(s)' if ref_count else ''}")
+    print(f"│ [{band}]{' ' * max(1, 10 - len(band))}{verdict}")
+
+    if unresolved:
+        print(f"│ [BROKEN]   {len(unresolved)} reference link(s) point at missing files:")
+        for target in unresolved[:4]:
+            print(f"│   -> {target}")
+    elif ref_count:
+        print(f"│ [PASS]     All reference links resolve")
 
     if findings:
         print(f"│ [DETECT]   {len(findings)} conversational filler / wrapper phrase(s):")
