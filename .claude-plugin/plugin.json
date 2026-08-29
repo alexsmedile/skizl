@@ -1,6 +1,6 @@
 {
   "name": "skizl",
-  "version": "1.11.0",
+  "version": "1.11.1",
   "description": "Full lifecycle manager and optimizer for agentic skills — author, densify into micro-kernels, pack, unpack, pin, sym, diff, snapshot, bump, archive, fork, publish, and git-guard.",
   "author": {
     "name": "Alessandro Smedile"

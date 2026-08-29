@@ -179,7 +179,9 @@ Each harness keeps skills in its own place:
 
 ```bash
 for dir in ~/.claude/skills ~/.claude/agents ~/.agents/skills \
-           ~/.config/opencode/skills ~/.codex/skills; do
+           ~/.config/opencode/skills ~/.codex/skills \
+           ~/.gemini/config/plugins ~/.gemini/antigravity-cli/plugins \
+           ~/.gemini/antigravity/skills; do
   [ -d "$dir" ] || continue
   find "$dir" -maxdepth 1 -type l ! -exec test -e {} \; -print 2>/dev/null \
     | while read -r link; do

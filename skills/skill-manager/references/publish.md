@@ -1,12 +1,12 @@
 # publish — Prepare a skill for publication as a plugin
 
-Use this when: scaffolding plugin manifests to publish a skill across Claude, Codex, Cursor, and Antigravity.
+Use this when: scaffolding package/plugin manifests to publish a skill across Claude, Codex, Cursor, Antigravity, and Agent Skills hosts.
 
-Scaffolds the complete plugin manifest structure on an existing skill folder, making it installable via the [Agent Plugins](https://agent-plugins.org) standard (ChatGPT, Codex, Cursor, GitHub Copilot, Kiro, VS Code), the Claude Code marketplace, Google Antigravity, and `npx skills` (skills only).
+Scaffolds the complete manifest structure on an existing skill folder, making it publishable via the [Agent Plugins](https://agent-plugins.org) standard (ChatGPT, Codex, Cursor, GitHub Copilot, Kiro, VS Code), the Claude Code marketplace, Google Antigravity plugin surfaces, and `npx skills` / direct Agent Skills roots.
 
 **Portable first, vendor second.** The root `plugin.json` is the Agent Plugins manifest — the portable core that every conformant host reads. The `.claude-plugin/` and `.codex-plugin/` manifests are vendor fallbacks for runtimes that have not adopted the standard. Write the portable manifest first, then add only the sidecars the target hosts actually require.
 
-All runtimes share the same `skills/`, `agents/`, and `hooks/` at the plugin root — no duplication, no runtime-specific trees. Note that only `skills/` (and `mcp.json`) are covered by the standard; `agents/`, `commands/`, and `hooks/` are vendor surface and do not travel between hosts.
+Portable package/plugin runtimes share the same `skills/` at the package root — no duplicated runtime-specific skill trees. Note that only `skills/` (and `mcp.json`) are covered by the standard; `agents/`, `commands/`, and `hooks/` are vendor surface and do not travel between hosts. For day-to-day installation from a skill library, flatten skills into the host's canonical skill root (`<skill-root>/<skill-name>/SKILL.md`) rather than relying on nested plugin-bundle discovery.
 
 ## Usage
 
@@ -269,6 +269,11 @@ Skill discovery is fixed and shallow: an immediate child of `skills/` counts as 
 contains `SKILL.md`. Clients do not recurse deeper, and an invalid skill is skipped without
 affecting the others.
 
+This same shallow rule is the practical installation contract for skill-library installs: expose
+each skill as a direct child of the harness skill root (`.agents/skills/<name>/SKILL.md`,
+`~/.gemini/config/skills/<name>/SKILL.md`, etc.). Plugin directories package bundles; they are
+not a universal substitute for top-level `/skill` discovery.
+
 > **Antigravity note.** Antigravity previously used its own root manifest
 > (`$schema: https://antigravity.google/schemas/v1/plugin.json`). Since only one `$schema` value
 > can occupy the field, the Agent Plugins schema takes it and Antigravity data moves under
@@ -276,6 +281,9 @@ affecting the others.
 > convergence is expected — but **verify the Antigravity install path still resolves** before
 > relying on it for a release.
 > Antigravity auto-discovers `skills/<name>/SKILL.md`, `agents/*.md`, `commands/*.md`, and `rules/*.md` inside the plugin folder, plus root `hooks.json` and `mcp_config.json`. It does NOT read `.claude-plugin/`, `.codex-plugin/`, or `hooks/` — those are inert for Antigravity.
+> For Alessandro's central skills library, prefer direct global app installs under
+> `~/.gemini/config/skills/<name>/SKILL.md` when `/skill` autocomplete reliability matters. Keep
+> plugin install paths for bundle validation/distribution.
 #### Antigravity components (optional — scaffold only when the plugin ships them)
 
 Antigravity auto-loads four things from the plugin root. Each is Antigravity's own schema at
@@ -532,10 +540,14 @@ Next steps:
     ln -s ../../<relative-path-to-repo> .agents/plugins/<repo-name>
 
   Install (Antigravity — global, all workspaces):
-    # Antigravity 2.0 desktop:
+    # Antigravity 2.0 desktop (restart app after adding):
     git clone https://github.com/<username>/<repo-name> ~/.gemini/config/plugins/<repo-name>
+    # or symlink local dev repo:
+    ln -s "$(pwd)" ~/.gemini/config/plugins/<repo-name>
     # agy CLI (separate state tree):
     git clone https://github.com/<username>/<repo-name> ~/.gemini/antigravity-cli/plugins/<repo-name>
+    # or symlink local dev repo:
+    ln -s "$(pwd)" ~/.gemini/antigravity-cli/plugins/<repo-name>
 
   New clones — activate git-guard:
     git config core.hooksPath scripts/hooks
@@ -582,10 +594,11 @@ Next steps:
 - Verify with `agy plugin validate <path>` — it prints every component class it processed, and errors on a missing or unparseable `plugin.json`
 - Install locations (Antigravity auto-scans these). **Antigravity is two products** — the 2.0 desktop app and the `agy` CLI keep separate state trees, and the published plugin docs sit under the 2.0 section, so their paths describe the desktop app:
   - Workspace (**both surfaces**): `<workspace>/.agents/plugins/<plugin-name>/` or `<workspace>/_agents/plugins/<plugin-name>/`
-  - Global, Antigravity 2.0 desktop: `~/.gemini/config/plugins/<plugin-name>/`
+  - Global, Antigravity 2.0 desktop: `~/.gemini/config/plugins/<plugin-name>/` (scanned on app startup; restart Antigravity to pick up new or changed plugins)
   - Global, `agy` CLI: `~/.gemini/antigravity-cli/plugins/<plugin-name>/`
   - Prefer the workspace path when the plugin is project-scoped — it is the one location both surfaces read.
   - The 2.0 desktop also exposes bundled plugins through its **Customizations** page.
+- Direct symlinking into both `~/.gemini/config/plugins/` and `~/.gemini/antigravity-cli/plugins/` is safe and ideal for live development across surfaces, but **never run `agy plugin install` over a symlink** (as the install command is destructive toward the symlink target).
 - Coexistence note: `.agents/plugins/` is also where the Codex `marketplace.json` **file** lives. Antigravity only picks up **directories** containing a `plugin.json`, so the Codex marketplace file is ignored — they share the dir safely. In a consuming workspace, an installed plugin folder sits at `.agents/plugins/<name>/` right next to any Codex marketplace file
 - The root `plugin.json` is inert for Claude Code (which reads `.claude-plugin/plugin.json`) and Codex (`.codex-plugin/plugin.json`) — no conflicts
 

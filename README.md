@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
 ![Agent Plugins](https://img.shields.io/badge/Agent%20Plugins-1.0.0-orange)
-![Version](https://img.shields.io/badge/version-1.11.0-green)
+![Version](https://img.shields.io/badge/version-1.11.1-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 
@@ -128,7 +128,7 @@ Benefits:
 | `diff` | compare, changes | Compare two versions of a skill's `SKILL.md` |
 | `doctor` | check, diagnose | Diagnose broken symlinks, missing files, orphaned entries |
 | `fork` | clone, copy | Clone a skill (local or GitHub URL) as a personal variant |
-| `publish` | scaffold | Scaffold plugin manifests for Claude, Codex + Antigravity |
+| `publish` | scaffold | Scaffold package/plugin manifests; keep runtime skills as direct `skills/<name>/SKILL.md` folders |
 | `release` | ship | Make a verified, atomic plugin release |
 | `snapshot` | save, checkpoint, freeze | Save `SKILL.md` as `versions/SKILL@x.y.z.md` |
 | `bump` | version, semver, increment | Increment `version:` in frontmatter (patch/minor/major) |
@@ -154,7 +154,7 @@ skizl covers the full skill lifecycle in four phases:
 
 **Version** — `snapshot` saves the current `SKILL.md` as `versions/SKILL@x.y.z.md` before changes. `bump` increments the version field and offers to snapshot. `diff` compares two versions — and offers to snapshot if local is ahead. `history` lists all snapshots with `--show` and `--diff` flags. `archive` tarballs the whole skill folder when a diff shows large-scale changes.
 
-**Distribute** — `fork` clones a skill from a local path or GitHub URL. `publish` scaffolds all plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, root `plugin.json` for Antigravity) from your `SKILL.md` frontmatter in one pass. `release` executes an atomic, verified, and resumable plugin release to GitHub and Codex.
+**Distribute** — `fork` clones a skill from a local path or GitHub URL. `publish` scaffolds package/plugin manifests (`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, root `plugin.json`) from your `SKILL.md` frontmatter in one pass while preserving the portable runtime surface: direct `skills/<name>/SKILL.md` folders. `release` executes an atomic, verified, and resumable plugin release to GitHub and Codex.
 
 ---
 
@@ -179,13 +179,18 @@ Users choose their installation method based on their workflow:
 
 | Method | How to Use | Best For | Advantage |
 |---|---|---|---|
-| **1. Local Library Symlinks** | `/skizl sym in` | Skill authors & central library maintainers (`skills_db`) | **Instant live edits**: edit once in your library, immediately active everywhere without reinstalling |
+| **1. Canonical Skill Roots / Local Library Symlinks** | `/skizl sym in` or a host installer that writes `<skill-name>/SKILL.md` directly under the skill root | Skill authors & central library maintainers (`skills_db`) | **Reliable discovery**: direct skill folders work across hosts; local symlinks keep edits live |
 | **2. Git Clone** | `git clone ... .agents/plugins/skizl` | Isolated workspace pinning, standalone checkouts | **Self-contained**: tracks a branch/tag, clean git updates |
 | **3. Managed Plugin Install** | `/plugin install`, `codex plugin add`, `npx skills add` | End-users, automated distribution, team setups | **Turnkey**: automatic caching, version pinning, and host registry |
 | **4. Declarative Pointers** | `/skizl sym declare` (`.agents/skills.json`) | Windows environments, committing configs without symlinks | **Clean**: portable repo-level registration |
 
 > [!TIP]
 > **Pick one method per skill/plugin.** Never run a managed CLI installer over a directory that is already symlinked to a local development workspace.
+
+For day-to-day skill-library installs, prefer direct skill folders in the host's
+canonical skill root (`.agents/skills/`, `.claude/skills/`, `~/.gemini/config/skills/`,
+etc.). Plugin directories remain useful for validation and distribution, but do
+not assume a `/skill` picker recursively discovers nested `plugins/<bundle>/skills/*`.
 
 ### Host-Specific Instructions
 
@@ -227,17 +232,30 @@ Or add the marketplace and browse interactively with `codex /plugins`.
 
 ### Google Antigravity
 
-Antigravity ships both a CLI and an app. Plugins are discovered from a scan
-directory, so cloning or symlinking into one installs the plugin:
+For day-to-day skill-library use, install direct skill folders into the app's
+canonical skill root so `/skill` discovery sees each skill by name:
 
 ```bash
-# workspace-level (this workspace only) — read by BOTH the app and the CLI
+# global — Antigravity desktop app skill picker
+mkdir -p ~/.gemini/config/skills
+ln -s /path/to/skizl/skills/skill-manager ~/.gemini/config/skills/skill-manager
+ln -s /path/to/skizl/skills/skill-forge ~/.gemini/config/skills/skill-forge
+ln -s /path/to/skizl/skills/skill-draft ~/.gemini/config/skills/skill-draft
+ln -s /path/to/skizl/skills/skill-densify ~/.gemini/config/skills/skill-densify
+```
+
+Antigravity also ships both a CLI and an app plugin surface. Use the plugin scan
+directories below only when validating or distributing the whole plugin bundle,
+not as the preferred `/skill` discovery install:
+
+```bash
+# workspace-level plugin bundle (this workspace only) — read by BOTH the app and the CLI
 git clone https://github.com/alexsmedile/skizl .agents/plugins/skizl
 
-# global — Antigravity 2.0 desktop app
+# global plugin bundle — Antigravity 2.0 desktop app
 git clone https://github.com/alexsmedile/skizl ~/.gemini/config/plugins/skizl
 
-# global — agy CLI (separate state tree from the app)
+# global plugin bundle — agy CLI (separate state tree from the app)
 git clone https://github.com/alexsmedile/skizl ~/.gemini/antigravity-cli/plugins/skizl
 ```
 
@@ -245,7 +263,9 @@ git clone https://github.com/alexsmedile/skizl ~/.gemini/antigravity-cli/plugins
 > **Never run `agy plugin install` on a symlinked plugin.** It is destructive toward the link target. Either symlink/clone directly into the plugin scan directory OR install via CLI — never both.
 
 The app and the CLI keep independent global roots, so a global install in one is
-not visible to the other. The workspace path is the only location both scan.
+not visible to the other. The workspace path is the only plugin location both
+scan. Do not assume nested plugin skills appear as top-level `/skill` entries;
+flatten skills into `~/.gemini/config/skills/` when discoverability matters.
 
 ### npx skills
 

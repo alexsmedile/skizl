@@ -39,3 +39,7 @@ skills/writing-great-skills/
 /TODO.md
 /todo.md
 /articles/
+
+# Local-only: backups, snapshots, scratch — never committed
+_snapshots/
+_local/

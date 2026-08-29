@@ -1,6 +1,6 @@
 # sym — Symlink skill installation
 
-Ensures skills in `skills/` are registered into `.claude/skills/` and `.agents/skills/` as portable relative symlinks.
+Ensures skills in `skills/` are registered into harness skill roots as direct `<skill-name>/SKILL.md` folders, usually via portable relative symlinks for project-local installs.
 
 ## Convention
 
@@ -18,6 +18,8 @@ Ensures skills in `skills/` are registered into `.claude/skills/` and `.agents/s
 
 Skills live once in `skills/` and are symlinked into both locations. Relative paths survive the project being moved, renamed, or cloned.
 
+For global installs from a central library, prefer the host's canonical skill root rather than a nested plugin bundle. Antigravity's app skill picker should receive direct folders under `~/.gemini/config/skills/<name>/`; keep `~/.gemini/antigravity-cli/plugins/` for plugin validation/distribution, not as the default skill-library install target.
+
 ---
 
 ## Commands
@@ -27,7 +29,7 @@ Skills live once in `skills/` and are symlinked into both locations. Relative pa
 | `sym init` | `sym in` | Link all skills from `skills/` into `.claude/skills/` and `.agents/skills/` |
 | `sym migrate` | `sym out` | Move real dirs from `.claude/skills/` into `skills/` and re-link |
 | `sym status` | — | Show what's linked, what's missing |
-| `sym declare` | `sym json` | Write `.agents/skills.json` instead of symlinks (Antigravity) |
+| `sym declare` | `sym json` | Write `.agents/skills.json` instead of symlinks when declarative registration is explicitly needed |
 
 ### `/skizl sym init` / `/skizl sym in`
 
@@ -136,12 +138,13 @@ done
 
 ### `/skizl sym declare` / `/skizl sym json`
 
-Use this when: registering skills with **Antigravity** without creating symlinks —
-on Windows, in a repo where git will not store symlinks, or when the registration
-should be committed so teammates get skills on clone.
+Use this when: registering skills without creating symlinks — on Windows, in a
+repo where git will not store symlinks, or when the registration should be
+committed so teammates get skills on clone.
 
-Antigravity reads a declarative pointer file instead of scanning a magic folder.
-It supports two, sharing one schema:
+Some Agent Skills hosts can read a declarative pointer file in addition to
+scanning the canonical skill root. Antigravity supports two files, sharing one
+schema:
 
 | File | Registers |
 |------|-----------|
@@ -190,7 +193,7 @@ Path resolution:
 
 Steps:
 
-1. Confirm the target root — `.agents/` for a workspace, `~/.gemini/config/` for a global registration.
+1. Confirm the target root — `.agents/` for a workspace, `~/.gemini/config/` for a global Antigravity registration.
 2. If the file already exists, read it and **merge** a new entry rather than overwriting; report what was already declared.
 3. Write the file with an `entries` array pointing at the skill directories.
 4. Verify with `agy plugin validate <path>` (for plugins) or by confirming the skills appear in the host.
@@ -214,4 +217,4 @@ Steps:
 - `migrate` only moves real directories — existing symlinks are untouched
 - After `migrate`, verify with `ls -la .claude/skills/` that all entries are symlinks (`->`)
 - If a skill lives outside the project entirely (e.g. `~/.claude/skills/`), use an absolute path as the symlink target since relative paths can't reach across unrelated directories
-- **Antigravity caution**: Never run `agy plugin install` on a symlinked plugin — it is destructive toward the link target. Either symlink/clone into the scan directory OR install via CLI, never both.
+- **Antigravity caution**: Prefer direct skill folders in `~/.gemini/config/skills/` for library skills. Never run `agy plugin install` on a symlinked plugin — it is destructive toward the link target. Either symlink/clone into the scan directory OR install via CLI, never both.

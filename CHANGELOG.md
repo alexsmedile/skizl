@@ -7,6 +7,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.11.1] — 2026-08-21
+
+### Added
+- **Antigravity Multi-Surface Symlink Guidance**: Documented explicit setup and commands for symlinking local plugin development repositories into both Antigravity 2.0 Desktop (`~/.gemini/config/plugins/<name>`) and `agy` CLI (`~/.gemini/antigravity-cli/plugins/<name>`).
+- **Antigravity Desktop Startup Discovery Notes**: Clarified that Antigravity Desktop scans `~/.gemini/config/plugins/` on launch and requires an application restart to discover newly installed or updated plugins.
+
+### Fixed
+- **`doctor` User-Scope Scan**: Added Antigravity roots (`~/.gemini/config/plugins`, `~/.gemini/antigravity-cli/plugins`, and `~/.gemini/antigravity/skills`) to the `doctor --scope user` dead-symlink inspection loop.
+
 ## [1.11.0] — 2026-08-21
 
 ### Added

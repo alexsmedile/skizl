@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Full lifecycle manager and optimizer for agentic skills — author, densify into micro-kernels, pack, unpack, pin, sym, diff, snapshot, bump, archive, fork, publish, and git-guard.",
-    "version": "1.11.0"
+    "version": "1.11.1"
   },
   "plugins": [
     {
       "name": "skizl",
       "source": "./",
       "description": "Full lifecycle manager and optimizer for agentic skills — author, densify into micro-kernels, pack, unpack, pin, sym, diff, snapshot, bump, archive, fork, publish, and git-guard.",
-      "version": "1.11.0",
+      "version": "1.11.1",
       "author": {
         "name": "Alessandro Smedile"
       },

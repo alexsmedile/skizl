@@ -76,7 +76,7 @@ A path documented for one is not automatically read by the other.
 
 | Surface | Global plugin root | Notes |
 |---|---|---|
-| Antigravity 2.0 desktop | `~/.gemini/config/plugins/` | as documented; app state lives in `~/.gemini/antigravity/` with its own `skills/` |
+| Antigravity 2.0 desktop | `~/.gemini/config/plugins/` | as documented (scanned on launch, requires restart for new plugins); app state lives in `~/.gemini/antigravity/` with its own `skills/` |
 | `agy` CLI | `~/.gemini/antigravity-cli/plugins/` | where CLI installs actually land; separate `skills/` tree |
 
 Both surfaces read the **workspace** path, so it is the portable answer:
