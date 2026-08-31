@@ -32,7 +32,7 @@ Unlike human summarization (which can smooth away nuance), agent skills are **st
 | Preamble ("It is important to remember...") | Cut preamble; state the operational rule directly. |
 | Output Framing ("Here is the result of...") | Strip wrapper; emit only the standardized box or artifact. |
 | Explaining rationale ("We do this because...") | Keep only the constraint; move rationale to references if essential. |
-| Negation ("Do not forget to avoid doing X...") | State the positive operational target ("Perform X with Y"). |
+| Convoluted negation ("Avoid forgetting to not...") | State direct negative constraint ("Do NOT edit files during review"). |
 | Conversational transitions ("Now that we have...") | Use tabular sequence or step numbers. |
 | Weak modal verbs ("You should try to ensure...") | Use direct imperative verbs ("Inspect", "Validate", "Emit"). |
 | Generic advice ("Write clean code", "Be careful") | Delete completely (zero behavioral impact). |
@@ -42,10 +42,15 @@ Unlike human summarization (which can smooth away nuance), agent skills are **st
 ## 4. Density Checklist
 
 - [ ] Front-door `SKILL.md` body sits in `COMPACT`/`NORMAL`, or is `LARGE`/`REVIEW` with tables + references carrying real branches.
+- [ ] Description carries explicit trigger phrases for turn-0 classification.
 - [ ] Core workflow is represented as a compact decision table or pipeline.
+- [ ] Direct negative constraints ("DO NOT") are used for strict boundaries instead of polite prose.
+- [ ] Tool API surfaces use a single consolidated parameter-annotated CLI palette.
+- [ ] Script/CLI parameters auto-resolve identity defaults (`--by`, `--operator`).
 - [ ] Discovery actions use deterministic helper scripts in `scripts/`.
-- [ ] Routine executions use silent fast-lane execution.
+- [ ] Routine executions use silent fast-lane execution with non-mutating preview (`--peek`, `--dry-run`).
 - [ ] Completion reports use a standard left-border text box.
-- [ ] Situational logic is moved to `references/*.md` with `Use this when:` activation rules — and every run's core path stays inline.
+- [ ] Situational logic is moved to `references/*.md` with `Use this when:` activation rules.
 - [ ] Every reference link resolves to a file that exists.
 - [ ] All CLI flags, parameters, and done conditions remain exact and unambiguous.
+
