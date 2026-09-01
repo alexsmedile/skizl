@@ -7,14 +7,21 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
-## [1.11.1] — 2026-08-21
+## [1.11.1] — 2026-09-01
 
 ### Added
+- **`skill-densify` Micro-Kernel Enhancements**:
+  - **Anti-Lecturing Heuristics & `docs/` vs `skills/` Law**: Added strict operational boundary separating human narrative/background documentation (`docs/`) from agent operational syntax matrices (`skills/`), eliminating textbook lecturing and definition preambles.
+  - **Expansion Handoff Contracts**: Formalized companion skill delegation tables to prevent single-responsibility kernel bloat when handling peripheral operations.
+  - **Direct Negative Constraints**: Prioritized direct `"DO NOT"` prohibitions and prompt-leak prevention rules.
+  - **`densify.py` Analyzer Upgrades**: Added automated detection for pedagogical lecturing and textbook fluff, validation of direct negative constraints and expansion handoffs, and updated `OPTIMAL` density classification score for structured & disclosed micro-kernels.
+  - **Graduated Size Bands**: Calibrated `THIN`, `COMPACT`, `NORMAL`, `LARGE`, `REVIEW`, and `OPTIMAL` thresholds to evaluate structural density rather than arbitrary line counts.
 - **Antigravity Multi-Surface Symlink Guidance**: Documented explicit setup and commands for symlinking local plugin development repositories into both Antigravity 2.0 Desktop (`~/.gemini/config/plugins/<name>`) and `agy` CLI (`~/.gemini/antigravity-cli/plugins/<name>`).
 - **Antigravity Desktop Startup Discovery Notes**: Clarified that Antigravity Desktop scans `~/.gemini/config/plugins/` on launch and requires an application restart to discover newly installed or updated plugins.
 
 ### Fixed
 - **`doctor` User-Scope Scan**: Added Antigravity roots (`~/.gemini/config/plugins`, `~/.gemini/antigravity-cli/plugins`, and `~/.gemini/antigravity/skills`) to the `doctor --scope user` dead-symlink inspection loop.
+- **`densify.py` Metric Drift**: Fixed threshold/display mismatch (70 vs 65) and excluded trigger frontmatter from compression penalties.
 
 ## [1.11.0] — 2026-08-21
 

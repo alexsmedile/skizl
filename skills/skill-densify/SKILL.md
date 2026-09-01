@@ -5,7 +5,7 @@ description: >-
   prose with decision matrices, direct negative constraints ("DO NOT"), consolidated CLI palettes,
   and deterministic scripts. Triggers on "densify", "compress skill", "make skill compact",
   "skill micro-kernel", or "token optimize skill".
-version: 1.1.0
+version: 1.2.0
 category: devtools
 status: current
 tags: [meta, skills, optimization, compression, micro-kernel]
@@ -47,6 +47,8 @@ python3 "${CLAUDE_SKILL_DIR:-<skill-dir>}/scripts/densify.py" <path/to/SKILL.md>
 6. **Mechanical Offload**: Wrap repetitive multi-turn file/CLI discovery in deterministic scripts in `scripts/`.
 7. **Silent Fast-Lane & Peeking**: Routine deterministic tasks execute silently with standard left-border reports. Provide non-mutating preview flags (`--peek`, `--dry-run`).
 8. **Progressive Disclosure**: Disclose branch-only context via pointers with explicit `Use this when:` triggers.
+9. **Anti-Lecturing**: Strip textbook definitions and pedagogical overviews (`docs/` vs `skills/`); provide direct input-output transforms and syntax matrices.
+10. **Expansion Handoffs**: Declare an explicit delegation table for operations exceeding the skill's single responsibility.
 
 | Band | Body lines | Read as |
 |---|---|---|

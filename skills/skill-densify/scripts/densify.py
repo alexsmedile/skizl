@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """densify.py — Automated density and micro-kernel analyzer for agent skills.
 
-Measures line counts, estimates token budgets, flags conversational filler / wrappers / no-ops,
-and checks progressive disclosure and table density.
+Measures line counts, estimates token budgets, flags conversational filler / wrappers / lecturing,
+and checks progressive disclosure, table density, direct negative invariants, and expansion handoffs.
 
 Usage: python3 densify.py <skill-dir-or-SKILL.md>
 """
@@ -18,13 +18,11 @@ FILLER_PATTERNS = [
     (r"\b(in order to|with the purpose of|so as to)\b", "Verbose phrasing (use 'to')"),
     (r"\b(feel free to|you may also|if you want|if you like)\b", "Advisory hedging"),
     (r"\b(here is a|here is the|in this section|the following is)\b", "Output wrapper / preamble"),
+    (r"\b(is an? (visual )?(blueprint|concept|framework|methodology|tool|standard) (used|designed) to)\b", "Pedagogical lecturing (move to docs/ or prune)"),
+    (r"\b(refers to the concept of|can be defined as|is widely used in (the )?industry)\b", "Textbook explanation (move to docs/)"),
+    (r"\b(allows (the )?(user|developer) to|enables users to)\b", "Feature marketing prose (use direct action verb)"),
 ]
 
-# Size bands, measured on body lines. These are calibrated against real skill
-# libraries: skills that have already applied progressive disclosure cluster
-# around a 120-150 line body, so a single low ceiling flags healthy skills.
-# Size alone is never a defect -- it is a prompt to check whether the content
-# is structured and whether branch-only detail has been disclosed.
 BANDS = [
     (60, "COMPACT", "Single-purpose kernel."),
     (150, "NORMAL", "Typical for a routed skill with references."),
@@ -35,14 +33,17 @@ BANDS = [
 
 def classify(body_lines, structured, ref_count, unresolved):
     """Judge a skill on structure, not on line count alone."""
+    density = structured / body_lines if body_lines else 0
+
+    # High structure with references is optimal regardless of line count
+    if density >= 0.25 and ref_count >= 1:
+        return "OPTIMAL", "Dense micro-kernel with structured tables & disclosed references."
+
     for ceiling, band, note in BANDS:
         if body_lines <= ceiling:
             break
 
-    # A large skill that is densely structured is doing its job; an
-    # unstructured one of the same size is the actual problem.
     if body_lines > 150:
-        density = structured / body_lines if body_lines else 0
         if density >= 0.15 and ref_count:
             note = "Structured and disclosed -- size is carrying real branches."
         elif density < 0.08:
@@ -50,11 +51,8 @@ def classify(body_lines, structured, ref_count, unresolved):
         else:
             note = "Check for branch-only detail that could be disclosed."
 
-    # Over-disclosure: small only because the operational content was pushed
-    # out of reach. A working 150-line skill beats a 60-line one whose steps
-    # live behind links the agent must chase mid-task.
-    if body_lines <= 60 and ref_count >= 3:
-        band, note = "THIN", "Small but heavily disclosed -> inline what every run needs."
+    if body_lines <= 60 and ref_count >= 3 and density < 0.20:
+        band, note = "THIN", "Small but low internal density -> inline what every run needs."
     return band, note
 
 
@@ -94,9 +92,6 @@ def analyze_skill(target_path):
     lines = text.splitlines()
     total_lines = len(lines)
 
-    # Measure the body only. Frontmatter is the trigger surface -- a rich
-    # description is what makes a skill fire correctly, so counting it would
-    # penalize the one part that should never be compressed.
     body = lines
     fm_lines = 0
     if lines and lines[0].strip() == "---":
@@ -105,21 +100,21 @@ def analyze_skill(target_path):
                 body, fm_lines = lines[i + 1:], i + 1
                 break
     body_lines = len(body)
-
-    # Estimate tokens (~4 chars per token)
     est_tokens = len(text) // 4
     
-    # Check tables & pipelines (body only -- frontmatter holds neither)
     table_lines = sum(1 for line in body if line.strip().startswith("|") and line.strip().endswith("|"))
     structured = table_lines + sum(1 for line in body if " → " in line or " -> " in line)
     table_ratio = (table_lines / body_lines * 100) if body_lines > 0 else 0
     pipeline_lines = sum(1 for line in body if " → " in line or " -> " in line)
 
-    # Progressive disclosure already applied?
     ref_count = len(list(skill_md.parent.glob("references/*.md")))
     has_scripts = any(skill_md.parent.glob("scripts/*"))
 
-    # Scan for filler
+    # Invariant and negative constraints detection
+    has_negative_invariants = any("DO NOT" in line for line in body)
+    has_handoffs = any("Handoff" in line or "Out-of-Scope" in line or "Delegate" in line for line in body)
+
+    # Scan for filler / lecturing
     findings = []
     for idx, line in enumerate(lines, start=1):
         for pattern, label in FILLER_PATTERNS:
@@ -136,6 +131,14 @@ def analyze_skill(target_path):
           f"{f', {ref_count} reference(s)' if ref_count else ''}")
     print(f"│ [{band}]{' ' * max(1, 10 - len(band))}{verdict}")
 
+    features = []
+    if has_negative_invariants:
+        features.append("DO NOT invariants present")
+    if has_handoffs:
+        features.append("expansion handoffs declared")
+    if features:
+        print(f"│ [FEATURES] {', '.join(features)}")
+
     if unresolved:
         print(f"│ [BROKEN]   {len(unresolved)} reference link(s) point at missing files:")
         for target in unresolved[:4]:
@@ -144,14 +147,14 @@ def analyze_skill(target_path):
         print(f"│ [PASS]     All reference links resolve")
 
     if findings:
-        print(f"│ [DETECT]   {len(findings)} conversational filler / wrapper phrase(s):")
+        print(f"│ [DETECT]   {len(findings)} conversational filler / lecturing phrase(s):")
         for line_no, label, sample in findings[:4]:
             sample_trunc = sample[:55] + "..." if len(sample) > 55 else sample
             print(f"│   L{line_no}: [{label}] \"{sample_trunc}\"")
         if len(findings) > 4:
             print(f"│   ... and {len(findings) - 4} more")
     else:
-        print("│ [PASS]     No conversational filler phrases detected")
+        print("│ [PASS]     No conversational filler or pedagogical lecturing detected")
         
     print("└─")
     return 0
