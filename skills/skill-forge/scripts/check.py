@@ -48,6 +48,21 @@ PROFILE_FIELDS["skizl"] = PROFILE_FIELDS["claude"] | {
     "status",
     "tags",
 }
+PROFILE_FIELDS["dotagents"] = PORTABLE_FIELDS | {
+    "id",
+    "enabled",
+    "kind",
+    "tags",
+    "version",
+    "title",
+    "role",
+    "connection-type",
+}
+
+# --- Secret detection pattern for MCP configurations ---
+SECRET_PATTERN = re.compile(
+    r"(?i)(?:bearer\s+[a-z0-9_\-\.]{20,}|(?:ghp|gho|ghu|ghs|github_pat)_[a-zA-Z0-9]{20,}|sk-[a-zA-Z0-9]{20,}|xox[baprs]-[0-9a-zA-Z]{10,})"
+)
 
 # --- Agent Plugins 1.0.0 (https://agent-plugins.org) ---
 # The manifest schema is CLOSED: unknown top-level keys are a validation failure,
@@ -245,6 +260,25 @@ def check_mcp(root, errors, warns, plugin_schema_version):
                     f"{label}: PLUGIN_ROOT/PLUGIN_DATA do not expand in '{field}' — "
                     "they ship as a literal string"
                 )
+            if isinstance(value, str) and SECRET_PATTERN.search(value):
+                warns.append(
+                    f"{label}: potential hardcoded secret/token detected in '{field}' — "
+                    "prefer environment variables or managed auth (e.g. Vercel Connect / OAuth)"
+                )
+        for field in ("args", "env"):
+            items = config.get(field)
+            if isinstance(items, list):
+                for item in items:
+                    if isinstance(item, str) and SECRET_PATTERN.search(item):
+                        warns.append(
+                            f"{label}: potential hardcoded secret/token in args — prefer environment variables"
+                        )
+            elif isinstance(items, dict):
+                for k, v in items.items():
+                    if isinstance(v, str) and SECRET_PATTERN.search(v):
+                        warns.append(
+                            f"{label}: potential hardcoded secret/token in env['{k}'] — prefer runtime environment variables"
+                        )
         headers = config.get("headers")
         if isinstance(headers, dict):
             for key, value in headers.items():
@@ -253,6 +287,25 @@ def check_mcp(root, errors, warns, plugin_schema_version):
                         f"{label}: PLUGIN_ROOT/PLUGIN_DATA do not expand in headers['{key}'] — "
                         "they ship as a literal string"
                     )
+                if isinstance(value, str) and SECRET_PATTERN.search(value):
+                    warns.append(
+                        f"{label}: potential hardcoded authorization secret in headers['{key}'] — "
+                        "prefer dynamic headers or runtime env reference"
+                    )
+
+    # Companion MCP files check
+    claude_mcp = root / ".mcp.json"
+    antigravity_mcp = root / "mcp_config.json"
+    if claude_mcp.exists() and not (root / "mcp.json").exists():
+        warns.append(
+            ".mcp.json found without root mcp.json — Claude-specific format; "
+            "provide portable mcp.json for Agent Plugins conformance"
+        )
+    if antigravity_mcp.exists() and not (root / "mcp.json").exists():
+        warns.append(
+            "mcp_config.json found without root mcp.json — Antigravity-specific format; "
+            "provide portable mcp.json for Agent Plugins conformance"
+        )
 
 
 def check_plugin(plugin_dir, profile):
@@ -337,6 +390,32 @@ def check_plugin(plugin_dir, profile):
 
     check_mcp(root, errors, warns, schema if isinstance(schema, str) else None)
 
+    # --- optional agents/: sub-agent profiles ---
+    agents_dir = root / "agents"
+    if agents_dir.is_dir():
+        for agent_file in sorted(agents_dir.glob("*.md")):
+            lines = agent_file.read_text(encoding="utf-8").splitlines()
+            try:
+                fm_fields, _ = frontmatter(lines)
+                if not fm_fields:
+                    warns.append(f"agents/{agent_file.name}: sub-agent profile missing frontmatter block")
+                elif not fm_fields.get("name") and not fm_fields.get("id"):
+                    warns.append(f"agents/{agent_file.name}: sub-agent profile missing 'name' or 'id'")
+            except ValueError as err:
+                errors.append(f"agents/{agent_file.name}: invalid frontmatter — {err}")
+
+    # --- optional commands/: slash command workflows ---
+    commands_dir = root / "commands"
+    if commands_dir.is_dir():
+        for cmd_file in sorted(commands_dir.glob("*.md")):
+            lines = cmd_file.read_text(encoding="utf-8").splitlines()
+            try:
+                fm_fields, _ = frontmatter(lines)
+                if fm_fields and not fm_fields.get("name") and not fm_fields.get("description"):
+                    warns.append(f"commands/{cmd_file.name}: command missing 'name' or 'description'")
+            except ValueError as err:
+                errors.append(f"commands/{cmd_file.name}: invalid frontmatter — {err}")
+
     # --- skills: immediate children of skills/ holding a SKILL.md ---
     skills_dir = root / "skills"
     discovered = []
@@ -376,6 +455,8 @@ def main(skill_dir, profile):
     errors, warns = [], []
 
     skill_md = root / "SKILL.md"
+    if not skill_md.exists() and (root / "skill.md").exists():
+        skill_md = root / "skill.md"
     if not skill_md.exists():
         print(f"ERROR: {root}/SKILL.md missing")
         return 1
@@ -395,6 +476,8 @@ def main(skill_dir, profile):
         fields, fm = {}, ""
 
     name = fields.get("name", "")
+    if not name and profile == "dotagents":
+        name = fields.get("id", "")
     description = fields.get("description", "")
     for field_name in ("name", "description", "compatibility"):
         value = fields.get(field_name, "")

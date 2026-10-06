@@ -112,4 +112,4 @@ Invoked as `/skizl <command>`:
 - **Front-door SKILL.md must stay under 65 lines** — move verbose content to `references/` files
 - **Reference files must be explicitly loaded** — Agent reads them on demand when a route/command triggers
 - **Pin shortcuts** follow the naming convention `i-<action>` and are symlinked into `.claude/skills/`
-- **Version consistency is enforced at commit time** — `git-guard` pre-commit hook blocks commits unless all 7 version sites agree.
+- **Version consistency is enforced at commit time** — `git-guard` pre-commit hook blocks commits unless all manifest and document version sites agree (root `plugin.json`, `.claude-plugin`, `.codex-plugin`, README badge, CHANGELOG, and git tag).

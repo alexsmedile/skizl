@@ -7,6 +7,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.12.0] — 2026-10-06
+
+### Added
+- **Unified MCP Server Matrix**: Documented mapping across Agent Plugins (`mcp.json`), Anthropic (`.mcp.json`), and Antigravity (`mcp_config.json`) in `publish.md`, including zero-cleartext secret guidelines inspired by Vercel Eve / Vercel Connect.
+- **MCP Secret Scrubbing**: Added automated pattern detection in `check.py` for potential hardcoded bearer tokens, API keys, or raw authorization headers across command args, env vars, and headers.
+- **Sub-Agent & Command Discovery in `check.py`**: Added validation for optional plugin-level sub-agents (`agents/*.md`) and slash commands (`commands/*.md`) in `--plugin` mode.
+- **`.agents` Protocol Profile**: Added `--profile dotagents` to `check.py` and documented the `.agents` layered standard (`dotagentsprotocol.com`) in `platforms.md`.
+- **Ecosystem Reference Extensions**: Added documentation links and profile details for `.agents Protocol`, Vercel AI SDK (`skills.sh`), Vercel Eve, and Block Buzz peer agent collaboration.
+
+### Fixed
+- **`git-guard.md` Documentation Sync**: Added root `plugin.json` to the version collector section in `references/git-guard.md` and updated `CLAUDE.md` to reflect full multi-manifest version consistency checking.
+
 ## [1.11.1] — 2026-09-01
 
 ### Added

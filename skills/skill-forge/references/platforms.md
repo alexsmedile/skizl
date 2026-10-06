@@ -22,15 +22,21 @@ Official reference: https://agentskills.io/specification
 | `codex` | Repository/user `.agents/skills/`; optional `agents/openai.yaml` | Keep SKILL.md portable; put UI, implicit-invocation policy, and MCP dependencies in `agents/openai.yaml` | Local/repo skills for authoring; plugins for reusable distribution; test `$name` plus implicit prompts |
 | `cursor` | `.agents/skills/` or `.cursor/skills/`; nested roots scope monorepos | `paths`, `disable-model-invocation`, `metadata`; legacy `globs` is compatibility-only | Test slash invocation, automatic relevance, and file-path scoping |
 | `gemini` | Workspace `.agents/skills/<name>/` (legacy `.agent/skills/` still read); user `~/.gemini/config/skills/<name>/` | Only `name` and `description` are documented, and `name` defaults to the folder name — keep frontmatter portable. Write `description` in third person with the trigger keywords the agent should match | Test discovery, activation, and bundled resource access; ship as a plugin (see below) rather than hand-linking |
+| `dotagents` | `.agents/skills/<name>/` (`skill.md` or `SKILL.md`); user `~/.agents/` | `id`, `name`, `description`, `enabled`, `kind`, `tags`, `version`, `title`, `role`, `connection-type` | Test global/workspace layering; share bundles via `.agents Hub` |
 | `skizl` | Plugin skill under `skills/` | Claude-compatible fields plus library `version`, `category`, `status`, and `tags` conventions | Validate with `--profile skizl`; lifecycle uses skizl commands only on explicit request |
 
 Official host references:
 
 - Claude: https://code.claude.com/docs/en/skills
+- Claude Plugins: https://github.com/anthropics/claude-plugins-official
 - OpenAI: https://learn.chatgpt.com/docs/build-skills
 - Cursor: https://cursor.com/docs/skills
 - Google Antigravity — skills: https://antigravity.google/docs/skills
 - Google Antigravity — plugins: https://antigravity.google/docs/plugins
+- .agents Protocol: https://dotagentsprotocol.com
+- Vercel AI SDK & Skills: https://vercel.com/docs/ai-sdk and https://skills.sh
+- Vercel Eve & MCP: https://vercel.com/docs/mcp/integrations/eve
+- Block Buzz (Peer Agents): https://github.com/block/buzz
 
 ## Packaging: Agent Plugins is the portable target
 

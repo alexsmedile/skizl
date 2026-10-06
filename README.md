@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-blueviolet)
 ![Agent Plugins](https://img.shields.io/badge/Agent%20Plugins-1.0.0-orange)
-![Version](https://img.shields.io/badge/version-1.11.1-green)
+![Version](https://img.shields.io/badge/version-1.12.0-green)
 
 **From scattered slash commands to a versioned, publishable skill library.**
 

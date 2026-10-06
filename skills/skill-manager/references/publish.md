@@ -374,9 +374,31 @@ Codex's `hooks/hooks-codex.json`. Do not copy either into this path.
 Referenced scripts must exist and be executable (`chmod +x`) — a missing or non-executable hook
 script fails silently at run time.
 
-**`mcp_config.json`** (repo root — Antigravity) — separate from the standard's `mcp.json`. If the
-plugin ships MCP servers for both, maintain both files; they are not aliases.
+### Unified MCP Server Matrix
 
+Three MCP conventions exist across plugin runtimes. Maintain `mcp.json` as the portable source of truth, and derive vendor companions only when targeting specific runtimes:
+
+| Host / Standard | File Location | Schema / Format Notes |
+|---|---|---|
+| **Agent Plugins 1.0.0** (OpenAI, Cursor, Copilot, VS Code) | `mcp.json` (repo root) | Requires explicit `"type"` (`stdio` or `streamable-http`). Variable substitution (`${PLUGIN_ROOT}`, `${PLUGIN_DATA}`) only in `args`, `env`, and `cwd`. |
+| **Anthropic Claude Code / Cowork** | `.mcp.json` (repo root) or inline in `.claude-plugin/plugin.json` | Similar to standard, auto-discovered at plugin root. Supports stdio and SSE/streamable-http. |
+| **Google Antigravity** | `mcp_config.json` (repo root) | Keyed by `"mcpServers"`. Does not read `mcp.json` or `.mcp.json`. |
+
+**Portable `mcp.json` (Agent Plugins core):**
+```json
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "<server-name>": {
+      "type": "stdio",
+      "command": "<executable>",
+      "args": ["${PLUGIN_ROOT}/scripts/<script>"]
+    }
+  }
+}
+```
+
+**Antigravity `mcp_config.json`:**
 ```json
 {
   "mcpServers": {
@@ -387,6 +409,11 @@ plugin ships MCP servers for both, maintain both files; they are not aliases.
   }
 }
 ```
+
+> [!CAUTION]
+> **Zero Secrets in Plugin Configs**:
+> Never commit raw API keys, bearer tokens, or database passwords in `mcp.json`, `.mcp.json`, or headers.
+> Prefer environment variables (`process.env.API_KEY`), managed auth handshakes (such as Vercel Connect in the Eve framework), or local user config (`~/.mcp.json`). Skizl's `check.py` lints for hardcoded secret patterns and flags them as warnings.
 
 ### `.agents/plugins/marketplace.json`
 
