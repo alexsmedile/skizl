@@ -36,10 +36,12 @@ skills/writing-great-skills/
 # local feedback, planning, and article drafts
 /FEEDBACK*.md
 /feedback*.md
-/TODO.md
-/todo.md
 /articles/
 
 # Local-only: backups, snapshots, scratch — never committed
 _snapshots/
 _local/
+
+# OPF local companions (shared content is committed; personal notes stay local)
+*.local.*
+.octopus.local/
