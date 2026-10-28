@@ -53,6 +53,10 @@ tools, or validation. Otherwise it is a section label.
 so the top stays legible. Licensed by branching: inline what every branch needs, disclose
 what only some branches reach. It protects hierarchy — it does NOT create a context
 boundary; only a fresh subagent or user hand-off does.
+Keep the decisions needed to choose a path in SKILL.md; the selected reference supplies
+the specific task, topic, or procedure. Split when a real load condition lets unrelated
+runs skip that material. Optimize the context needed for a working route, not the entry
+file's length or the number of files; preserve enough guidance to reason and execute.
 
 **Context pointer** — an in-context reference naming out-of-context material and the
 condition for reaching it. The pointer's *wording* decides when and how reliably the agent

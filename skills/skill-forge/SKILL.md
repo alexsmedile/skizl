@@ -7,7 +7,7 @@ description: |
   a skill, or optimize its activation boundaries. For a quick single-file skill with no
   ceremony, use skill-draft; not for one-off prompts, general agent questions, or human-facing
   docs.
-version: 1.5.0
+version: 1.5.1
 category: devtools
 status: current
 tags: [meta, skills, authoring]
@@ -15,7 +15,8 @@ tags: [meta, skills, authoring]
 
 # Skill Forge
 
-Architectural engine for predictable agent skills. A skill is a compact decision system.
+Architectural engine for predictable agent skills. A skill is an agent-facing entry point
+to a manual, process, or pipeline: it steers what the agent does and how it reasons.
 Read [GLOSSARY.md](GLOSSARY.md) before execution: every bold term is applied as defined there.
 
 ## 1. Gate Zero: Skill Necessity Test
@@ -39,10 +40,10 @@ A skill earns existence ONLY if work recurs and needs repeatable decision steeri
 
 ## 3. Architecture & Information Hierarchy
 
-- **Boundary Mapping**: Name the owned outcome, non-goals, and boundary invariants.
+- **Boundary Mapping**: Keep the owned outcome, non-goals, boundary invariants, and delegation decisions in `SKILL.md`. Mapping is a design activity, not a requirement for a separate boundaries file.
 - **Capability Clusters**: Group by inputs, tools, outputs -> map to runtime branches or helpers.
 - **Host Profiles**: Consult [references/platforms.md](references/platforms.md) for target host profiles.
-- **Content Distribution**: Inline must-haves in `SKILL.md`; disclose branch logic to `references/*.md` (`Use this when:`).
+- **Content Distribution**: Keep routing and shared decision rules in `SKILL.md`; disclose task-, topic-, or branch-specific procedures, techniques, and examples to references with explicit load conditions (`Use this when:`). See **Progressive disclosure** in [GLOSSARY.md](GLOSSARY.md).
 - **Verifiable Finish Lines**: Every step must end on a checkable completion criterion.
 
 ## 4. Quality Gates & Shipping
