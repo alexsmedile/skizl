@@ -7,7 +7,7 @@ description: |
   a skill, or optimize its activation boundaries. For a quick single-file skill with no
   ceremony, use skill-draft; not for one-off prompts, general agent questions, or human-facing
   docs.
-version: 1.5.1
+version: 1.5.2
 category: devtools
 status: current
 tags: [meta, skills, authoring]
@@ -39,6 +39,10 @@ A skill earns existence ONLY if work recurs and needs repeatable decision steeri
 | `audit` | Existing skill to debloat, repair, extend, or harden | Read [tracks/audit.md](tracks/audit.md) |
 
 ## 3. Architecture & Information Hierarchy
+
+For multi-skill packages, scattered procedures, module/provider boundaries, or routing
+and disclosure changes, apply [information architecture](references/information-architecture.md)
+before choosing files. Judge a complete working route, not entry-file length alone.
 
 - **Boundary Mapping**: Keep the owned outcome, non-goals, boundary invariants, and delegation decisions in `SKILL.md`. Mapping is a design activity, not a requirement for a separate boundaries file.
 - **Capability Clusters**: Group by inputs, tools, outputs -> map to runtime branches or helpers.

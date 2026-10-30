@@ -17,7 +17,9 @@ enough for the empirical track.
    using the chosen host profile. Done when: the mode, mechanism, and a one-line why appear in
    the draft.
 3. **Validate routing before prose.** Apply the glossary's **branch** test to the workshop map;
-   collapse any candidate that changes no behavior. Confirm each route's inputs, context, tools,
+   collapse any candidate that changes no behavior. For multi-skill/module work, use
+   [information architecture](../references/information-architecture.md) to assign authoritative
+   owners and trace complete routes before choosing package shape. Confirm each route's inputs, context, tools,
    approvals, output, validation, recovery, and resume behavior. Done when: every branch names
    the behavior it changes and what every branch needs versus what only some reach.
 4. **Commit the package plan.** Assign always-needed routing and steps to SKILL.md; branch-only

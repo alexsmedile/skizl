@@ -29,7 +29,9 @@ is diagnosis, not creation — resist redrafting from scratch.
 | Invocation mode by accident | Only ever fired by hand → keep the description and add the target host's manual-only control; must fire autonomously → write a real trigger surface and remove manual-only control |
 | Frontmatter mixes host dialects | Select a target profile; keep portable fields plus only that host's extensions; move portable version data under `metadata` |
 | Too long; agent wades before acting (sprawl) | Move branch-only reference behind activation-ruled pointers; split real branches |
-| Same meaning in two places (duplication) | Keep the most local copy, delete the other |
+| Same meaning in two places (duplication) | Keep the definition with its authoritative owner; replace other copies with scoped pointers where needed |
+| Procedure scattered across skills, runtime notes and project history | Apply [information architecture](../references/information-architecture.md): assign the authoritative owner, co-locate the procedure, retain distinct writers and trace affected routes |
+| Provider choice leaks into general method or hides dependency | Apply the same reference's method/implementation/provider boundary; expose real adapter support and preserve working routes until replacements are qualified |
 | Stale layers nobody dared remove (sediment) | Check every line for relevance; delete what no longer bears on the task |
 | Line the model does anyway (no-op) | Delete the sentence whole — or, if it's a weak leading word, replace it with a stronger one |
 | "Don't do X" steering (negation) | Rewrite as the positive target; keep a prohibition only as a hard guardrail paired with the positive |
