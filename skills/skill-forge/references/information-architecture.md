@@ -40,6 +40,30 @@ its target and which decision it enables; it does not require recursive loading.
 Keep path-selection rules available before the choice and detailed mechanics behind
 the selected pointer. Sharpen ambiguous pointers before inlining their targets.
 
+For procedural skills, make the principal use case executable from its entry:
+
+- **Give an ordered path, not only an owner list.** Connect the request to required
+  reads, actions/tools, files to create or modify, returned artifacts and exit checks.
+  A specialist link alone does not explain how its output feeds the next step.
+- **Make mechanics concrete at their owner.** Give verified commands/API calls,
+  input/output locations or resolution rules, and the actual result to inspect.
+  Keep executable schemas and syntax in one authoritative place; link the exact
+  procedure/section rather than making the agent search a broad manual. For
+  reasoning-only steps, identify the decision and evidence instead of inventing a CLI.
+- **Disclose by branch, preserve the working sequence.** Keep path selection in
+  the entry and co-locate the selected procedure. Splitting every small step into
+  another reference can shorten the entry while increasing navigation and inference.
+  Specialization is useful when handoffs carry inputs, outputs and completion evidence.
+- **Specify revision entry points.** Map common feedback to its owning source,
+  first step to repeat, preserved decisions and dependent checks. Separate the
+  smallest logical correction from what the actual backend must recompute; reuse
+  valid outputs and approvals only within their recorded scope.
+- **Compare execution effort, not just text size.** Trace one normal request and
+  one correction: can an agent act without guessing commands, editable files,
+  ordering or success evidence? Record unresolved joins and unnecessary reads.
+  A shorter document or a static trace alone does not prove runtime/token savings
+  or better output quality; those claims require observed runs.
+
 Trace representative tasks end to end, including resume and one failure case:
 can the agent select the route, reach required rules and execute without missing
 context or reading unrelated stages? Recover relevant truncated sections. Reuse a

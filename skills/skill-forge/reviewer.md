@@ -49,6 +49,11 @@ Check all eight sections. Cite file and line for every issue.
 - Are approval boundaries explicit before consequential or externally visible actions?
 - Can the agent complete, recover, resume, and safely rerun the workflow using only the
   declared context and tools?
+- For a procedural skill's common request and one correction, can the agent follow
+  the order from required reads through actual commands/actions, editable sources,
+  returned artifacts and checks without reconstructing missing handoffs? Apply
+  [working-route validation](references/information-architecture.md#validate-a-working-route);
+  distinguish logical restart scope from backend recomputation.
 
 ### 5. Pruning
 - Find duplication — the same meaning in more than one place.

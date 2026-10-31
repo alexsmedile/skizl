@@ -7,7 +7,7 @@ description: |
   a skill, or optimize its activation boundaries. For a quick single-file skill with no
   ceremony, use skill-draft; not for one-off prompts, general agent questions, or human-facing
   docs.
-version: 1.5.2
+version: 1.5.3
 category: devtools
 status: current
 tags: [meta, skills, authoring]
@@ -49,6 +49,7 @@ before choosing files. Judge a complete working route, not entry-file length alo
 - **Host Profiles**: Consult [references/platforms.md](references/platforms.md) for target host profiles.
 - **Content Distribution**: Keep routing and shared decision rules in `SKILL.md`; disclose task-, topic-, or branch-specific procedures, techniques, and examples to references with explicit load conditions (`Use this when:`). See **Progressive disclosure** in [GLOSSARY.md](GLOSSARY.md).
 - **Verifiable Finish Lines**: Every step must end on a checkable completion criterion.
+- **Executable Main Path**: For procedural skills, make the common request directly actionable: what to read, run, edit and inspect, in dependency order, plus where a correction resumes. Reduce reconstruction between documents, not just word count; apply [working-route validation](references/information-architecture.md#validate-a-working-route) without duplicating domain contracts.
 
 ## 4. Quality Gates & Shipping
 
